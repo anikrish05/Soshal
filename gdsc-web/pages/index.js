@@ -1,6 +1,8 @@
 import { useLoadScript, GoogleMap } from '@react-google-maps/api';
 import { useMemo } from 'react';
 import styles from '../styles/Home.module.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
 const Home = () => {
   const libraries = useMemo(() => ['places'], []);
@@ -8,6 +10,14 @@ const Home = () => {
     () => ({ lat: 36.9905, lng: -122.0584 }),
     []
   );
+  const [test, setTest] = useState("wasgoody")
+useEffect(()=>{
+    axios({
+      method: 'GET',
+      url: `https://jsonplaceholder.typicode.com/todos/1`,
+    })
+});
+
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
