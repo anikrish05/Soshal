@@ -1,2 +1,2 @@
 GDSC App
-Sochal
+Soshal
