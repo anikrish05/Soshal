@@ -31,7 +31,7 @@
                  Flutter's first frame. -->
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyA_m_1o0vS7Kp2kB7D5TApVX3fvmc8q6TI"
+                android:value="AIzaSyCWdiW38G-z5HM_6qULGurbZPhNk5ZQTQ8"
                 />
             <meta-data
               android:name="io.flutter.embedding.android.SplashScreenDrawable"

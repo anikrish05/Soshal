@@ -3,6 +3,7 @@ import 'package:gdsc_app/screens/feed.dart';
 import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/sign.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:gdsc_app/widgets/appBar.dart';
 
 void main() => runApp(MaterialApp(
   initialRoute: '/login',
@@ -14,71 +15,43 @@ void main() => runApp(MaterialApp(
 ));
 
 
-class Nav extends StatelessWidget {
-  PersistentTabController _controller = PersistentTabController(
-      initialIndex: 0);
+class NavBottomWidget extends StatefulWidget {
+  @override
+  _NavBottomWidgetState createState() => _NavBottomWidgetState();
+}
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
-        title: ("Home"),
-        activeColorPrimary: Colors.blue,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.settings),
-        title: ("Settings"),
-        activeColorPrimary: Colors.blue,
-        inactiveColorPrimary: Colors.grey,
-      ),
-    ];
-  }
-
-  List<Widget> _buildScreens() {
-    return [
-      LoginScreen(),
-      MyApp(),
-      SignUpScreen()
-    ];
-  }
+class _NavBottomWidgetState extends State<NavBottomWidget> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineInSafeArea: true,
-      backgroundColor: Colors.white,
-      // Default is Colors.white.
-      handleAndroidBackButtonPress: true,
-      // Default is true.
-      resizeToAvoidBottomInset: true,
-      // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-      stateManagement: true,
-      // Default is true.
-      hideNavigationBarWhenKeyboardShows: true,
-      // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
-      ),
-      popAllScreensOnTapOfSelectedTab: true,
-      popActionScreens: PopActionScreensType.all,
-      itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
-      ),
-      screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
-      ),
-      navBarStyle: NavBarStyle
-          .style1, // Choose the nav bar style with this property.
+    return BottomNavigationBar(
+      iconSize: 40,
+      selectedIconTheme: IconThemeData(color: Colors.orange, size: 40),
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map),
+          label: 'Map',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: _selectedIndex, //New
+      onTap: _onItemTapped,
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
 

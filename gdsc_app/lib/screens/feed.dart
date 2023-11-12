@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
+import 'package:gdsc_app/main.dart';
+
 
 class MyApp extends StatefulWidget {
   //const MyApp({super.key});
@@ -30,6 +32,7 @@ class _MyAppState extends State<MyApp> {
             zoom: 11.0,
           ),
         ),
+        bottomNavigationBar: NavBottomWidget(),
       ),
     );
   }
