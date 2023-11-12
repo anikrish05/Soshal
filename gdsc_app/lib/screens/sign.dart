@@ -9,6 +9,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passWordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   bool isChecked = false;
+  bool isValidEmail(input) {
+    return RegExp(
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(input);
+  }
   @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {
@@ -37,8 +42,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     )
                 )
             ),
-            TextField(
-                obscureText: true,
+            TextFormField(
+                validator: (input) => isValidEmail(input) ? null : "Check your email",
                 controller: emailController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(

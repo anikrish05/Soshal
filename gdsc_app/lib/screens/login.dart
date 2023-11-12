@@ -36,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
             ),
             TextField(
-                obscureText: true,
                 controller: emailController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
