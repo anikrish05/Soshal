@@ -17,76 +17,98 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushNamed(context, '/sign');
 
     }
+  Color _color1 = Color(0xFFFF8050);
+  Color _color2 = Color(0xFFF0F0F0);
   @override
 
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(
+          //TODO: Change the alignment
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Center(
-                child: Text('Soshal',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top:8),
+                  child: Icon(Icons.location_pin,
+                    color: _color1,
+                    size: 50.3
+                  ),
+                ),
+                Text('Soshal',
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 50.3,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2.0,
-                        color: Colors.grey[600],
+                        color: _color1,
                         fontFamily: 'Borel'
                     )
-                )
+                ),
+              ],
             ),
-            TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintStyle: TextStyle(color: Colors.grey[800], fontFamily: "borel"),
-                  labelText: "Email",
-                  hintText: "Email",
-                  fillColor: Colors.white70,
-                )
+            TextButton(
+              onPressed: () {signUpRoute(); },
+              child: Text("create a new account",
+                  style: TextStyle(
+                      fontFamily: "borel",
+                      color: Colors.black,
+                      fontSize: 18.3
+                  )
+              ),
+            ),
+            SizedBox(
+              width: 350,
+              height: 40,
+              child: TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    labelText: "Email",
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
             ),
             Padding(
-                padding: EdgeInsets.all(16.0)
+                padding: EdgeInsets.all(5.0)
             ),
-            TextField(
-                obscureText: true,
-                controller: passWordController,
-                obscuringCharacter: '*',
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintStyle: TextStyle(color: Colors.grey[800], fontFamily: "borel"),
-                  labelText: "Password",
-                  hintText: "Password",
-                  fillColor: Colors.white70,
-                )
+            SizedBox(
+              width: 350,
+              height: 40,
+              child: TextField(
+                  obscureText: true,
+                  controller: passWordController,
+                  obscuringCharacter: '*',
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                      borderSide: BorderSide(width: 0.0)
+                    ),
+                    labelText: "Password",
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
             ),
 
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.blue,
+                foregroundColor: Colors.black,
               ),
               onPressed: () {login(); },
               child: Text('Log in',
                   style: TextStyle(
-                      fontFamily: "borel"
+                      fontFamily: "borel",
+                    fontSize: 18.3
                   )
               ),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue,
-              ),
-              onPressed: () {signUpRoute(); },
-              child: Text("Don't have an account?",
-                  style: TextStyle(
-                      fontFamily: "borel"
-                  )
-              ),
-            )
+
           ],
         )
     );

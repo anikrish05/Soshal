@@ -9,6 +9,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passWordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   bool isChecked = false;
+  Color _color1 = Color(0xFFFF8050);
+  Color _color2 = Color(0xFFF0F0F0);
+
   bool isValidEmail(input) {
     return RegExp(
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
@@ -23,71 +26,78 @@ class _SignUpScreenState extends State<SignUpScreen> {
         MaterialState.focused,
       };
       if (states.any(interactiveStates.contains)) {
-        return Colors.black;
+        return Colors.white;
       }
-      return Colors.black;
+      return Colors.white;
     }
     return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Center(
-                child: Text('Sign Up',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                        color: Colors.grey[600],
-                        fontFamily: 'Borel'
-                    )
+            Text('Sign Up',
+                style: TextStyle(
+                    fontSize: 50.3,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2.0,
+                    color: _color1,
+                    fontFamily: 'Borel'
                 )
             ),
-            TextFormField(
-                validator: (input) => isValidEmail(input) ? null : "Check your email",
-                controller: emailController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintStyle: TextStyle(color: Colors.grey[800], fontFamily: "borel"),
-                  labelText: "Email",
-                  hintText: "Email",
-                  fillColor: Colors.white70,
-                )
+            SizedBox(
+              width: 350,
+              height: 40,
+              child: TextFormField(
+                  validator: (input) => isValidEmail(input) ? null : "Check your email",
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    labelText: "Email",
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
             ),
             Padding(
-                padding: EdgeInsets.all(16.0)
+                padding: EdgeInsets.all(8.0)
             ),
-            TextField(
-                obscureText: true,
-                controller: passWordController,
-                obscuringCharacter: '*',
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintStyle: TextStyle(color: Colors.grey[800], fontFamily: "borel"),
-                  labelText: "Password",
-                  hintText: "Password",
-                  fillColor: Colors.white70,
-                )
+            SizedBox(
+              width: 350,
+              height: 40,
+              child: TextField(
+                  obscureText: true,
+                  controller: passWordController,
+                  obscuringCharacter: '*',
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    labelText: "Password",
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
             ),
             Padding(
-                padding: EdgeInsets.all(16.0)
+                padding: EdgeInsets.all(8.0)
             ),
-            TextField(
-                obscureText: true,
-                controller: confirmPasswordController,
-                obscuringCharacter: '*',
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintStyle: TextStyle(color: Colors.grey[800], fontFamily: "borel"),
-                  labelText: "Confirm Password",
-                  hintText: "Confirm Password",
-                  fillColor: Colors.white70,
-                )
+            SizedBox(
+              width: 350,
+              height: 40,
+              child: TextField(
+                  obscureText: true,
+                  controller: confirmPasswordController,
+                  obscuringCharacter: '*',
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    labelText: "Password",
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -95,9 +105,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text('Are you a club owner?',
                     style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
                         letterSpacing: 2.0,
-                        color: Colors.grey[600],
+                        color: Colors.black,
                         fontFamily: 'Borel'
                     )
                 ),
@@ -108,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   side: MaterialStateBorderSide.resolveWith(
                         (states) => BorderSide(width: 1.0, color: Colors.black),
                   ),
-                  checkColor: Colors.white,
+                  checkColor: Colors.black,
                   fillColor: MaterialStateProperty.resolveWith(getColor),
                   value: isChecked,
                   onChanged: (bool? value){
@@ -126,7 +135,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onPressed: () { },
               child: Text('Sign up',
                   style: TextStyle(
-                      fontFamily: "borel"
+                      fontFamily: "borel",
+                    color: Colors.black,
+                    fontSize: 18.3
                   )
               ),
             ),
