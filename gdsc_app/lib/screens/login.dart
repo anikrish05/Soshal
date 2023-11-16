@@ -30,7 +30,12 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/soshalTransparent.png'),
+            Image.asset('assets/soshalTransparent.png',
+              height: 100
+            ),
+            Padding(
+                padding: EdgeInsets.only(bottom: 90)
+            ),
             TextButton(
               onPressed: () {signUpRoute(); },
               child: Center(
@@ -72,9 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50.0),
-                      borderSide: BorderSide(width: 0.0)
                     ),
-                    labelText: "Password",
+                    hintText: "Password",
                     filled: true,
                     fillColor: _color2,
                   )
