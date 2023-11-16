@@ -66,6 +66,9 @@ flutter:
    - family: Borel
      fonts:
        - asset: fonts/Borel-Regular.ttf
+   - family: Sarabun
+     fonts:
+       - asset: fonts/Sarabun-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

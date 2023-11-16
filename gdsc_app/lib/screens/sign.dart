@@ -60,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(8.0)
+                padding: EdgeInsets.all(5.0)
             ),
             SizedBox(
               width: 350,
@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(8.0)
+                padding: EdgeInsets.all(5.0)
             ),
             SizedBox(
               width: 350,

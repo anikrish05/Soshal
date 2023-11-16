@@ -23,40 +23,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
         body: Column(
           //TODO: Change the alignment
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top:8),
-                  child: Icon(Icons.location_pin,
-                    color: _color1,
-                    size: 50.3
-                  ),
-                ),
-                Text('Soshal',
-                    style: TextStyle(
-                        fontSize: 50.3,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                        color: _color1,
-                        fontFamily: 'Borel'
-                    )
-                ),
-              ],
-            ),
+            Image.asset('assets/soshalTransparent.png'),
             TextButton(
               onPressed: () {signUpRoute(); },
-              child: Text("create a new account",
+              child: Center(
+                child: Text("create a new account",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontFamily: "borel",
-                      color: Colors.black,
-                      fontSize: 18.3
-                  )
+                        fontFamily: "borel",
+                        color: Colors.white,
+                        fontSize: 18.3,
+                    )
+                ),
               ),
             ),
             SizedBox(
@@ -75,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(5.0)
+                padding: EdgeInsets.only(bottom: 8)
             ),
             SizedBox(
               width: 350,
@@ -98,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
+                foregroundColor: Colors.white,
               ),
               onPressed: () {login(); },
               child: Text('Log in',
