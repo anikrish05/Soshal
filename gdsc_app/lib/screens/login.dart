@@ -1,5 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart';
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -8,11 +10,19 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
-  void login(){
-    if (emailController.text == passWordController.text){
-          Navigator.pushNamed(context, '/feed');
-      }
-    }
+  void login() async {
+    await post(Uri.parse('http://10.0.2.2:3000/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": emailController.text,
+        "password": passWordController.text
+      }),
+    ).then((response) => Navigator.pushNamed(context, '/feed')).catchError((onError)=>{
+      print(onError)
+    });
+  }
     void signUpRoute(){
       Navigator.pushNamed(context, '/sign');
 
