@@ -10,8 +10,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
+  void initState(){
+    super.initState();
+    isUserSignedIn();
+    //get(Uri.parse('http://10.0.2.2:3000/signedIn')).then((response) => {print(jsonDecode(response.body))});
+  }
+   void isUserSignedIn() async{
+    final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
+    print(jsonDecode(response.body));
+    if((jsonDecode(response.body))['message'] != false){
+      Navigator.pushNamed(context, '/feed');
+    }
+  }
   void login() async {
-    await post(Uri.parse('http://10.0.2.2:3000/login'),
+    final response = await post(Uri.parse('http://10.0.2.2:3000/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -19,10 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
         "email": emailController.text,
         "password": passWordController.text
       }),
-    ).then((response) => Navigator.pushNamed(context, '/feed')).catchError((onError)=>{
-      print(onError)
-    });
-  }
+    );
+    print(response.statusCode);
+    if(response.statusCode == 200) {
+      Navigator.pushNamed(context, '/feed');
+    }
+    }
     void signUpRoute(){
       Navigator.pushNamed(context, '/sign');
 

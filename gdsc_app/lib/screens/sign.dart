@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -16,6 +19,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return RegExp(
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(input);
+  }
+  void createAccount() async{
+    print(isChecked);
+    if(passWordController.text == confirmPasswordController.text){
+      final response = await post(Uri.parse('http://10.0.2.2:3000/signup'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "email": emailController.text,
+          "password": passWordController.text
+        }),
+      );
+      print(response.statusCode);
+      if(response.statusCode == 200){
+        if(isChecked){
+          Navigator.pushNamed(context, '/createClub');
+        }
+        Navigator.pushNamed(context, '/createUser');
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -132,7 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
               ),
-              onPressed: () { },
+              onPressed: () {createAccount(); },
               child: Text('Sign up',
                   style: TextStyle(
                       fontFamily: "borel",

@@ -4,7 +4,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const { initializeApp } = require('firebase/app');
 const { getFirestore, collection, getDocs, doc, setDoc } = require('firebase/firestore');
-const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} = require("firebase/auth");
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
 
 
 const port = 3000
@@ -34,14 +34,14 @@ app.get('/', async (req, res) => {
 app.post('/signup', (req, res) =>{
   const {email, password} = req.body;
   createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-  // Signed in
   var user = userCredential.user;
   console.log(user);
-   res.send(JSON.stringify({ message: user}))
+   res.status(200).send(JSON.stringify({ message: user}))
+
     }).catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        res.send(JSON.stringify({ message: error}))
+        res.status(500).send(JSON.stringify({ message: error}))
     });
 })
 
@@ -51,7 +51,7 @@ app.post('/login', (req, res) =>{
   // Signed in
   var user = userCredential.user;
   console.log(user);
-   res.send(JSON.stringify({ message: user}))
+   res.status(200).send(JSON.stringify({ message: user}))
     }).catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -64,6 +64,26 @@ app.post('/login', (req, res) =>{
     });
 })
 
+app.get('/signedIn', (req, res) =>{
+  auth.onAuthStateChanged(function(user) {
+  if (user) {
+    res.send(JSON.stringify({message: user}))
+  } else {
+    res.send(JSON.stringify({message: false}))
+  }
+  });
+})
+
+app.get('signOut', (req, res) =>{
+  auth.signOut.then(()=>{
+    res.status(200).send(JSON.stringify({ message: "Signed Out"}))
+  }).catch((error) => {
+  res.status(500).send(JSON.stringify({ message: error}))
+
+});
+
+})
+
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Soshal listening on port ${port}`)
 })
