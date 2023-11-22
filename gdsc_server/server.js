@@ -40,7 +40,8 @@ app.post('/signup', (req, res) =>{
     following: [],
     displayName: name,
     role: "",
-    email: email
+    email: email,
+    myEvents: []
   }
   if(isOwner == "true"){
     data.role = "owner"

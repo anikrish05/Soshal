@@ -9,6 +9,7 @@ class User{
   String? email;
   List<int>? following;
   String? role;
+  List<int>? myEvents;
 
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
@@ -28,6 +29,7 @@ class User{
     this.email = data.email;
     this.following = data.following;
     this.role = data.role;
+    this.myEvents = data.myEvents;
   }
 
 }
