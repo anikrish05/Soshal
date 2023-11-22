@@ -9,16 +9,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return(AppBar(
       backgroundColor: Colors.white,
         elevation: 1,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 35.0),
-          child: Text('Soshal',
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
-                  color: Colors.orange[600],
-                  fontFamily: 'Borel'
-              )
+        title: Container(
+            padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 3),
+            child: Image.asset('assets/image.png',
+              height: 50
           ),
         ),
         actions: [

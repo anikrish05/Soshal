@@ -13,13 +13,12 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState(){
     super.initState();
     isUserSignedIn();
-    //get(Uri.parse('http://10.0.2.2:3000/signedIn')).then((response) => {print(jsonDecode(response.body))});
   }
    void isUserSignedIn() async{
     final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
     print(jsonDecode(response.body));
     if((jsonDecode(response.body))['message'] != false){
-      Navigator.pushNamed(context, '/feed');
+      Navigator.pushNamed(context, '/home');
     }
   }
   void login() async {
@@ -47,14 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
         body: Column(
           //TODO: Change the alignment
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/soshalTransparent.png',
+            Image.asset('assets/image.png',
               height: 100
             ),
             Padding(
@@ -67,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                         fontFamily: "borel",
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 18.3,
                     )
                 ),
@@ -75,14 +74,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(
               width: 350,
-              height: 40,
-              child: TextField(
+              child: TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    labelText: "Email",
+                    hintText: "Email",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                     filled: true,
                     fillColor: _color2,
                   )
@@ -93,34 +93,36 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(
               width: 350,
-              height: 40,
-              child: TextField(
+              child: TextFormField(
                   obscureText: true,
                   controller: passWordController,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     hintText: "Password",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                     filled: true,
                     fillColor: _color2,
                   )
               ),
             ),
-
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
+                foregroundColor: Colors.black,
               ),
               onPressed: () {login(); },
               child: Text('Log in',
                   style: TextStyle(
                       fontFamily: "borel",
+                    decoration: TextDecoration.underline,
                     fontSize: 18.3
                   )
               ),
             ),
+
 
           ],
         )

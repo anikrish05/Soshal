@@ -10,7 +10,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final usernameController = TextEditingController();
+
   bool isChecked = false;
   Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
@@ -22,23 +23,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
   void createAccount() async{
     print(isChecked);
-    if(passWordController.text == confirmPasswordController.text){
-      final response = await post(Uri.parse('http://10.0.2.2:3000/signup'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          "email": emailController.text,
-          "password": passWordController.text
-        }),
-      );
-      print(response.statusCode);
-      if(response.statusCode == 200){
-        if(isChecked){
-          Navigator.pushNamed(context, '/createClub');
-        }
-        Navigator.pushNamed(context, '/createUser');
+    final response = await post(Uri.parse('http://10.0.2.2:3000/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": emailController.text,
+        "password": passWordController.text,
+        "name": usernameController.text,
+        "isOwner": isChecked ? "true" : "false"
+      }),
+    );
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      if(isChecked){
+        Navigator.pushNamed(context, '/createClub');
       }
+      Navigator.pushNamed(context, '/home');
     }
   }
   @override
@@ -56,72 +57,76 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
     return Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Sign Up',
-                style: TextStyle(
-                    fontSize: 50.3,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    color: _color1,
-                    fontFamily: 'Borel'
-                )
+            Image.asset('assets/image.png',
+                height: 100
+            ),
+            Padding(
+                padding: EdgeInsets.only(bottom: 90)
             ),
             SizedBox(
               width: 350,
-              height: 40,
               child: TextFormField(
-                  validator: (input) => isValidEmail(input) ? null : "Check your email",
-                  controller: emailController,
+                  controller: usernameController,
+                  obscuringCharacter: '*',
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    labelText: "Email",
+                    hintText: "Name",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                     filled: true,
                     fillColor: _color2,
                   )
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(5.0)
+                padding: EdgeInsets.only(bottom: 8)
             ),
             SizedBox(
               width: 350,
-              height: 40,
-              child: TextField(
+              child: TextFormField(
+                  controller: emailController,
+                  obscuringCharacter: '*',
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    hintText: "Email",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    filled: true,
+                    fillColor: _color2,
+                  )
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(bottom: 8)
+            ),
+            SizedBox(
+              width: 350,
+              child: TextFormField(
                   obscureText: true,
                   controller: passWordController,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    labelText: "Password",
+                    hintText: "Password",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                     filled: true,
                     fillColor: _color2,
                   )
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(5.0)
-            ),
-            SizedBox(
-              width: 350,
-              height: 40,
-              child: TextField(
-                  obscureText: true,
-                  controller: confirmPasswordController,
-                  obscuringCharacter: '*',
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    labelText: "Password",
-                    filled: true,
-                    fillColor: _color2,
-                  )
-              ),
+                padding: EdgeInsets.only(bottom: 8)
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -160,7 +165,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Text('Sign up',
                   style: TextStyle(
                       fontFamily: "borel",
-                    color: Colors.black,
+                      decoration: TextDecoration.underline,
+                      color: Colors.black,
                     fontSize: 18.3
                   )
               ),
