@@ -32,4 +32,23 @@ class User{
     this.myEvents = data.myEvents;
   }
 
+  Future<bool> signIn(String email, String password) async{
+    final response = await post(Uri.parse('http://10.0.2.2:3000/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": email,
+        "password": password
+      }),
+    );
+    if(response.statusCode == 200){
+      return true;
+    }
+    else{
+      return false;
+    }
+
+  }
+
 }

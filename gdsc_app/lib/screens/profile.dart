@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../widgets/profileWidgets/profileHeader.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -14,7 +15,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       home: Scaffold(
         body: ListView(
           children: [
-
+            ProfileHeaderWidget(
+              "assets/logo.png",
+              () async{}
+            )
           ],
         ),
       ),

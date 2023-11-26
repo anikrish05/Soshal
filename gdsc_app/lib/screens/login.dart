@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:gdsc_app/classes/user.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -10,39 +12,37 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
-  void initState(){
-    super.initState();
-    isUserSignedIn();
-  }
-   void isUserSignedIn() async{
-    final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
-    print(jsonDecode(response.body));
-    if((jsonDecode(response.body))['message'] != false){
-      Navigator.pushNamed(context, '/home');
-    }
-  }
-  void login() async {
-    final response = await post(Uri.parse('http://10.0.2.2:3000/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        "email": emailController.text,
-        "password": passWordController.text
-      }),
-    );
-    print(response.statusCode);
-    if(response.statusCode == 200) {
-      Navigator.pushNamed(context, '/feed');
-    }
-    }
-    void signUpRoute(){
-      Navigator.pushNamed(context, '/sign');
-
-    }
+  User user = User();
   Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
   @override
+
+  void initState() {
+    super.initState();
+    isUserSignedIn();
+  }
+  void isUserSignedIn() async {
+    print("in");
+    user.isUserSignedIn().then((check){
+      print(check);
+      if(check){
+        Navigator.pushNamed(context, '/home');
+      }
+    });
+  }
+  void login() async {
+    print("HIIHIHIHI");
+    user.signIn(emailController.text, passWordController.text).then((check){
+      if(check){
+        print("hi");
+        Navigator.pushNamed(context, '/home');
+      }
+    });
+  }
+  void signUpRoute(){
+    Navigator.pushNamed(context, '/sign');
+
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(

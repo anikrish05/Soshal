@@ -7,15 +7,20 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return(AppBar(
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         elevation: 1,
-        title: Container(
-            padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 3),
-            child: Image.asset('assets/image.png',
-              height: 50
-          ),
-        ),
-        actions: [
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/image.png',
+                fit: BoxFit.fitWidth,
+                height: 150,
+                width: 150
+              ),
+            ]),
+      automaticallyImplyLeading:false,
+      actions: [
           Icon(Icons.notifications,
             size: 50,
             color: Colors.grey[500]

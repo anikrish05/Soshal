@@ -11,29 +11,47 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late GoogleMapController mapController;
+  Completer<GoogleMapController> _controller = Completer();
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
+  Marker ucscMarker = Marker(
+    markerId: MarkerId('UCSC'),
+    position: LatLng(36.9907207008804, -122.05845686120782),
+    infoWindow: InfoWindow(title: 'UCSC'),
+  );
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
 
   @override
   void initState() {
     super.initState();
+  }
+  void dispose() {
+    _disposeController();
+    super.dispose();
+  }
+
+  Future<void> _disposeController() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 11.0,
-          ),
+        body: Stack(
+          children: <Widget>[
+            GoogleMap(
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+              markers: {ucscMarker},
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 16.0,
+              ),
+            ),
+          ],
         ),
       ),
     );
