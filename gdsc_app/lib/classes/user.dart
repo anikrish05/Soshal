@@ -10,7 +10,7 @@ class User{
   List<int>? following;
   String? role;
   List<int>? myEvents;
-
+  String hostName = "10.0.2.2:3000";
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
     print(jsonDecode(response.body));

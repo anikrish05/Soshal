@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: ListView(
           children: [
             ProfileHeaderWidget(
-              "assets/logo.png",
+              "../assets/logo.png",
               () async{}
             )
           ],

@@ -21,27 +21,25 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        children: [
-          ClipOval(
-            child: Material(
-              color: Colors.transparent,
-              child: Ink.image(
-                  image: NetworkImage(_image),
-                fit: BoxFit.cover,
-                width: 128,
-                height: 128,
-                child: InkWell(onTap: _onClicked),
-              ),
-            )
-          ),
-          Positioned(
-            bottom: 0,
-              right: 4,
-              child: buildEditIcon(Colors.orange)),
-        ]
-      )
+    return Stack(
+      children: [
+        ClipOval(
+          child: Material(
+            color: Colors.transparent,
+            child: Ink.image(
+                image: AssetImage(_image),
+              fit: BoxFit.cover,
+              width: 128,
+              height: 128,
+              child: InkWell(onTap: _onClicked),
+            ),
+          )
+        ),
+        Positioned(
+          bottom: 0,
+            right: 0,
+            child: buildEditIcon(Colors.orange)),
+      ]
     );
   }
 
