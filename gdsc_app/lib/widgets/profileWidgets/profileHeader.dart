@@ -41,6 +41,18 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             child: buildEditIcon(Colors.orange)),
       ]
     );
+    return Scaffold(
+      child: Container(
+        padding: const EdgeInsets.all(tDefaultSize),
+        child: Column(
+          children: [
+            SizedBox(
+              width: 120, height: 120,
+            )
+          ]
+        )
+      )
+    )
   }
 
   Widget buildEditIcon(Color color) => buildCircle(
@@ -67,4 +79,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       child: child
     ),
 );
+
+
+
 }
