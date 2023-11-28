@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-
+const hostName = "10.0.2.2:3000";
 class User{
   int? uid;
   String? displayName;
@@ -10,9 +10,8 @@ class User{
   List<int>? following;
   String? role;
   List<int>? myEvents;
-  String hostName = "10.0.2.2:3000";
   Future<bool> isUserSignedIn() async {
-    final response = await get(Uri.parse('http://10.0.2.2:3000/signedIn'));
+    final response = await get(Uri.parse('http://$hostName/api/users/signedIn'));
     print(jsonDecode(response.body));
     if ((jsonDecode(response.body))['message'] == false) {
       return false;
@@ -21,7 +20,7 @@ class User{
   }
 
   void initUserData() async{
-    final response = await get(Uri.parse('http://10.0.2.2:3000/userData'));
+    final response = await get(Uri.parse('http://$hostName/api/users/userData'));
     var data = jsonDecode(response.body);
     this.uid = data.uid;
     this.displayName = data.displayName;
@@ -33,7 +32,8 @@ class User{
   }
 
   Future<bool> signIn(String email, String password) async{
-    final response = await post(Uri.parse('http://10.0.2.2:3000/login'),
+    print("in SignIn");
+    final response = await post(Uri.parse('http://$hostName/api/users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
