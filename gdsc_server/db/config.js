@@ -1,5 +1,6 @@
 const { initializeApp } = require('firebase/app');
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc} = require('firebase/firestore');
+const { getStorage } = require('firebase/storage');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
 
 const port = 3000
@@ -10,13 +11,16 @@ const port = 3000
     storageBucket: "gdsc-7069b.appspot.com",
     messagingSenderId: "207257008294",
     appId: "1:207257008294:web:8c151991199f12ed77dc67",
-    measurementId: "G-T62TCR1X7P"
+    measurementId: "G-T62TCR1X7P",
+    storageBucket: "gs://gdsc-7069b.appspot.com"
   };
 const FirebaseApp = initializeApp(config);
 const db = getFirestore(FirebaseApp);
 const auth = getAuth(FirebaseApp);
+const storage = getStorage(FirebaseApp);
 
 module.exports = {
 	db,
-	auth
+	auth,
+  storage
 }

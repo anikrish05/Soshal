@@ -4,6 +4,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', require('./app/routes/users'))
+app.use('/api/clubs', require('./app/routes/clubs'))
+
 const port = 3000
 
 app.listen(port, () => {

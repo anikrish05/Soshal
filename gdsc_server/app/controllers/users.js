@@ -1,8 +1,8 @@
-const { db, auth } = require('../../db/config')
+const { db, auth, storage } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
+const { ref, uploadBytes } = require('firebase/storage');
 
-console.log("in controller")
 const signup  = async (req, res) => {
   const {email, password, name, isOwner} = req.body;
   createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
@@ -14,14 +14,15 @@ const signup  = async (req, res) => {
     displayName: name,
     role: "",
     email: email,
-    myEvents: []
+    myEvents: [],
+    clubsOwned: []
+
   }
   if(isOwner == "true"){
     data.role = "owner"
-    data.clubsOwned = []
   }
   else{
-    data.owner = "user"
+    data.role = "user"
   }
   console.log(data)
   setDoc(doc(db, "users", data.uid), data).then(()=>{
