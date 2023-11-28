@@ -6,14 +6,11 @@ class ProfileHeaderWidget extends StatefulWidget {
   late int _graduationYear; // Added _graduationYear
   late VoidCallback _onClicked;
 
-  ProfileHeaderWidget(String image, VoidCallback onClicked) {
+  ProfileHeaderWidget(String image, VoidCallback onClicked, String name, int graduationYear) {
     this._image = image;
     this._onClicked = onClicked;
-  }
-
-  void setProfileInfo(String name, int graduationYear) {
-    _name = name;
-    _graduationYear = graduationYear;
+    this._name = name;
+    this._graduationYear = graduationYear;
   }
 
   @override
