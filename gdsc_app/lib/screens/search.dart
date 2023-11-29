@@ -7,7 +7,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMixin{
   final searchController = TextEditingController();
-  Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
   late TabController tabController;
 
