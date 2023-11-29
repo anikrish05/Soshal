@@ -28,6 +28,9 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
         padding: const EdgeInsets.all(8),
         children: <Widget>[
           buildText(),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+          ),
           buildTabBar()
         ]
       ),
