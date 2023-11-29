@@ -11,7 +11,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
-  void onCreateEvent() {
+  void onUpdateProfile() {
     print("on create event");
   }
 
@@ -34,14 +34,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               2027,
             ),
             CreateButtonsWidget(
-              onCreateEvent: () {
-                // Add logic to handle "Create Event" button press
-                print('Create Event button pressed');
-              },
-              onCreateClub: () {
-                // Add logic to handle "Create Club" button press
-                print('Create Club button pressed');
-              },
+              onUpdateProfile,
+              onCreateClub
             ),
             SizedBox(height: 16), // Add some vertical space between buttons and line
             Padding(
