@@ -5,17 +5,30 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMixin{
   final searchController = TextEditingController();
+  Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
+  late TabController tabController;
 
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    tabController!.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[
-          buildText()
+          buildText(),
+          buildTabBar()
         ]
       ),
     );
@@ -25,6 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
     child: TextFormField(
         controller: searchController,
         decoration: InputDecoration(
+          prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(50.0),
@@ -36,5 +50,25 @@ class _SearchScreenState extends State<SearchScreen> {
         )
     ),
   );
+  Widget buildTabBar() => TabBar(
+      unselectedLabelColor: Colors.redAccent,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          color: Colors.redAccent),
+      controller: tabController,
+      tabs: [
+        Tab(
+          text: 'discover',
+        ),
+        Tab(
+          text: 'following',
+        ),
+        Tab(
+          text: 'near me',
+        )
+      ]
+  );
 }
+
 
