@@ -47,87 +47,94 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-        body: Column(
-          //TODO: Change the alignment
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('assets/image.png',
-              height: 100
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 90)
-            ),
-            TextButton(
-              onPressed: () {signUpRoute(); },
-              child: Center(
-                child: Text("create a new account",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
+        body: Center(
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Image.asset('assets/image.png',
+                height: 100
+              ),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 90)
+              ),
+              TextButton(
+                onPressed: () {signUpRoute(); },
+                child: Center(
+                  child: Text("create a new account",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                          fontFamily: "borel",
+                          color: Colors.black,
+                          fontSize: 18.3,
+                      )
+                  ),
+                ),
+              ),
+              buildEmailField(),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 8)
+              ),
+              buildPasswordField(),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.black,
+                ),
+                onPressed: () {login(); },
+                child: Text('Log in',
+                    style: TextStyle(
                         fontFamily: "borel",
-                        color: Colors.black,
-                        fontSize: 18.3,
+                      decoration: TextDecoration.underline,
+                      fontSize: 18.3
                     )
                 ),
               ),
-            ),
-            SizedBox(
-              width: 350,
-              child: TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    hintText: "Email",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    filled: true,
-                    fillColor: _color2,
-                  )
-              ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 8)
-            ),
-            SizedBox(
-              width: 350,
-              child: TextFormField(
-                  obscureText: true,
-                  controller: passWordController,
-                  obscuringCharacter: '*',
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    hintText: "Password",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    filled: true,
-                    fillColor: _color2,
-                  )
-              ),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-              ),
-              onPressed: () {login(); },
-              child: Text('Log in',
-                  style: TextStyle(
-                      fontFamily: "borel",
-                    decoration: TextDecoration.underline,
-                    fontSize: 18.3
-                  )
-              ),
-            ),
 
 
-          ],
+            ],
+          ),
         )
     );
   }
+  Widget buildEmailField(){
+    return SizedBox(
+      width: 350,
+      child: TextFormField(
+          controller: emailController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Email",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          )
+      ),
+    );
+  }
+
+  Widget buildPasswordField(){
+    return  SizedBox(
+      width: 350,
+      child: TextFormField(
+          obscureText: true,
+          controller: passWordController,
+          obscuringCharacter: '*',
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Password",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          )
+      ),
+    );
+  }
+
 }
 
 
