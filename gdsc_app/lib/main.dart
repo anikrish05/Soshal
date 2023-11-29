@@ -4,8 +4,10 @@ import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/sign.dart';
 import 'package:gdsc_app/screens/createUser.dart';
 import 'package:gdsc_app/screens/createClub.dart';
+import 'package:gdsc_app/screens/search.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
+
 import 'package:http/http.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -25,6 +27,7 @@ void main() => runApp(MaterialApp(
     '/createClub': (context) => CreateClubScreen(),
     '/profile': (context) => ProfileScreen(),
     '/home': (context) => Home(),
+    '/search': (context) => SearchScreen()
   },
 ));
 
@@ -38,7 +41,7 @@ class _HomeState extends State<Home> {
   int selectedIndex = 0;
   List screens = [
     MyApp(),
-    ProfileScreen(),
+    SearchScreen(),
     ProfileScreen()
   ];
   void onClicked(int index) {
@@ -79,8 +82,8 @@ class _HomeState extends State<Home> {
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
