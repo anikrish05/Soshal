@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileHeaderWidget(
               "../assets/logo.png",
                   () async{},
-              "Anirudh",
+              "Aditi Namble",
               2027,
             )
           ],

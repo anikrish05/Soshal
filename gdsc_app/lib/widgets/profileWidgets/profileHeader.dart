@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ProfileHeaderWidget extends StatefulWidget {
   late String _image;
-  late String _name; // Added _name
-  late int _graduationYear; // Added _graduationYear
+  late String _name;
+  late int _graduationYear;
   late VoidCallback _onClicked;
 
   ProfileHeaderWidget(String image, VoidCallback onClicked, String name, int graduationYear) {
@@ -34,30 +34,31 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Row(
       children: [
-        ClipOval(
-          child: Material(
-            color: Colors.transparent,
-            child: Ink.image(
-              image: AssetImage(_image),
-              fit: BoxFit.cover,
-              width: 128,
-              height: 128,
-              child: InkWell(onTap: _onClicked),
+        Stack(
+          children: [
+            ClipOval(
+              child: Material(
+                color: Colors.transparent,
+                child: Ink.image(
+                  image: AssetImage("assets/emptyprofileimage.jpg"),
+                  fit: BoxFit.cover,
+                  width: 128,
+                  height: 128,
+                  child: InkWell(onTap: _onClicked),
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              bottom: 8, // Adjust the distance from the bottom
+              right: 8, // Adjust the distance from the right
+              child: buildEditIcon(Colors.orange),
+            ),
+          ],
         ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: buildEditIcon(Colors.orange),
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: buildProfileInfo(),
-        ),
+        SizedBox(width: 16), // Adjust the padding as needed
+        buildProfileInfo(),
       ],
     );
   }
@@ -75,6 +76,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       ),
     ),
   );
+
   Widget buildCircle({
     required Widget child,
     required double all,
@@ -89,37 +91,28 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       );
 
   Widget buildProfileInfo() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(10),
-          bottomRight: Radius.circular(10),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          _name,
+          style: TextStyle(
+            color: Colors.grey, // Change font color to gray
+            fontWeight: FontWeight.w800, // Change to a bold font
+            fontSize: 24, // Make the top text bigger
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            _name,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+        SizedBox(height: 4),
+        Text(
+          'Class of $_graduationYear',
+          style: TextStyle(
+            color: Colors.grey, // Change font color to gray
+            fontWeight: FontWeight.w400, // Change to a regular font
+            fontSize: 16,
           ),
-          SizedBox(height: 4),
-          Text(
-            'Class of $_graduationYear',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-
-
 }
