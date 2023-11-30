@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
+import '../widgets/eventWidgets/eventCard.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,12 +11,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  @override
   void onCreateEvent() {
     print("on create event");
   }
 
-  @override
   void onCreateClub() {
     print("on create club");
   }
@@ -30,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileHeaderWidget(
               "../assets/logo.png",
                   () async {},
-              "Aditi Namble",
+              "Adithya Kartik",
               2027,
             ),
             CreateButtonsWidget(
@@ -50,6 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 1,  // Set the height of the divider
                 color: _buttonColor, // Set the color of the line
               ),
+            ),
+            SizedBox(height: 16),
+            CreateCardWidget(
+              onCreateEvent: onCreateEvent,
+              onCreateClub: onCreateClub,
             ),
           ],
         ),
