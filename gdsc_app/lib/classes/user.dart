@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart';
 const hostName = "10.0.2.2:3000";
 class User{
-  int? uid;
-  String? displayName;
-  String? downloadURL;
-  String? email;
-  List<int>? following;
-  String? role;
-  List<int>? myEvents;
+  late String uid;
+  late String displayName;
+  late String downloadURL;
+  late String email;
+  late List<dynamic> following;
+  late String role;
+  late List<dynamic> myEvents;
+  String gradYr = "update";
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://$hostName/api/users/signedIn'));
     print(jsonDecode(response.body));
@@ -21,14 +22,14 @@ class User{
 
   void initUserData() async{
     final response = await get(Uri.parse('http://$hostName/api/users/userData'));
-    var data = jsonDecode(response.body);
-    this.uid = data.uid;
-    this.displayName = data.displayName;
-    this.downloadURL = data.downloadURL;
-    this.email = data.email;
-    this.following = data.following;
-    this.role = data.role;
-    this.myEvents = data.myEvents;
+    var data = jsonDecode(response.body)['message'];
+    this.uid = data['uid'];
+    this.displayName = data['displayName'];
+    this.downloadURL = data['downloadURL'];
+    this.email = data['email'];
+    this.following = data['following'];
+    this.role = data['role'];
+    this.myEvents = data['myEvents'];
   }
 
   Future<bool> signIn(String email, String password) async{

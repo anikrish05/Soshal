@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
+import 'package:gdsc_app/classes/user.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _buttonColor = Color(0xFF88898C);
   Color _slideColor = Colors.orange;
   Color _colorTab = Color(0xFFFF8050);
+  User user = User();
 
   late TabController tabController;
 
@@ -31,11 +33,26 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    isUserSignedIn();
+
   }
   @override
   void dispose() {
     super.dispose();
     tabController!.dispose();
+  }
+
+  void isUserSignedIn() async {
+    user.isUserSignedIn().then((check){
+      if(check){
+        print("hello");
+        user.initUserData();
+      }
+      else{
+        Navigator.pushNamed(context, '/login');
+      }
+    });
+
   }
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,9 +60,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         body: ListView(
           children: [
             ProfileHeaderWidget(
-              "../assets/logo.png",
+              user.downloadURL=="" ? "../assets/logo.png": user.downloadURL,
                   () async {},
-              "Aditi Namble",
+              user.displayName,
               2027,
             ),
             CreateButtonsWidget(
