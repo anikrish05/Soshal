@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
+import '../widgets/eventWidgets/eventCard.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     print("on create event");
   }
 
-  @override
   void onCreateClub() {
     Navigator.pushNamed(context, '/createClub');
   }
@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             ProfileHeaderWidget(
               "../assets/logo.png",
                   () async {},
-              "Aditi Namble",
+              "Adithya Kartik",
               2027,
             ),
             CreateButtonsWidget(
@@ -60,6 +60,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
               ),
             ),
             SizedBox(height: 16),
+            CreateCardWidget(
+              onCreateEvent: onCreateEvent,
+              onCreateClub: onCreateClub,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
             buildTabBar(),// Add some vertical space between line and buttons// Include the buttons widget here
           ],
         ),
@@ -84,5 +93,4 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           text: 'Saved',
         )
       ]
-  );
 }
