@@ -31,6 +31,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     this._graduationYear = graduationYear;
     this._onClicked = onClicked;
   }
+  Color _colorTab = Color(0xFFFF8050);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     color: Colors.white,
     all: 3,
     child: buildCircle(
-      color: color,
+      color: _colorTab,
       all: 8,
       child: Icon(
         Icons.edit,

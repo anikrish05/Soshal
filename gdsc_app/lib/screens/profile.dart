@@ -20,9 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     Navigator.pushNamed(context, '/createClub');
   }
 
-  Color _buttonColor = Color(0xFF88898C);
-  Color _slideColor = Colors.orange;
-  late TabController tabController;
+
 
   @override
   void initState() {
@@ -34,6 +32,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     super.dispose();
     tabController!.dispose();
   }
+  Color _buttonColor = Color(0xFF88898C);
+  Color _colorTab = Color(0xFFFF8050);
+  Color _slideColor = Colors.orange;
+  late TabController tabController;
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -65,11 +67,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
   }
   Widget buildTabBar() => TabBar(
-      unselectedLabelColor: _slideColor,
+      unselectedLabelColor: _colorTab,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: _slideColor),
+          color: _colorTab),
       controller: tabController,
       tabs: [
         Tab(
