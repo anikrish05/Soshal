@@ -53,21 +53,21 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
     ),
   );
   Widget buildTabBar() => TabBar(
-      unselectedLabelColor: Colors.redAccent,
+      unselectedLabelColor: Colors.orange,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: Colors.redAccent),
+          color: Colors.orange),
       controller: tabController,
       tabs: [
         Tab(
-          text: 'discover',
+          text: 'Discover',
         ),
         Tab(
-          text: 'following',
+          text: 'Following',
         ),
         Tab(
-          text: 'near me',
+          text: 'Near Me',
         )
       ]
   );
