@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
+import '../widgets/profileWidgets/ProfileFeatureButtons.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -34,8 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               2027,
             ),
             CreateButtonsWidget(
-              onUpdateProfile,
-              onCreateClub
+                onUpdateProfile,
+                onCreateClub
             ),
             SizedBox(height: 16), // Add some vertical space between buttons and line
             Padding(
@@ -45,6 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: _buttonColor, // Set the color of the line
               ),
             ),
+            SizedBox(height: 16), // Add some vertical space between line and buttons
+            ProfileFeatureButtons(),  // Include the buttons widget here
           ],
         ),
       ),
