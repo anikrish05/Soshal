@@ -56,123 +56,135 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return Colors.white;
     }
     return Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('assets/image.png',
-                height: 100
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 90)
-            ),
-            SizedBox(
-              width: 350,
-              child: TextFormField(
-                  controller: usernameController,
-                  obscuringCharacter: '*',
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    hintText: "Name",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    filled: true,
-                    fillColor: _color2,
-                  )
+        body: Center(
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Image.asset('assets/image.png',
+                  height: 100
               ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 8)
-            ),
-            SizedBox(
-              width: 350,
-              child: TextFormField(
-                  controller: emailController,
-                  obscuringCharacter: '*',
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    hintText: "Email",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    filled: true,
-                    fillColor: _color2,
-                  )
+              Padding(
+                  padding: EdgeInsets.only(bottom: 90)
               ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 8)
-            ),
-            SizedBox(
-              width: 350,
-              child: TextFormField(
-                  obscureText: true,
-                  controller: passWordController,
-                  obscuringCharacter: '*',
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    hintText: "Password",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    filled: true,
-                    fillColor: _color2,
-                  )
+              buildNameWidget(),
+
+              Padding(
+                  padding: EdgeInsets.only(bottom: 8)
               ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 8)
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Are you a club owner?',
+              buildEmailWidget(),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 8)
+              ),
+              buildPasswordWidget(),
+
+              Padding(
+                  padding: EdgeInsets.only(bottom: 8)
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Are you a club owner?',
+                      style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 2.0,
+                          color: Colors.black,
+                          fontFamily: 'Borel'
+                      )
+                  ),
+                  Checkbox(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2.0),
+                    ),
+                    side: MaterialStateBorderSide.resolveWith(
+                          (states) => BorderSide(width: 1.0, color: Colors.black),
+                    ),
+                    checkColor: Colors.black,
+                    fillColor: MaterialStateProperty.resolveWith(getColor),
+                    value: isChecked,
+                    onChanged: (bool? value){
+                      setState(() {
+                        isChecked = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
+                onPressed: () {createAccount(); },
+                child: Text('Sign up',
                     style: TextStyle(
-                        fontSize: 10,
-                        letterSpacing: 2.0,
+                        fontFamily: "borel",
+                        decoration: TextDecoration.underline,
                         color: Colors.black,
-                        fontFamily: 'Borel'
+                      fontSize: 18.3
                     )
                 ),
-                Checkbox(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
-                  side: MaterialStateBorderSide.resolveWith(
-                        (states) => BorderSide(width: 1.0, color: Colors.black),
-                  ),
-                  checkColor: Colors.black,
-                  fillColor: MaterialStateProperty.resolveWith(getColor),
-                  value: isChecked,
-                  onChanged: (bool? value){
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue,
               ),
-              onPressed: () {createAccount(); },
-              child: Text('Sign up',
-                  style: TextStyle(
-                      fontFamily: "borel",
-                      decoration: TextDecoration.underline,
-                      color: Colors.black,
-                    fontSize: 18.3
-                  )
-              ),
-            ),
-          ],
+            ],
+          ),
         )
+    );
+  }
+  Widget buildNameWidget(){
+    return SizedBox(
+      width: 350,
+      child: TextFormField(
+          controller: usernameController,
+          obscuringCharacter: '*',
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Name",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          )
+      ),
+    );
+  }
+
+  Widget buildEmailWidget(){
+    return SizedBox(
+      width: 350,
+      child: TextFormField(
+          controller: emailController,
+          obscuringCharacter: '*',
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Email",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          )
+      ),
+    );
+  }
+  Widget buildPasswordWidget(){
+    return  SizedBox(
+      width: 350,
+      child: TextFormField(
+          obscureText: true,
+          controller: passWordController,
+          obscuringCharacter: '*',
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Password",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          )
+      ),
     );
   }
 }

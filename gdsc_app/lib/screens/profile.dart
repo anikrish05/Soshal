@@ -10,17 +10,30 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  void onCreateEvent() {
+class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin{
+  @override
+  void onUpdateProfile() {
     print("on create event");
   }
 
   void onCreateClub() {
-    print("on create club");
+    Navigator.pushNamed(context, '/createClub');
   }
 
   Color _buttonColor = Color(0xFF88898C);
+  Color _slideColor = Colors.orange;
+  late TabController tabController;
 
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    tabController!.dispose();
+  }
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -33,14 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               2027,
             ),
             CreateButtonsWidget(
-              onCreateEvent: () {
-                // Add logic to handle "Create Event" button press
-                print('Create Event button pressed');
-              },
-              onCreateClub: () {
-                // Add logic to handle "Create Club" button press
-                print('Create Club button pressed');
-              },
+                onUpdateProfile,
+                onCreateClub
             ),
             SizedBox(height: 16), // Add some vertical space between buttons and line
             Padding(
@@ -60,4 +67,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+            buildTabBar(),// Add some vertical space between line and buttons// Include the buttons widget here
+          ],
+        ),
+      ),
+    );
+  }
+  Widget buildTabBar() => TabBar(
+      unselectedLabelColor: _slideColor,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          color: _slideColor),
+      controller: tabController,
+      tabs: [
+        Tab(
+          text: 'Events',
+        ),
+        Tab(
+          text: 'Clubs',
+        ),
+        Tab(
+          text: 'Saved',
+        )
+      ]
 }

@@ -7,7 +7,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMixin{
   final searchController = TextEditingController();
-  Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
   late TabController tabController;
 
@@ -28,6 +27,9 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
         padding: const EdgeInsets.all(8),
         children: <Widget>[
           buildText(),
+          Padding(
+            padding: EdgeInsets.all(10.0),
+          ),
           buildTabBar()
         ]
       ),
@@ -51,21 +53,21 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
     ),
   );
   Widget buildTabBar() => TabBar(
-      unselectedLabelColor: Colors.redAccent,
+      unselectedLabelColor: Colors.orange,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: Colors.redAccent),
+          color: Colors.orange),
       controller: tabController,
       tabs: [
         Tab(
-          text: 'discover',
+          text: 'Discover',
         ),
         Tab(
-          text: 'following',
+          text: 'Following',
         ),
         Tab(
-          text: 'near me',
+          text: 'Near Me',
         )
       ]
   );
