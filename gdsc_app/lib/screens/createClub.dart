@@ -10,6 +10,7 @@ class CreateClubScreen extends StatelessWidget {
   var clubBio = TextEditingController();
   var location = TextEditingController();
   var category = TextEditingController();
+  Color _orangeColor = Color(0xFFFF8050);
 
 
   @override
@@ -17,7 +18,14 @@ class CreateClubScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: BackButton(
         onPressed: () => Navigator.of(context).pop(),
-      color: Colors.orange),backgroundColor: Colors.white),
+      color: _orangeColor),
+          centerTitle: true,
+          title: Text("Create a Club",
+            style: TextStyle(
+            color: Color(0xFF88898C),
+          ),),
+          backgroundColor: Colors.white
+      ),
       body: Padding(
       padding: EdgeInsets.all(16.6),
       child: ListView(
@@ -49,8 +57,10 @@ class CreateClubScreen extends StatelessWidget {
                               controller: clubName,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                                labelText: 'Club Name',
+                                hintText: "Club Name",
+                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                               ),
+
                             ),
                           ),
                           Divider(),
@@ -61,8 +71,8 @@ class CreateClubScreen extends StatelessWidget {
                               controller: clubBio,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                                labelText: 'Add Club Bio',
-                              ),
+                                hintText: "Add Club Bio",
+                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),                              ),
                               maxLines: 3,
                             ),
                           )
@@ -82,10 +92,11 @@ class CreateClubScreen extends StatelessWidget {
                 height: 40,
                 width: 150,
                 child: TextField(
-                  controller: location,
+                  controller: category,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                    labelText: 'Location',
+                    hintText: "Category",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   ),
                 ),
               ),
@@ -93,7 +104,7 @@ class CreateClubScreen extends StatelessWidget {
               ToggleSwitch(
                 minWidth: 77.5,
                 cornerRadius: 20.0,
-                activeBgColors: [[Colors.orange[400]!], [Colors.orange[400]!]],
+                activeBgColors: [[_orangeColor], [_orangeColor]],
                 activeFgColor: Colors.white,
                 inactiveBgColor: Colors.grey,
                 inactiveFgColor: Colors.white,
@@ -108,19 +119,12 @@ class CreateClubScreen extends StatelessWidget {
             ]
           )
         ),
-        Divider(),
-        TextField(
-          controller: category,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-            labelText: 'Category',
-          )
-        ),
           Divider(),
           TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-              labelText: 'Contact Info',
+              hintText: "Contact Info",
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             ),
           ),
           Divider(),
@@ -131,9 +135,9 @@ class CreateClubScreen extends StatelessWidget {
             style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: Colors.red)
+                    side: BorderSide.none
                 )
-            ),backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
+            ),backgroundColor: MaterialStateProperty.all<Color>(_orangeColor)),
           ),
           Divider(),
           ElevatedButton(
@@ -142,9 +146,10 @@ class CreateClubScreen extends StatelessWidget {
             style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: Colors.red)
+                    side: BorderSide.none,
+
                 )
-            ),backgroundColor: MaterialStateProperty.all<Color>(Colors.orange))
+            ),backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))
           ),
 
         ],
