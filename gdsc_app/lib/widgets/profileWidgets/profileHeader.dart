@@ -43,7 +43,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               child: Material(
                 color: Colors.transparent,
                 child: Ink.image(
-                  image: AssetImage("assets/emptyprofileimage.jpg"),
+                  image: AssetImage("assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png"),
                   fit: BoxFit.cover,
                   width: 128,
                   height: 128,
