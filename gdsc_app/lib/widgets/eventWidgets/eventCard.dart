@@ -17,9 +17,9 @@ class CreateCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.center,
       child: Container(
-        width: MediaQuery.of(context).size.width * 1.3, // Adjust the width here
+        width: MediaQuery.of(context).size.width * 0.89, // Adjust the width here
         child: Card(
           color: _cardColor,
           shape: RoundedRectangleBorder(
