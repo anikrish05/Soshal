@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CreateCardWidget extends StatelessWidget {
-  late VoidCallback onCreateEvent;
-  late VoidCallback onCreateClub;
+
   Color _cardColor = Color(0xffc8c9ca);
 
   // Define the image dimensions
   final double imageWidth = 100;
   final double imageHeight = 80;
-
-  CreateCardWidget({
-    required this.onCreateEvent,
-    required this.onCreateClub,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +22,6 @@ class CreateCardWidget extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           child: InkWell(
             splashColor: Colors.blueGrey.withAlpha(30),
-            onTap: onCreateEvent,
             child: Padding(
               padding: const EdgeInsets.all(8.0), // Add padding to the card
               child: Row(

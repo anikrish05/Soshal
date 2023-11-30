@@ -16,11 +16,16 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     print("on create event");
   }
 
+  @override
   void onCreateClub() {
-    Navigator.pushNamed(context, '/createClub');
+    print("on create club");
   }
 
+  Color _buttonColor = Color(0xFF88898C);
+  Color _slideColor = Colors.orange;
+  Color _colorTab = Color(0xFFFF8050);
 
+  late TabController tabController;
 
   @override
   void initState() {
@@ -32,10 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     super.dispose();
     tabController!.dispose();
   }
-  Color _buttonColor = Color(0xFF88898C);
-  Color _colorTab = Color(0xFFFF8050);
-  Color _slideColor = Colors.orange;
-  late TabController tabController;
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             ProfileHeaderWidget(
               "../assets/logo.png",
                   () async {},
-              "Adithya Kartik",
+              "Aditi Namble",
               2027,
             ),
             CreateButtonsWidget(
@@ -60,16 +61,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
               ),
             ),
             SizedBox(height: 16),
-            CreateCardWidget(
-              onCreateEvent: onCreateEvent,
-              onCreateClub: onCreateClub,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-            buildTabBar(),// Add some vertical space between line and buttons// Include the buttons widget here
+            buildTabBar(),
+            Padding(padding: EdgeInsets.all(8)),
+            CreateCardWidget(),// Add some vertical space between line and buttons// Include the buttons widget here
           ],
         ),
       ),
@@ -93,4 +87,5 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           text: 'Saved',
         )
       ]
+  );
 }
