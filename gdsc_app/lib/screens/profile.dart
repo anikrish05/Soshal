@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
   @override
   void onCreateClub() {
-    print("on create club");
+    Navigator.pushNamed(context, '/createClub');
   }
 
   Color _buttonColor = Color(0xFF88898C);
