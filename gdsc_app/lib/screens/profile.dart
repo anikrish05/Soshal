@@ -70,22 +70,25 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
   }
   Widget buildTabBar() => TabBar(
-      unselectedLabelColor: _colorTab,
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          color: _colorTab),
-      controller: tabController,
-      tabs: [
-        Tab(
-          text: 'Events',
-        ),
-        Tab(
-          text: 'Clubs',
-        ),
-        Tab(
-          text: 'Saved',
-        )
-      ]
+    unselectedLabelColor: _colorTab,
+    indicatorSize: TabBarIndicatorSize.tab,
+    indicator: BoxDecoration(
+      borderRadius: BorderRadius.circular(50),
+      color: _colorTab,
+    ),
+    controller: tabController,
+    tabs: [
+      Tab(
+        text: 'Events',
+      ),
+      Tab(
+        text: 'Clubs',
+      ),
+      Tab(
+        text: 'Saved',
+      ),
+    ],
+    indicatorPadding: EdgeInsets.symmetric(horizontal: 16), // Adjust the padding as needed
   );
+
 }
