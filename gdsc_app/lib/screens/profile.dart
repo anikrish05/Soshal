@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
-import '../widgets/profileWidgets/ProfileFeatureButtons.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin{
   @override
   void onUpdateProfile() {
     print("on create event");
@@ -22,7 +21,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Color _buttonColor = Color(0xFF88898C);
+  Color _slideColor = Colors.orange;
+  late TabController tabController;
 
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    tabController!.dispose();
+  }
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -46,11 +57,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: _buttonColor, // Set the color of the line
               ),
             ),
-            SizedBox(height: 16), // Add some vertical space between line and buttons
-            ProfileFeatureButtons(),  // Include the buttons widget here
+            SizedBox(height: 16),
+            buildTabBar(),// Add some vertical space between line and buttons// Include the buttons widget here
           ],
         ),
       ),
     );
   }
+  Widget buildTabBar() => TabBar(
+      unselectedLabelColor: _slideColor,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          color: _slideColor),
+      controller: tabController,
+      tabs: [
+        Tab(
+          text: 'Events',
+        ),
+        Tab(
+          text: 'Clubs',
+        ),
+        Tab(
+          text: 'Saved',
+        )
+      ]
+  );
 }

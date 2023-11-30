@@ -22,7 +22,7 @@ class CreateButtonsWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               primary: _buttonColor, // Set the button color to gray
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // Set the border radius
+                borderRadius: BorderRadius.circular(50), // Set the border radius
               ),
             ),
             child: Text('Update Profile'),
@@ -33,7 +33,7 @@ class CreateButtonsWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               primary: _buttonColor, // Set the button color to gray
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // Set the border radius
+                borderRadius: BorderRadius.circular(50),
               ),
             ),
             child: Text('Create Club'),
