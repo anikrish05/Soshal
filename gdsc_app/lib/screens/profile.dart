@@ -5,6 +5,7 @@ import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
 import 'package:gdsc_app/classes/user.dart';
+import '../widgets/loader.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -41,27 +42,29 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   }
 
   dynamic isUserSignedIn() async {
-    user.isUserSignedIn().then((check) {
+    user.isUserSignedIn().then((check) async {
       if(check){
         print("hello");
+        Future<bool> check = user.initUserData();
       }
       else{
         Navigator.pushNamed(context, '/login');
       }
     });
-
   }
-  final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 2),
-        () => 'Data Loaded',
-  );  @override
+  Future<bool> getData() async{
+    return(user.initUserData());
+  }
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder<String>(
-          future: _calculation,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            return(
+        body: FutureBuilder<bool>(
+          future: getData(),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot)
+    {
+      if (snapshot.hasData){
+        return (
             ListView(
               children: [
                 ProfileHeaderWidget(
@@ -92,7 +95,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 // Add some vertical space between line and buttons// Include the buttons widget here
               ],
             )
-            );
+        );
+    }
+      else{
+        return(
+            LoaderWidget()
+        );
+      }
           }
         ),
       ),
