@@ -11,7 +11,7 @@ async function addUserToClub (userId, clubId){
 }
 
 const createClub = async (req, res) => {
-	const {name, description, image, type, category} = req.body;
+	const {name, description, image, type, category, admin} = req.body;
 	const data = {
 		verified: false,
 		name: name,
@@ -21,7 +21,7 @@ const createClub = async (req, res) => {
 		category: category,
 		followers: [],
 		events: [],
-		admin: []
+		admin: admin
 	}
 	  addDoc(doc(db, "clubs"), data).then((docRef)=>{
 	  	for(var i = 0; i<admin.length; i++){
@@ -32,6 +32,15 @@ const createClub = async (req, res) => {
         res.status(500).send(JSON.stringify({ message: "Failed"}))
 	})
 }
+const getClub = async (req, res) => {
+	const {id} = req.body;
+	getDoc(doc(db, "clubs", id)).then((data)=>{
+        res.status(200).send(JSON.stringify({'message':data.data()}))
+
+	})
+
+}
 module.exports = {
-	createClub
+	createClub,
+	getClub
 };
