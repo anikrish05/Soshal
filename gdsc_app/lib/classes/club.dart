@@ -38,7 +38,14 @@ class Club{
 
   }
   Future<bool> getClub(id) async {
-    final response = await post(Uri.parse('http://$hostName/api/clubs/createClub'));
+    final response = await post(Uri.parse('http://$hostName/api/clubs/getClub'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "id": id,
+      }),
+    );
     var data = jsonDecode(response.body)['message'];
     this.id = data['uid'];
     this.name = data['name'];
