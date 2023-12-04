@@ -26,9 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _slideColor = Colors.orange;
   Color _colorTab = Color(0xFFFF8050);
   User user = User();
-
   late TabController tabController;
-
   @override
   void initState() {
     super.initState();
@@ -42,11 +40,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     tabController!.dispose();
   }
 
-  void isUserSignedIn() async {
-    user.isUserSignedIn().then((check){
+  dynamic isUserSignedIn() async {
+    user.isUserSignedIn().then((check) {
       if(check){
         print("hello");
-        user.initUserData();
       }
       else{
         Navigator.pushNamed(context, '/login');
@@ -54,34 +51,49 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     });
 
   }
+  final Future<String> _calculation = Future<String>.delayed(
+    const Duration(seconds: 2),
+        () => 'Data Loaded',
+  );  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: ListView(
-          children: [
-            ProfileHeaderWidget(
-              user.downloadURL=="" ? "../assets/logo.png": user.downloadURL,
-                  () async {},
-              user.displayName,
-              2027,
-            ),
-            CreateButtonsWidget(
-                onUpdateProfile,
-                onCreateClub
-            ),
-            SizedBox(height: 16), // Add some vertical space between buttons and line
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30), // Adjust the padding as needed
-              child: Container(
-                height: 1,  // Set the height of the divider
-                color: _buttonColor, // Set the color of the line
-              ),
-            ),
-            SizedBox(height: 16),
-            buildTabBar(),
-            Padding(padding: EdgeInsets.all(8)),
-            CreateCardWidget(),// Add some vertical space between line and buttons// Include the buttons widget here
-          ],
+        body: FutureBuilder<String>(
+          future: _calculation,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            return(
+            ListView(
+              children: [
+                ProfileHeaderWidget(
+                  user.downloadURL == "" ? "../assets/logo.png" : user
+                      .downloadURL,
+                      () async {},
+                  user.displayName,
+                  2027,
+                ),
+                CreateButtonsWidget(
+                    onUpdateProfile,
+                    onCreateClub
+                ),
+                SizedBox(height: 16),
+                // Add some vertical space between buttons and line
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  // Adjust the padding as needed
+                  child: Container(
+                    height: 1, // Set the height of the divider
+                    color: _buttonColor, // Set the color of the line
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildTabBar(),
+                Padding(padding: EdgeInsets.all(8)),
+                CreateCardWidget(),
+                // Add some vertical space between line and buttons// Include the buttons widget here
+              ],
+            )
+            );
+          }
         ),
       ),
     );

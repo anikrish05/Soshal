@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
+
 const hostName = "10.0.2.2:3000";
 class User{
-  late String uid;
-  late String displayName;
-  late String downloadURL;
-  late String email;
-  late List<dynamic> following;
-  late String role;
-  late List<dynamic> myEvents;
+  String uid ="";
+  String displayName="";
+  String downloadURL="";
+  String email="";
+  List<dynamic> following=[];
+  String role="";
+  List<dynamic> myEvents=[];
   String gradYr = "update";
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://$hostName/api/users/signedIn'));
@@ -20,9 +21,10 @@ class User{
     return true;
   }
 
-  void initUserData() async{
+  Future<bool> initUserData() async{
     final response = await get(Uri.parse('http://$hostName/api/users/userData'));
     var data = jsonDecode(response.body)['message'];
+    print(data['downloadURL'] is String);
     this.uid = data['uid'];
     this.displayName = data['displayName'];
     this.downloadURL = data['downloadURL'];
@@ -30,6 +32,7 @@ class User{
     this.following = data['following'];
     this.role = data['role'];
     this.myEvents = data['myEvents'];
+    return true;
   }
 
   Future<bool> signIn(String email, String password) async{

@@ -3,15 +3,42 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:gdsc_app/classes/club.dart';
 
-class CreateClubScreen extends StatelessWidget {
+class CreateClubScreen extends StatefulWidget {
 
+  @override
+  State<CreateClubScreen> createState() => _CreateClubScreenState();
+}
+
+class _CreateClubScreenState extends State<CreateClubScreen> {
   var clubName = TextEditingController();
+
   var clubBio = TextEditingController();
+
   var location = TextEditingController();
+
   var category = TextEditingController();
+
   Color _orangeColor = Color(0xFFFF8050);
 
+  int index = 1;
+
+  void submit(){
+    Club club = Club();
+    late String type;
+    if (index==1){
+      type = "Public";
+    }
+    else{
+      type = "Private";
+    }
+    club.addClub(clubName.text, clubBio.text, location.text, category.text, type,).then((check)=>{
+      if(check){
+        Navigator.of(context).pop()
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +140,9 @@ class CreateClubScreen extends StatelessWidget {
                 labels: ['Public', 'Private'],
                 radiusStyle: true,
                 onToggle: (index) {
-                  print('switched to: $index');
+                  setState((){
+                    index = index;
+                  });
                 },
               ),
             ]
