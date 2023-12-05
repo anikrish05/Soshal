@@ -30,6 +30,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     this._name = name;
     this._graduationYear = graduationYear;
     this._onClicked = onClicked;
+    print(this._onClicked);
   }
   Color _colorTab = Color(0xFFFF8050);
 

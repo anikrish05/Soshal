@@ -27,6 +27,10 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Our app requires your photo galleries in order to select a profile image or a club image that will be curated to your liking</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need your camera in case you would like to take a picture of something to set as your profile image</string>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

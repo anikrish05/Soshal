@@ -1,19 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'package:gdsc_app/screens/createClub.dart';
-
+import 'dart:io';
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin{
+  File? image;
+  Future pickImage() async {
+    print("inddddd");
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if(image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } catch(e) {
+      print('Failed to pick image: $e');
+    }
+  }
   @override
   void onUpdateProfile() {
     print("on create event");
@@ -74,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 ProfileHeaderWidget(
                   user.downloadURL == "" ? "../assets/logo.png" : user
                       .downloadURL,
-                      () async {},
+                      () async {pickImage();},
                   user.displayName,
                   2027,
                 ),
