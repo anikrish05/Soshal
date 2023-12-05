@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
+import '../widgets/clubWidgets/clubCard.dart';
+
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'package:gdsc_app/screens/createClub.dart';
@@ -32,10 +34,12 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _colorTab = Color(0xFFFF8050);
   User user = User();
   late TabController tabController;
+  int selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 3, vsync: this, );
     isUserSignedIn();
 
   }
@@ -95,7 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 SizedBox(height: 16),
                 buildTabBar(),
                 Padding(padding: EdgeInsets.all(8)),
-                CreateCardWidget(),
+                getDataTabs(),
+
                 // Add some vertical space between line and buttons// Include the buttons widget here
               ],
             )
@@ -111,26 +116,50 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       ),
     );
   }
-  Widget buildTabBar() => TabBar(
-    unselectedLabelColor: _colorTab,
-    indicatorSize: TabBarIndicatorSize.tab,
-    indicator: BoxDecoration(
-      borderRadius: BorderRadius.circular(50),
-      color: _colorTab,
+  Widget buildTabBar() {
+    return(
+      TabBar(
+        unselectedLabelColor: _colorTab,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          color: _colorTab,
+        ),
+        controller: tabController,
+        tabs: [
+          Tab(
+            text: 'Events',
+          ),
+          Tab(
+            text: 'Clubs',
+          ),
+          Tab(
+            text: 'Saved',
+          ),
+        ],
+        indicatorPadding: EdgeInsets.symmetric(
+            horizontal: 16), // Adjust the padding as needed
+      )
+    );
+  }
+
+  Widget getDataTabs() =>    SizedBox(
+    height: 150,
+    child: TabBarView(
+      children: [
+        ListView(
+          children: [
+            EventCardWidget(),
+            EventCardWidget(),
+          ],
+        ),
+        ClubCardWidget(),
+        EventCardWidget(),
+      ],
+      controller: tabController,
     ),
-    controller: tabController,
-    tabs: [
-      Tab(
-        text: 'Events',
-      ),
-      Tab(
-        text: 'Clubs',
-      ),
-      Tab(
-        text: 'Saved',
-      ),
-    ],
-    indicatorPadding: EdgeInsets.symmetric(horizontal: 16), // Adjust the padding as needed
   );
+
+
 
 }
