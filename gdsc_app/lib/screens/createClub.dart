@@ -6,9 +6,13 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:gdsc_app/classes/club.dart';
 
 class CreateClubScreen extends StatefulWidget {
-
+  late String currUserId;
+  CreateClubScreen(currUserId){
+    this.currUserId = currUserId;
+  }
   @override
-  State<CreateClubScreen> createState() => _CreateClubScreenState();
+  _CreateClubScreenState createState() =>
+      _CreateClubScreenState(currUserId);
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
@@ -21,9 +25,12 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   var category = TextEditingController();
 
   Color _orangeColor = Color(0xFFFF8050);
+  late String currUserId;
 
   int index = 1;
-
+  _CreateClubScreenState(currUserId){
+    this.currUserId = currUserId;
+  }
   void submit(){
     Club club = Club();
     late String type;
@@ -33,7 +40,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     else{
       type = "Private";
     }
-    club.addClub(clubName.text, clubBio.text, location.text, category.text, type,).then((check)=>{
+    club.addClub(clubName.text, clubBio.text, location.text, category.text, type, [currUserId]).then((check)=>{
       if(check){
         Navigator.of(context).pop()
       }
@@ -171,7 +178,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           Divider(),
           ElevatedButton(
             child: Text('Create Club'),
-            onPressed: () {},
+            onPressed: () {submit();},
             style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),

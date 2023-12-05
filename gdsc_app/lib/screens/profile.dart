@@ -6,6 +6,7 @@ import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
+import 'package:gdsc_app/screens/createClub.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -20,7 +21,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
   @override
   void onCreateClub() {
-    Navigator.pushNamed(context, '/createClub');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
+    );
   }
 
   Color _buttonColor = Color(0xFF88898C);

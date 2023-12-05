@@ -14,7 +14,7 @@ class Club{
   late List<dynamic> followers;
   late List<dynamic> events;
   late List<dynamic> admin;
-  Future<bool> addClub(clubName, clubBio, location, category, type ) async {
+  Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {
     print("in SignIn");
     final response = await post(Uri.parse('http://$hostName/api/clubs/createClub'),
       headers: <String, String>{
