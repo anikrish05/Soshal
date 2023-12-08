@@ -1,10 +1,11 @@
+// feed.dart
+
 import 'dart:async';
-import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:gdsc_app/widgets/slidingUpWidget.dart';
-
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:gdsc_app/widgets/slidingUpWidget.dart';
+import 'package:gdsc_app/classes/MarkerData.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _MyAppState extends State<MyApp> {
   final List<Marker> _markers = <Marker>[];
 
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
+  MarkerData? selectedMarkerData; // Track selected marker data
 
   @override
   void initState() {
@@ -30,10 +32,16 @@ class _MyAppState extends State<MyApp> {
         markerId: MarkerId('UCSC'),
         position: LatLng(36.9907207008804, -122.05845686120782),
         onTap: () {
+          // Get data for the clicked marker
+          selectedMarkerData = getMarkerData('UCSC');
+
           // Show/hide the sliding panel when marker is tapped
           panelController.isPanelOpen
               ? panelController.close()
               : panelController.open();
+
+          // Rebuild the widget to reflect the new selected marker data
+          setState(() {});
         },
       ),
     );
@@ -57,7 +65,9 @@ class _MyAppState extends State<MyApp> {
           controller: panelController,
           minHeight: 0,
           maxHeight: 300.0, // Adjust as needed
-          panel: SlidingUpWidget(),
+          panel: selectedMarkerData != null
+              ? SlidingUpWidget(markerData: selectedMarkerData!)
+              : Container(), // You can replace Container() with an empty widget or any default content
           body: GoogleMap(
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
@@ -72,5 +82,14 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
 
+  // Function to get data for a specific marker
+  MarkerData getMarkerData(String markerId) {
+    // Replace this with your actual data retrieval logic
+    return MarkerData(
+      title: 'UCSC',
+      description: 'Your marker description goes here.',
+      // Add more data fields as needed
+    );
+  }
+}
