@@ -1,5 +1,3 @@
-// feed.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -85,10 +83,11 @@ class _MyAppState extends State<MyApp> {
 
   // Function to get data for a specific marker
   MarkerData getMarkerData(String markerId) {
-    // Replace this with your actual data retrieval logic
     return MarkerData(
-      title: 'UCSC',
-      description: 'Your marker description goes here.',
+      title: "House Party",
+      description: "Kamble is gonna be there.",
+      place: "69 Pineapple St",
+      time: "7:99 AM"
       // Add more data fields as needed
     );
   }
