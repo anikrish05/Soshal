@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
         body: SlidingUpPanel(
           controller: panelController,
           minHeight: 0,
-          maxHeight: 300.0, // Adjust as needed
+          maxHeight: 380, // Adjust as needed
           panel: selectedMarkerData != null
               ? SlidingUpWidget(markerData: selectedMarkerData!)
               : Container(), // You can replace Container() with an empty widget or any default content
@@ -86,8 +86,8 @@ class _MyAppState extends State<MyApp> {
     return MarkerData(
       title: "House Party",
       description: "Kamble is gonna be there.",
-      place: "69 Pineapple St",
-      time: "7:99 AM"
+      location: "69 Pineapple St",
+      time: "Feb 31, 7:99 AM"
       // Add more data fields as needed
     );
   }

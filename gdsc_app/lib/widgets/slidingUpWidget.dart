@@ -33,8 +33,9 @@ class SlidingUpWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    width: 80,
-                    height: 80,
+                    margin: EdgeInsets.only(left: 12), // Adjust the right margin for more space
+                    width: 125,
+                    height: 125, // Set a fixed height for the image container
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -48,14 +49,22 @@ class SlidingUpWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          markerData.title,
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            Text(
+                              markerData.title,
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 5),
-                        Text(
-                          markerData.description,
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                        Row(
+                          children: [
+                            Text(
+                              markerData.description,
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 8),
                         Row(
@@ -65,7 +74,10 @@ class SlidingUpWidget extends StatelessWidget {
                             Row(
                               children: List.generate(
                                 5,
-                                    (index) => Icon(Icons.star, color: Colors.grey, size: 16),
+                                    (index) => Padding(
+                                  padding: EdgeInsets.only(right: 4), // Adjust spacing between icons
+                                  child: Icon(Icons.star, color: Colors.grey, size: 16),
+                                ),
                               ),
                             ),
                           ],
@@ -74,15 +86,28 @@ class SlidingUpWidget extends StatelessWidget {
                         Row(
                           children: [
                             Icon(Icons.location_on),
-                            Text(markerData.place),
+                            Padding(padding: EdgeInsets.only(right: 4)),
+                            Text(markerData.location),
                           ],
                         ),
                         SizedBox(height: 8),
                         Row(
                           children: [
                             Icon(Icons.access_time),
+                            Padding(padding: EdgeInsets.only(right: 4)),
                             Text(markerData.time),
                           ],
+                        ),
+                        SizedBox(height: 8),
+                        // RSVP button aligned to the right
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Add RSVP button logic
+                            },
+                            child: Text('RSVP'),
+                          ),
                         ),
                       ],
                     ),
