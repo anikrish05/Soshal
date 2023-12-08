@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../widgets/slidingUpWidget.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -10,22 +12,36 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Completer<GoogleMapController> _controller = Completer();
+  CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
+  final List<Marker> _markers = <Marker>[];
 
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
 
-  Set<Marker> markers = {
-    Marker(
-      markerId: MarkerId('UCSC'),
-      position: LatLng(36.9907207008804, -122.05845686120782),
-      infoWindow: InfoWindow(title: 'UCSC'),
-    ),
-  };
 
-  bool isSlidingPanelVisible = false;
+  //bool isSlidingPanelVisible = false;
 
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
+
+  void loadData (){
+    _markers.add(
+      Marker(
+        markerId: MarkerId('UCSC'),
+        position: LatLng(36.9907207008804, -122.05845686120782),
+        onTap: () {
+          _customInfoWindowController.addInfoWindow!(
+              SlidingUpPanel(
+                panel: Center(child: Text("This is the sliding Widget"),),
+              ),
+              LatLng(36.9907207008804, -122.05845686120782)
+          );
+        }
+      //infoWindow: InfoWindow(title: 'UCSC'),
+    )
+    );
   }
 
   void dispose() {
@@ -38,20 +54,23 @@ class _MyAppState extends State<MyApp> {
     controller.dispose();
   }
 
+  /*
   void handleTap(LatLng latLng) {
-    Marker tappedMarker = markers.firstWhere(
+    print("in handle tap");
+    Marker tappedMarker = _markers.firstWhere(
           (marker) => marker.position == latLng,
-      orElse: () => Marker(markerId: MarkerId('dummy')),
+      //orElse: () => Marker(markerId: MarkerId('dummy')),
     );
-
+    print(tappedMarker);
     if (tappedMarker.markerId != MarkerId('dummy')) {
+      print("in marker pressed");
       showMarkerInfo(context, tappedMarker);
       setState(() {
         isSlidingPanelVisible = true;
       });
     }
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,19 +79,24 @@ class _MyAppState extends State<MyApp> {
           children: <Widget>[
             GoogleMap(
               onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
+                _customInfoWindowController.googleMapController = controller;
               },
-              markers: markers,
+              markers: Set<Marker>.of(_markers),
               initialCameraPosition: CameraPosition(
                 target: _center,
                 zoom: 16.0,
               ),
-              onTap: (LatLng latLng) {
-                handleTap(latLng);
+              onTap: (position) {
+                _customInfoWindowController.hideInfoWindow!();
               },
+              onCameraMove: (position){
+                _customInfoWindowController.onCameraMove!();
+              }
             ),
-            SlidingUpWidget(isSlidingPanelVisible: isSlidingPanelVisible), // Conditionally add SlidingUpWidget
-          ],
+            CustomInfoWindow(
+              controller: _customInfoWindowController,
+            ),
+       ],
         ),
       ),
     );
