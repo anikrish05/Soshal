@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this, );
+    tabController = TabController(length: 2, vsync: this, );
     isUserSignedIn();
 
   }
@@ -133,9 +133,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           Tab(
             text: 'Clubs',
           ),
-          Tab(
-            text: 'Saved',
-          ),
         ],
         indicatorPadding: EdgeInsets.symmetric(
             horizontal: 16), // Adjust the padding as needed
@@ -144,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   }
 
   Widget getDataTabs() =>    SizedBox(
-    height: 150,
+    height: MediaQuery.of(context).size.height,
     child: TabBarView(
       children: [
         ListView(
@@ -154,7 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           ],
         ),
         ClubCardWidget(),
-        EventCardWidget(),
       ],
       controller: tabController,
     ),
