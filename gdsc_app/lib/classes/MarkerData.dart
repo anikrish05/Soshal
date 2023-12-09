@@ -3,6 +3,7 @@ class MarkerData {
   final String description;
   final String location;
   final String time;
+  final String image;
 
-  MarkerData({required this.title, required this.description, required this.location, required this.time});
+  MarkerData({required this.title, required this.description, required this.location, required this.time, required this.image});
 }

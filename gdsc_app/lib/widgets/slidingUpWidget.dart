@@ -39,7 +39,7 @@ class SlidingUpWidget extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727',
+                        markerData.image,
                         fit: BoxFit.cover,
                       ),
                     ),
