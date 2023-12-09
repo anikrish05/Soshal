@@ -1,37 +1,26 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class ProfileHeaderWidget extends StatefulWidget {
-  late String _image;
-  late String _name;
-  late int _graduationYear;
-  late VoidCallback _onClicked;
+  final dynamic image;
+  final VoidCallback onClicked;
+  final String name;
+  final int graduationYear;
+  final VoidCallback onImagePicked;
 
-  ProfileHeaderWidget(String image, VoidCallback onClicked, String name, int graduationYear) {
-    this._image = image;
-    this._onClicked = onClicked;
-    this._name = name;
-    this._graduationYear = graduationYear;
-  }
+  ProfileHeaderWidget({
+    required this.image,
+    required this.onClicked,
+    required this.name,
+    required this.graduationYear,
+    required this.onImagePicked,
+  });
 
   @override
-  _ProfileHeaderWidgetState createState() =>
-      _ProfileHeaderWidgetState(_image, _name, _graduationYear, _onClicked);
+  _ProfileHeaderWidgetState createState() => _ProfileHeaderWidgetState();
 }
 
 class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
-  late String _image;
-  late String _name;
-  late int _graduationYear;
-  late VoidCallback _onClicked;
-
-  _ProfileHeaderWidgetState(
-      String image, String name, int graduationYear, VoidCallback onClicked) {
-    this._image = image;
-    this._name = name;
-    this._graduationYear = graduationYear;
-    this._onClicked = onClicked;
-    print(this._onClicked);
-  }
   Color _colorTab = Color(0xFFFF8050);
 
   @override
@@ -44,25 +33,39 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               child: Material(
                 color: Colors.transparent,
                 child: Ink.image(
-                  image: AssetImage("assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png"),
+                  image: getImageProvider(),
                   fit: BoxFit.cover,
                   width: 128,
                   height: 128,
-                  child: InkWell(onTap: _onClicked),
+                  child: InkWell(onTap: () async {
+                    widget.onClicked();
+                    await Future.delayed(Duration.zero); // Schedule the callback to happen after the frame
+                    widget.onImagePicked(); // Trigger the callback
+                  }),
                 ),
               ),
             ),
             Positioned(
-              bottom: 8, // Adjust the distance from the bottom
-              right: 8, // Adjust the distance from the right
+              bottom: 8,
+              right: 8,
               child: buildEditIcon(Colors.orange),
             ),
           ],
         ),
-        SizedBox(width: 16), // Adjust the padding as needed
+        SizedBox(width: 16),
         buildProfileInfo(),
       ],
     );
+  }
+
+  ImageProvider<Object> getImageProvider() {
+    if (widget.image is File) {
+      return FileImage(widget.image as File);
+    } else if (widget.image is String) {
+      return NetworkImage(widget.image as String);
+    } else {
+      return AssetImage('assets/emptyprofileimage.jpg');
+    }
   }
 
   Widget buildEditIcon(Color color) => buildCircle(
@@ -98,19 +101,19 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _name,
+          widget.name,
           style: TextStyle(
-            color: Colors.grey, // Change font color to gray
-            fontWeight: FontWeight.w800, // Change to a bold font
-            fontSize: 24, // Make the top text bigger
+            color: Colors.grey,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
           ),
         ),
         SizedBox(height: 4),
         Text(
-          'Class of $_graduationYear',
+          'Class of ${widget.graduationYear}',
           style: TextStyle(
-            color: Colors.grey, // Change font color to gray
-            fontWeight: FontWeight.w400, // Change to a regular font
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
             fontSize: 16,
           ),
         ),

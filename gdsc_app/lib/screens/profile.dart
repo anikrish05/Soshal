@@ -9,50 +9,24 @@ import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'package:gdsc_app/screens/createClub.dart';
 import 'dart:io';
+
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin{
+class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   File? image;
-  Future pickImage() async {
-    print("inddddd");
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
-      final imageTemp = File(image.path);
-      setState(() => this.image = imageTemp);
-    } catch(e) {
-      print('Failed to pick image: $e');
-    }
-  }
-  @override
-  void onUpdateProfile() {
-    print("on create event");
-  }
-
-  @override
-  void onCreateClub() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
-    );
-  }
-
-  Color _buttonColor = Color(0xFF88898C);
-  Color _slideColor = Colors.orange;
+  late TabController tabController;
   Color _colorTab = Color(0xFFFF8050);
   User user = User();
-  late TabController tabController;
-  @override
+
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
     isUserSignedIn();
-
   }
-  @override
+
   void dispose() {
     super.dispose();
     tabController!.dispose();
@@ -60,70 +34,94 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
   dynamic isUserSignedIn() async {
     user.isUserSignedIn().then((check) async {
-      if(check){
+      if (check) {
         print("hello");
         Future<bool> check = user.initUserData();
-      }
-      else{
+      } else {
         Navigator.pushNamed(context, '/login');
       }
     });
   }
-  Future<bool> getData() async{
-    return(user.initUserData());
+
+  Future<bool> getData() async {
+    return (user.initUserData());
   }
-  @override
+
+  void onUpdateProfile() {
+    print("on create event");
+  }
+
+  void onCreateClub() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
+    );
+  }
+
+  void onImagePicked() async {
+    setState(() {});
+    await Future.delayed(Duration.zero);
+    final res = await user.updateProfilePic(this.image!);
+  }
+
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      onImagePicked(); // Trigger the callback to re-render ProfileHeaderWidget
+      setState(() => this.image = imageTemp);
+    } catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: FutureBuilder<bool>(
           future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot)
-    {
-      if (snapshot.hasData){
-        return (
-            ListView(
-              children: [
-                ProfileHeaderWidget(
-                  user.downloadURL == "" ? "../assets/logo.png" : user
-                      .downloadURL,
-                      () async {pickImage();},
-                  user.displayName,
-                  2027,
-                ),
-                CreateButtonsWidget(
-                    onUpdateProfile,
-                    onCreateClub
-                ),
-                SizedBox(height: 16),
-                // Add some vertical space between buttons and line
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
-                  // Adjust the padding as needed
-                  child: Container(
-                    height: 1, // Set the height of the divider
-                    color: _buttonColor, // Set the color of the line
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                children: [
+                  ProfileHeaderWidget(
+                    image: this.image,
+                    onClicked: () async {
+                      pickImage();
+                    },
+                    name: user.displayName,
+                    graduationYear: 2027,
+                    onImagePicked: onImagePicked,
                   ),
-                ),
-                SizedBox(height: 16),
-                buildTabBar(),
-                Padding(padding: EdgeInsets.all(8)),
-                CreateCardWidget(),
-                // Add some vertical space between line and buttons// Include the buttons widget here
-              ],
-            )
-        );
-    }
-      else{
-        return(
-            LoaderWidget()
-        );
-      }
-          }
+                  CreateButtonsWidget(
+                    onUpdateProfile,
+                    onCreateClub,
+                  ),
+                  SizedBox(height: 16),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Container(
+                      height: 1,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  buildTabBar(),
+                  Padding(padding: EdgeInsets.all(8)),
+                  CreateCardWidget(),
+                ],
+              );
+            } else {
+              return LoaderWidget();
+            }
+          },
         ),
       ),
     );
   }
+
   Widget buildTabBar() => TabBar(
     unselectedLabelColor: _colorTab,
     indicatorSize: TabBarIndicatorSize.tab,
@@ -143,7 +141,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         text: 'Saved',
       ),
     ],
-    indicatorPadding: EdgeInsets.symmetric(horizontal: 16), // Adjust the padding as needed
+    indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
   );
-
 }
