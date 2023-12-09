@@ -49,6 +49,7 @@ class SlidingUpWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(height: 10),
                         Row(
                           children: [
                             Text(
@@ -99,20 +100,69 @@ class SlidingUpWidget extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 8),
-                        // RSVP button aligned to the right
+                        // Elevated button with rounded edges and #d1d1d1 color
                         Align(
                           alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add RSVP button logic
-                            },
-                            child: Text('RSVP'),
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 2, right: 40), // Adjust top and left margins
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Add RSVP button logic
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.grey, // Set the button color to #d1d1d1
+                                textStyle: TextStyle(
+                                  fontFamily: 'Borel',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold, // Change the font to Borel
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20), // Round the edges
+                                ),
+                              ),
+                              child: Text('rsvp'),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
+              ),
+            ),
+            Divider(
+              color: Colors.grey,
+              thickness: 1,
+              indent: 50,
+              endIndent: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 40, left: 40),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  height: 40, // Adjust the height of the text box
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'add comments',
+                      filled: true,
+                      fillColor: Colors.grey, // Set the box color to gray
+                      hintStyle: TextStyle(
+                        fontFamily: 'Borel',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // Make the hint text white
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 10), // Center the hint text both vertically and horizontally
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent), // Remove the outline when focused
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent), // Remove the outline when enabled
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
