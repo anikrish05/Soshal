@@ -62,10 +62,16 @@ class _MyAppState extends State<MyApp> {
         body: SlidingUpPanel(
           controller: panelController,
           minHeight: 0,
-          maxHeight: 380, // Adjust as needed
+          maxHeight: 450, // Adjust as needed
           panel: selectedMarkerData != null
-              ? SlidingUpWidget(markerData: selectedMarkerData!)
-              : Container(), // You can replace Container() with an empty widget or any default content
+              ? SlidingUpWidget(
+            markerData: selectedMarkerData!,
+            onClose: () {
+              // Handle closing logic when map is tapped
+              panelController.close();
+            },
+          )
+              : Container(),
           body: GoogleMap(
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
@@ -88,7 +94,7 @@ class _MyAppState extends State<MyApp> {
       description: "Kamble is gonna be there.",
       location: "69 Pineapple St",
       time: "Feb 31, 7:99 AM",
-        image: 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727',
+      image: 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727',
       // Add more data fields as needed
     );
   }
