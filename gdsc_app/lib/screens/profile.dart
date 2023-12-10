@@ -5,6 +5,7 @@ import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
 import '../widgets/clubWidgets/clubCard.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
@@ -63,13 +64,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Future<bool> getData() async{
     return(user.initUserData());
   }
+
+  Future<bool> getClubs() async{
+    return(user.getClubData());
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot)
+        body: FutureBuilder<List<bool>>(
+            future: Future.wait([
+              getData(), // Your first asynchronous function
+              getClubs(), // Your second asynchronous function
+            ]),
+          builder: (BuildContext context, AsyncSnapshot<List<bool>> snapshot)
     {
       if (snapshot.hasData){
         return (
@@ -150,7 +158,12 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             EventCardWidget(),
           ],
         ),
-        ClubCardWidget(),
+        ListView.builder(
+          itemCount: user.clubData.length,
+          itemBuilder: (BuildContext context, int index) {
+            return  ClubCardWidget(club: user.clubData[index]);
+          },
+        )
       ],
       controller: tabController,
     ),

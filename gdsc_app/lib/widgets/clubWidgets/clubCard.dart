@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 
 class ClubCardWidget extends StatelessWidget {
 
   Color _cardColor = Color(0xffc8c9ca);
   double _rating = 1.0;  // Example rating
+  final ClubCardData club;
+  ClubCardWidget({required this.club});
 
   @override
   Widget build(BuildContext context) {
