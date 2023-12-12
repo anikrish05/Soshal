@@ -52,6 +52,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return user.getClubData();
   }
 
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -160,6 +164,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
-    );
+    ).then(onGoBack);
   }
 }
