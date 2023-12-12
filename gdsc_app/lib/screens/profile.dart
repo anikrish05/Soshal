@@ -144,9 +144,18 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           ],
         ),
         ListView.builder(
-          itemCount: user.clubData.length,
+          itemCount: user.clubData.length ~/ 2,  // Use integer division to get half of the length
           itemBuilder: (BuildContext context, int index) {
-            return ClubCardWidget(club: user.clubData[index]);
+            int firstIndex = index * 2;
+            int secondIndex = firstIndex + 1;
+
+            return Row(
+              children: <Widget>[
+                ClubCardWidget(club: user.clubData[firstIndex]),
+                if (secondIndex < user.clubData.length)  // Check if the second index is within bounds
+                  ClubCardWidget(club: user.clubData[secondIndex]),
+              ],
+            );
           },
         )
       ],
