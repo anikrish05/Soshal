@@ -7,7 +7,6 @@ class ClubCardWidget extends StatelessWidget {
   double _rating = 1.0;  // Example rating
   final ClubCardData club;
   ClubCardWidget({required this.club});
-
   @override
   Widget build(BuildContext context) {
     // Get the screen width
@@ -40,7 +39,7 @@ class ClubCardWidget extends StatelessWidget {
                       height: imageHeight,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset('assets/tech4goodimage.png', fit: BoxFit.contain), // Changed Image.network to Image.asset
+                        child: imageBuild(), // Replace 'IMAGE_URL' with your image url
                       ),
                     ),
                     SizedBox(width: 10),
@@ -48,7 +47,7 @@ class ClubCardWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Tech4 Good Labs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), // Increased the font size
+                          Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), // Increased the font size
                           SizedBox(height: 20), // Add more spacing vertically
                           Flexible(  // Wrap the Row widget with a Flexible widget
                             child: Row(
@@ -78,5 +77,14 @@ class ClubCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+  Widget imageBuild(){
+    if(club.downloadURL != ""){
+      return(Image.network(club.downloadURL, fit: BoxFit.cover));
+
+    }
+    else{
+      return(Image.network('https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727', fit: BoxFit.cover));
+    }
   }
 }

@@ -1,20 +1,24 @@
+// classes/User.dart
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 
 const hostName = "10.0.2.2:3000";
-class User{
-  String uid ="";
-  String displayName="";
-  String downloadURL="";
-  String email="";
-  List<String> following=[];
-  String role="";
-  List<String> myEvents=[];
+
+class User {
+  String uid = "";
+  String displayName = "";
+  String downloadURL = "";
+  String email = "";
+  List<String> following = [];
+  String role = "";
+  List<String> myEvents = [];
   List<ClubCardData> clubData = [];
   List<String> clubIds = [];
   String gradYr = "update";
+
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://$hostName/api/users/signedIn'));
     print(jsonDecode(response.body));
@@ -27,7 +31,6 @@ class User{
   Future<bool> initUserData() async {
     final response = await get(Uri.parse('http://$hostName/api/users/userData'));
     var data = jsonDecode(response.body)['message'];
-    print(data['downloadURL'] is String);
     this.uid = data['uid'];
     this.displayName = data['displayName'];
     this.downloadURL = data['downloadURL'];
@@ -37,34 +40,28 @@ class User{
     this.myEvents = List<String>.from(data['myEvents'] ?? []);
     this.clubIds = List<String>.from(data['clubsOwned'] ?? []);
 
-
     return true;
   }
 
-
   Future<bool> getClubData() async {
-    print("I am in get club data");
-
     if (this.clubIds != null) {
-      print("Not null");
-
       for (var i = 0; i < this.clubIds.length; i++) {
+        print("loop" + i.toString());
         try {
           final clubIteration = await get(
-            Uri.parse('http://localhost:3000/api/clubs/getClub/${this.clubIds[i]}'),
+            Uri.parse('http://$hostName/api/clubs/getClub/${this.clubIds[i]}'),
           );
 
           if (clubIteration.statusCode == 200) {
-            var clubDataResponse = jsonDecode(clubIteration.body)['data'];
-
+            var clubDataResponse = jsonDecode(clubIteration.body)['message'];
             clubData.add(
               ClubCardData(
-                admin: clubDataResponse['admin'],
+                admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
                 category: clubDataResponse['category'],
                 description: clubDataResponse['description'],
                 downloadURL: clubDataResponse['downloadURL'],
-                events: clubDataResponse['events'],
-                followers: clubDataResponse['followers'],
+                events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
+                followers: List<String>.from((clubDataResponse['followers'] ?? []).map((follower) => follower.toString())),
                 name: clubDataResponse['name'],
                 type: clubDataResponse['type'],
                 verified: clubDataResponse['verified'],
@@ -76,22 +73,20 @@ class User{
             print("Error fetching club data for ID ${this.clubIds[i]} - StatusCode: ${clubIteration.statusCode}");
           }
         } catch (error) {
-          print("Error fetching club data for ID ${this.clubIds[i]}: $error");
+          print("Error fetching club datqa for ID ${this.clubIds[i]}: $error");
         }
       }
     } else {
       print("clubIds is null");
     }
-
-    print("Came out");
     return true;
   }
 
 
-
-  Future<bool> signIn(String email, String password) async{
+  Future<bool> signIn(String email, String password) async {
     print("in SignIn");
-    final response = await post(Uri.parse('http://$hostName/api/users/login'),
+    final response = await post(
+      Uri.parse('http://$hostName/api/users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -100,13 +95,10 @@ class User{
         "password": password
       }),
     );
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
-
   }
-
 }
