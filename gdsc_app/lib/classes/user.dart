@@ -65,6 +65,7 @@ class User {
                 name: clubDataResponse['name'],
                 type: clubDataResponse['type'],
                 verified: clubDataResponse['verified'],
+                id: this.clubIds[i]
               ),
             );
 
