@@ -35,13 +35,19 @@ const createClub = async (req, res) => {
 	})
 }
 const getClub = async (req, res) => {
-	const {id} = req.body;
-	getDoc(doc(db, "clubs", id)).then((data)=>{
-        res.status(200).send(JSON.stringify({'message':data.data()}))
+  try {
+    const id = req.params.id;
+	console.log(id);
+    const docRef = await getDoc(doc(db, "clubs", id));
+	console.log(docRef.data());
+        res.status(200).send(JSON.stringify({'message':docRef.data()}))
+   
+  } catch (error) {
+    console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+  }
+};
 
-	})
-
-}
 module.exports = {
 	createClub,
 	getClub
