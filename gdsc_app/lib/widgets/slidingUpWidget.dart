@@ -15,13 +15,9 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
   List<Comment> comments = [
     Comment(username: 'Kamble', text: 'Let\'s get lit!'),
-    Comment(username: 'Adithya', text: 'Can\'t miss this opportunity to see her!?'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
-    Comment(username: 'Venkat', text: 'I am coming out!!!!!'),
+    Comment(username: 'Kamble', text: 'Let\'s get lit!'),
+    Comment(username: 'Kamble', text: 'Let\'s get lit!'),
+
   ];
 
   // Controller for the comment text field
@@ -195,23 +191,17 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
             SizedBox(height: 16), // Add padding under the text box
             // Comment section with scrollbar
             Expanded(
-              child: Container(
-                height: 200, // Set a fixed height for the comment section
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: 200,
-                      ),
-                      child: ListView.builder(
-                        reverse: true, // Set reverse to true
-                        itemCount: comments.length,
-                        itemBuilder: (context, index) {
-                          return buildCommentItem(comments[index]);
-                        },
-                      ),
-                    ),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  reverse: true, // Set reverse to true
+                  child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
+                    shrinkWrap: true,
+                    itemCount: comments.length,
+                    itemBuilder: (context, index) {
+                      return buildCommentItem(comments[index]);
+                    },
                   ),
                 ),
               ),
@@ -224,19 +214,32 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
 
   Widget buildCommentItem(Comment comment) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16), // Increase vertical padding
       child: Row(
         children: [
+          Container(
+            width: 40, // Increase the width of the profile image container
+            height: 40, // Increase the height of the profile image container
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png'),
+              ),
+            ),
+          ),
+          SizedBox(width: 12), // Increase the spacing between the image and text
           Expanded(
             child: Text(
               '${comment.username}: ${comment.text}',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 16), // Increase the font size
             ),
           ),
         ],
       ),
     );
   }
+
 
   void addComment() {
     // Get the text from the comment text field
