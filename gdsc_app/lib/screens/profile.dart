@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
@@ -21,7 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _colorTab = Color(0xFFFF8050);
   User user = User();
   late TabController tabController;
-  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -144,20 +142,24 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           ],
         ),
         ListView.builder(
-          itemCount: user.clubData.length ~/ 2,  // Use integer division to get half of the length
+          itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),  // Add 1 if the list is odd
           itemBuilder: (BuildContext context, int index) {
             int firstIndex = index * 2;
             int secondIndex = firstIndex + 1;
 
-            return Row(
+            return index == user.clubData.length ~/ 2
+                ? Center(
+              child: ClubCardWidget(club: user.clubData[firstIndex]),
+            )
+                : Row(
               children: <Widget>[
                 ClubCardWidget(club: user.clubData[firstIndex]),
-                if (secondIndex < user.clubData.length)  // Check if the second index is within bounds
+                if (secondIndex < user.clubData.length)
                   ClubCardWidget(club: user.clubData[secondIndex]),
               ],
             );
           },
-        )
+        ),
       ],
       controller: tabController,
     ),
