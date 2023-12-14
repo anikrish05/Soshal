@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfileHeaderWidget extends StatefulWidget {
-  late String _image;
-  late String _name;
-  late int _graduationYear;
-  late VoidCallback _onClicked;
+  final dynamic image;
+  final String name;
+  final int graduationYear;
+  final VoidCallback onClicked;
 
-  ProfileHeaderWidget(String image, VoidCallback onClicked, String name, int graduationYear) {
-    this._image = image;
-    this._onClicked = onClicked;
-    this._name = name;
-    this._graduationYear = graduationYear;
-  }
+  ProfileHeaderWidget({
+    required this.image,
+    required this.onClicked,
+    required this.name,
+    required this.graduationYear,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _ProfileHeaderWidgetState createState() =>
-      _ProfileHeaderWidgetState(_image, _name, _graduationYear, _onClicked);
+  _ProfileHeaderWidgetState createState() => _ProfileHeaderWidgetState();
 }
 
 class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
-  late String _image;
-  late String _name;
-  late int _graduationYear;
-  late VoidCallback _onClicked;
+  late ImageProvider<Object> _image;
 
-  _ProfileHeaderWidgetState(
-      String image, String name, int graduationYear, VoidCallback onClicked) {
-    this._image = image;
-    this._name = name;
-    this._graduationYear = graduationYear;
-    this._onClicked = onClicked;
+  @override
+  void initState() {
+    super.initState();
+    _image = _getImageProvider(widget.image);
   }
-  Color _colorTab = Color(0xFFFF8050);
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +39,22 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               child: Material(
                 color: Colors.transparent,
                 child: Ink.image(
-                  image: AssetImage("assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png"),
+                  image: _image,
                   fit: BoxFit.cover,
                   width: 128,
                   height: 128,
-                  child: InkWell(onTap: _onClicked),
+                  child: InkWell(onTap: widget.onClicked),
                 ),
               ),
             ),
             Positioned(
-              bottom: 8, // Adjust the distance from the bottom
-              right: 8, // Adjust the distance from the right
+              bottom: 8,
+              right: 8,
               child: buildEditIcon(Colors.orange),
             ),
           ],
         ),
-        SizedBox(width: 16), // Adjust the padding as needed
+        SizedBox(width: 16),
         buildProfileInfo(),
       ],
     );
@@ -68,7 +64,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     color: Colors.white,
     all: 3,
     child: buildCircle(
-      color: _colorTab,
+      color: Colors.orange,
       all: 8,
       child: Icon(
         Icons.edit,
@@ -97,23 +93,47 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _name,
+          widget.name,
           style: TextStyle(
-            color: Colors.grey, // Change font color to gray
-            fontWeight: FontWeight.w800, // Change to a bold font
-            fontSize: 24, // Make the top text bigger
+            color: Colors.grey,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
           ),
         ),
         SizedBox(height: 4),
         Text(
-          'Class of $_graduationYear',
+          'Class of ${widget.graduationYear}',
           style: TextStyle(
-            color: Colors.grey, // Change font color to gray
-            fontWeight: FontWeight.w400, // Change to a regular font
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
             fontSize: 16,
           ),
         ),
       ],
     );
+  }
+
+  // Add this method to update the image dynamically
+  void updateImage(dynamic newImage) {
+    setState(() {
+      _image = _getImageProvider(newImage);
+    });
+  }
+
+  // Helper method to get the appropriate ImageProvider based on the image type
+  ImageProvider<Object> _getImageProvider(dynamic image) {
+    if (image is String && image.startsWith('http')) {
+      // Network image
+      return NetworkImage(image);
+    } else if (image is String && image.startsWith('assets')) {
+      // Asset image
+      return AssetImage(image);
+    } else if (image is String) {
+      // File image
+      return FileImage(File(image));
+    } else {
+      // Default fallback image (you may change this)
+      return AssetImage('assets/default_image.png');
+    }
   }
 }

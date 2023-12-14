@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
@@ -7,8 +7,8 @@ import '../widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
-import 'package:gdsc_app/screens/createClub.dart';
-
+import 'createClub.dart';
+import 'dart:async';
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -50,6 +50,16 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return user.getClubData();
   }
 
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      user.downloadURL = pickedFile.path;
+      setState(() {});
+      // Perform any additional actions, e.g., upload the image to a server
+    }
+  }
+
   FutureOr onGoBack(dynamic value) {
     setState(() {});
   }
@@ -85,10 +95,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return ListView(
       children: [
         ProfileHeaderWidget(
-          user.downloadURL == "" ? "../assets/logo.png" : user.downloadURL,
-              () async {},
-          user.displayName,
-          2027,
+          image: user.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user.downloadURL,
+          onClicked: _pickImage,
+          name: user.displayName,
+          graduationYear: 2027,
         ),
         CreateButtonsWidget(
           onUpdateProfile,
@@ -142,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           ],
         ),
         ListView.builder(
-          itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),  // Add 1 if the list is odd
+          itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),
           itemBuilder: (BuildContext context, int index) {
             int firstIndex = index * 2;
             int secondIndex = firstIndex + 1;
@@ -178,3 +188,4 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     ).then(onGoBack);
   }
 }
+
