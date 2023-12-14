@@ -5,6 +5,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', require('./app/routes/users'))
 app.use('/api/clubs', require('./app/routes/clubs'))
+app.use('/api/events', require('./app/routes/events'))
 
 const port = 3000
 

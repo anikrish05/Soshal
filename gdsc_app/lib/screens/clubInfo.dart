@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/club.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 
 class ClubProfilePage extends StatefulWidget {
-  late Club club;
-  ClubProfilePage(Club club){
+  late ClubCardData club;
+  ClubProfilePage(ClubCardData club){
     this.club = club;
   }
 
@@ -13,8 +14,8 @@ class ClubProfilePage extends StatefulWidget {
 }
 
 class _ClubProfilePageState extends State<ClubProfilePage> {
-  late Club club;
-  _ClubProfilePageState(Club club){
+  late ClubCardData club;
+  _ClubProfilePageState(ClubCardData club){
     this.club = club;
   }
   @override
@@ -27,10 +28,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
         children: [
           SizedBox(
             height: 200, // Adjust the height of the image container
-            child: Image.asset(
-              club.downloadURL, // Use Image.asset for assets
-              fit: BoxFit.cover,
-            ),
+            child: imageBuild(),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -57,6 +55,13 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
         ],
       ),
     );
+  }
+  Widget imageBuild() {
+    if (club.downloadURL != "") {
+      return Image.network(club.downloadURL, fit: BoxFit.cover);
+    } else {
+      return Image.network('https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727', fit: BoxFit.cover);
+    }
   }
 }
 

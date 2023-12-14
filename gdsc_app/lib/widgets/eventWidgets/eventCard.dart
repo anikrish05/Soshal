@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CreateCardWidget extends StatelessWidget {
+class EventCardWidget extends StatelessWidget {
 
   Color _cardColor = Color(0xffc8c9ca);
 

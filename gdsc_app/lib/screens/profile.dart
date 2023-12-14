@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
+import '../widgets/clubWidgets/clubCard.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'package:gdsc_app/screens/createClub.dart';
@@ -16,28 +17,30 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
+  
   File? image;
-  late TabController tabController;
+  Color _buttonColor = Color(0xFF88898C);
+  Color _slideColor = Colors.orange;
   Color _colorTab = Color(0xFFFF8050);
   User user = User();
+  late TabController tabController;
 
+  @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
     isUserSignedIn();
   }
 
+  @override
   void dispose() {
     super.dispose();
-    tabController!.dispose();
+    tabController.dispose();
   }
 
   dynamic isUserSignedIn() async {
     user.isUserSignedIn().then((check) async {
-      if (check) {
-        print("hello");
-        Future<bool> check = user.initUserData();
-      } else {
+      if (!check) {
         Navigator.pushNamed(context, '/login');
       }
     });
@@ -77,41 +80,34 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
   }
 
+    return user.initUserData();
+  }
+
+  Future<bool> getClubs() async {
+    return user.getClubData();
+  }
+
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: FutureBuilder<bool>(
           future: getData(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData) {
-              return ListView(
-                children: [
-                  ProfileHeaderWidget(
-                    image: this.image,
-                    onClicked: () async {
-                      pickImage();
-                    },
-                    name: user.displayName,
-                    graduationYear: 2027,
-                    onImagePicked: onImagePicked,
-                  ),
-                  CreateButtonsWidget(
-                    onUpdateProfile,
-                    onCreateClub,
-                  ),
-                  SizedBox(height: 16),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: Container(
-                      height: 1,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  buildTabBar(),
-                  Padding(padding: EdgeInsets.all(8)),
-                  CreateCardWidget(),
-                ],
+            if (snapshot.connectionState == ConnectionState.done) {
+              return FutureBuilder<bool>(
+                future: getClubs(),
+                builder: (BuildContext context, AsyncSnapshot<bool> clubsSnapshot) {
+                  if (clubsSnapshot.connectionState == ConnectionState.done) {
+                    return buildProfileUI();
+                  } else {
+                    return LoaderWidget();
+                  }
+                },
               );
             } else {
               return LoaderWidget();
@@ -122,25 +118,100 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
   }
 
-  Widget buildTabBar() => TabBar(
-    unselectedLabelColor: _colorTab,
-    indicatorSize: TabBarIndicatorSize.tab,
-    indicator: BoxDecoration(
-      borderRadius: BorderRadius.circular(50),
-      color: _colorTab,
+  Widget buildProfileUI() {
+    return ListView(
+      children: [
+        ProfileHeaderWidget(
+          user.downloadURL == "" ? "../assets/logo.png" : user.downloadURL,
+              () async {},
+          user.displayName,
+          2027,
+        ),
+        CreateButtonsWidget(
+          onUpdateProfile,
+          onCreateClub,
+        ),
+        SizedBox(height: 16),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30),
+          child: Container(
+            height: 1,
+            color: _buttonColor,
+          ),
+        ),
+        SizedBox(height: 16),
+        buildTabBar(),
+        Padding(padding: EdgeInsets.all(8)),
+        getDataTabs(),
+      ],
+    );
+  }
+
+  Widget buildTabBar() {
+    return TabBar(
+      unselectedLabelColor: _colorTab,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: _colorTab,
+      ),
+      controller: tabController,
+      tabs: [
+        Tab(
+          text: 'Events',
+        ),
+        Tab(
+          text: 'Clubs',
+        ),
+      ],
+      indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+
+  Widget getDataTabs() => SizedBox(
+    height: MediaQuery.of(context).size.height,
+    child: TabBarView(
+      children: [
+        ListView(
+          children: [
+            EventCardWidget(),
+            EventCardWidget(),
+          ],
+        ),
+        ListView.builder(
+          itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),  // Add 1 if the list is odd
+          itemBuilder: (BuildContext context, int index) {
+            int firstIndex = index * 2;
+            int secondIndex = firstIndex + 1;
+
+            return index == user.clubData.length ~/ 2
+                ? Center(
+              child: ClubCardWidget(club: user.clubData[firstIndex]),
+            )
+                : Row(
+              children: <Widget>[
+                ClubCardWidget(club: user.clubData[firstIndex]),
+                if (secondIndex < user.clubData.length)
+                  ClubCardWidget(club: user.clubData[secondIndex]),
+              ],
+            );
+          },
+        ),
+      ],
+      controller: tabController,
     ),
-    controller: tabController,
-    tabs: [
-      Tab(
-        text: 'Events',
-      ),
-      Tab(
-        text: 'Clubs',
-      ),
-      Tab(
-        text: 'Saved',
-      ),
-    ],
-    indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
   );
+
+  @override
+  void onUpdateProfile() {
+    print("on create event");
+  }
+
+  @override
+  void onCreateClub() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
+    ).then(onGoBack);
+  }
 }
