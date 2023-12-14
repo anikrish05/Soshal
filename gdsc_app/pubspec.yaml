@@ -24,6 +24,9 @@ dependencies:
   flutter:
     sdk: flutter
   toggle_switch: ^2.1.0
+  date_time_picker: "^2.1.0"
+  map_location_picker: ^1.2.7
+
 
 
   # The following adds the Cupertino Icons font to your application.

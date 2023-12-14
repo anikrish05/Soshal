@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:gdsc_app/screens/feed.dart';
 import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/sign.dart';
 import 'package:gdsc_app/screens/createUser.dart';
+import 'package:gdsc_app/screens/createEvent.dart';
 import 'package:gdsc_app/screens/createClub.dart';
 import 'package:gdsc_app/screens/search.dart';
 import 'package:gdsc_app/screens/profile.dart';
@@ -26,7 +28,9 @@ void main() => runApp(MaterialApp(
     '/createUser': (context) => CreateUserScreen(),
     '/profile': (context) => ProfileScreen(),
     '/home': (context) => Home(),
-    '/search': (context) => SearchScreen()
+    '/search': (context) => SearchScreen(),
+    '/createEvent': (context) => CreateEventScreen(),
+    '/createEventMap': (context) => CreateEventMapScreen()
   },
 ));
 

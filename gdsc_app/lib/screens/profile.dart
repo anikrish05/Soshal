@@ -9,6 +9,8 @@ import '../widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'package:gdsc_app/screens/createClub.dart';
+import 'package:gdsc_app/screens/createEvent.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   @override
