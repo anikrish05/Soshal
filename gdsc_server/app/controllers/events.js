@@ -8,6 +8,16 @@ async function associatedClubEventAdd(club, eventId){
 	}
 	await updateDoc(doc(db, "clubs", club), data)
 }
+
+async function getAssociatedClubForEvent(admin){
+	clubInfo = []
+	admin.forEach((clubId){
+		const doc = getDoc(doc(db, "clubs", clubId))
+		clubInfo.push(doc.data())
+	})
+	return clubInfo;
+}
+
 const createEvent = async (req, res) => {
 	const {name, description, image, location, time, repeat, associatedClub} = req.body;
 	const data = {
@@ -31,7 +41,10 @@ const getFeedPosts = async (req, res) => {
 	const colRef = collection(db, "events");
 	const docsSnap = await getDocs(colRef);
 	allDocs = []
-	docsSnap.forEach(doc => {allDocs.push(doc.data())})
+	docsSnap.forEach(doc => {
+		data = doc.data()
+		data.clubInfo = getAssociatedClubForEvent(data.admin)
+		allDocs.push(data)
 	res.status(200).send(JSON.stringify({ message: allDocs}))
 }
 
