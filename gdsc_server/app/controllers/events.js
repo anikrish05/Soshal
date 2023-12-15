@@ -27,6 +27,15 @@ const createEvent = async (req, res) => {
 	})
 }
 
+const getFeedPosts = async (req, res) => {
+	const colRef = collection(db, "events");
+	const docsSnap = await getDocs(colRef);
+	allDocs = []
+	docsSnap.forEach(doc => {allDocs.push(doc.data())})
+	res.status(200).send(JSON.stringify({ message: allDocs}))
+}
+
 module.exports = {
-	createEvent
+	createEvent,
+	getFeedPosts
 };
