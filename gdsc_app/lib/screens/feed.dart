@@ -126,12 +126,11 @@ class _MyAppState extends State<MyApp> {
   MarkerData getMarkerData(dynamic event) {
     print(event);
     return MarkerData(
-      title: "House Party",
-      description: "Kamble is gonna be there.",
+      title: event['name'],
+      description: event['description'],
       location: "69 Pineapple St",
       time: "Feb 31, 7:99 AM",
-      image:
-      'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727',
+      image: event['downloadURL'] == "" ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727': event['downloadURL'],
       // Add more data fields as needed
     );
   }

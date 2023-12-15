@@ -1,21 +1,21 @@
 const { db, auth } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
-async function associatedClubEventAdd(club, eventId){
-	const doc = getDoc(doc(db, "clubs", club))
-	data = {
-		events: doc.data().events.push(eventId)
-	}
-	await updateDoc(doc(db, "clubs", club), data)
+async function associatedClubEventAdd(club, eventId) {
+    const clubDoc = doc(db, "clubs", club);
+    const clubData = (await getDoc(clubDoc)).data();
+    const updatedEvents = clubData.events ? [...clubData.events, eventId] : [eventId];
+    await setDoc(clubDoc, { events: updatedEvents }, { merge: true });
 }
 
-async function getAssociatedClubForEvent(admin){
-	clubInfo = []
-	admin.forEach((clubId){
-		const doc = getDoc(doc(db, "clubs", clubId))
-		clubInfo.push(doc.data())
-	})
-	return clubInfo;
+async function getAssociatedClubForEvent(admin) {
+    const clubInfo = [];
+    for (const clubId of admin) {
+        const clubDoc = doc(db, "clubs", clubId);
+        const clubData = (await getDoc(clubDoc)).data();
+        clubInfo.push(clubData);
+    }
+    return clubInfo;
 }
 
 const createEvent = async (req, res) => {
@@ -46,6 +46,7 @@ const getFeedPosts = async (req, res) => {
 		data.clubInfo = getAssociatedClubForEvent(data.admin)
 		allDocs.push(data)
 	res.status(200).send(JSON.stringify({ message: allDocs}))
+	})
 }
 
 module.exports = {
