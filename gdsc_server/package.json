@@ -1,7 +1,7 @@
 {
   "name": "soshal-server",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
   "license": "MIT",
   "dependencies": {

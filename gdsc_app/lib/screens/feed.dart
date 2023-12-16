@@ -6,6 +6,7 @@ import 'package:gdsc_app/widgets/slidingUpWidget.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
+import '../widgets/loader.dart';
 
 class MyApp extends StatefulWidget {
   @override
