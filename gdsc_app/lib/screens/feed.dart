@@ -15,7 +15,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Completer<GoogleMapController> _controller = Completer();
   PanelController panelController = PanelController();
-  final List<Marker> _markers = <Marker>[];
+  List<Marker> _markers = <Marker>[];
+  bool isDataLoaded = false;
 
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
   MarkerData? selectedMarkerData; // Track selected marker data
@@ -33,45 +34,39 @@ class _MyAppState extends State<MyApp> {
       await get(Uri.parse('http://10.0.2.2:3000/api/events/getFeedPosts'));
 
       if (response.statusCode == 200) {
-        // If the server returns a 200 OK response, parse the data
         return jsonDecode(response.body)['message'];
       } else {
-        // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      // Handle errors during the HTTP request
       print('Error fetching data: $e');
-      throw e; // Re-throw the error to notify the calling code
+      throw e;
     }
   }
 
   Future<void> loadData() async {
     try {
-      List<dynamic> eventData = await getEventData();
-      _markers.clear(); // Clear existing markers before adding new ones
-      eventData.forEach((event) {
-        _markers.add(
-          Marker(
-            markerId: MarkerId(event['id'].toString()),
-            position: LatLng(event['latitude'], event['longitude']),
-            onTap: () {
-              // Get data for the clicked marker
-              selectedMarkerData = getMarkerData(event);
-
-              // Show/hide the sliding panel when marker is tapped
-              panelController.isPanelOpen
-                  ? panelController.close()
-                  : panelController.open();
-
-              // Rebuild the widget to reflect the new selected marker data
-              setState(() {});
-            },
-          ),
-        );
-      });
+      if (!isDataLoaded) {
+        List<dynamic> eventData = await getEventData();
+        _markers.clear();
+        eventData.forEach((event) {
+          _markers.add(
+            Marker(
+              markerId: MarkerId(event['id'].toString()),
+              position: LatLng(event['latitude'], event['longitude']),
+              onTap: () {
+                selectedMarkerData = getMarkerData(event);
+                panelController.isPanelOpen
+                    ? panelController.close()
+                    : panelController.open();
+                setState(() {});
+              },
+            ),
+          );
+        });
+        isDataLoaded = true;
+      }
     } catch (e) {
-      // Handle errors if any
       print('Error loading data: $e');
     }
   }
@@ -105,12 +100,11 @@ class _MyAppState extends State<MyApp> {
             SlidingUpPanel(
               controller: panelController,
               minHeight: 0,
-              maxHeight: 450, // Adjust as needed
+              maxHeight: 450,
               panel: selectedMarkerData != null
                   ? SlidingUpWidget(
                 markerData: selectedMarkerData!,
                 onClose: () {
-                  // Handle closing logic when map is tapped
                   panelController.close();
                 },
               )
@@ -122,7 +116,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  // Function to get data for a specific marker
   MarkerData getMarkerData(dynamic event) {
     print(event);
     return MarkerData(
@@ -130,8 +123,10 @@ class _MyAppState extends State<MyApp> {
       description: event['description'],
       location: "69 Pineapple St",
       time: "Feb 31, 7:99 AM",
-      image: event['downloadURL'] == "" ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727': event['downloadURL'],
-      // Add more data fields as needed
+      image: event['downloadURL'] ==
+          ""
+          ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'
+          : event['downloadURL'],
     );
   }
 }
