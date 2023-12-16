@@ -14,20 +14,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Completer<GoogleMapController> _controller = Completer();
-  PanelController panelController = PanelController();
-  List<Marker> _markers = <Marker>[];
-  bool isDataLoaded = false;
+PanelController panelController = PanelController();
+List<Marker> _markers = [];
+MarkerData? selectedMarkerData; // Track selected marker data
 
-  final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
-  MarkerData? selectedMarkerData; // Track selected marker data
+final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
 
-  @override
-  void initState() {
-    super.initState();
-    // Load data only once in initState
-    loadData();
-  }
+@override
+void initState() {
+  super.initState();
+  loadData(); //might need to remove and just have reload capability
+}
 
+// Added method to load data on demand
   Future<List<dynamic>> getEventData() async {
     try {
       var response =
@@ -44,77 +43,74 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<void> loadData() async {
-    try {
-      if (!isDataLoaded) {
-        List<dynamic> eventData = await getEventData();
-        _markers.clear();
-        eventData.forEach((event) {
-          _markers.add(
-            Marker(
-              markerId: MarkerId(event['id'].toString()),
-              position: LatLng(event['latitude'], event['longitude']),
-              onTap: () {
-                selectedMarkerData = getMarkerData(event);
-                panelController.isPanelOpen
-                    ? panelController.close()
-                    : panelController.open();
-                setState(() {});
-              },
-            ),
-          );
-        });
-        isDataLoaded = true;
-      }
-    } catch (e) {
-      print('Error loading data: $e');
-    }
-  }
-
-  void dispose() {
-    _disposeController();
-    super.dispose();
-  }
-
-  Future<void> _disposeController() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Stack(
-          children: [
-            GoogleMap(
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-              markers: Set<Marker>.of(_markers),
-              initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: 16.0,
-              ),
-            ),
-            SlidingUpPanel(
-              controller: panelController,
-              minHeight: 0,
-              maxHeight: 450,
-              panel: selectedMarkerData != null
-                  ? SlidingUpWidget(
-                markerData: selectedMarkerData!,
-                onClose: () {
-                  panelController.close();
-                },
-              )
-                  : Container(),
-            ),
-          ],
+Future<void> loadData() async {
+  try {
+    List<dynamic> eventData = await getEventData();
+    _markers.clear();
+    eventData.forEach((event) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(event['id'].toString()),
+          position: LatLng(event['latitude'], event['longitude']),
+          onTap: () {
+            selectedMarkerData = getMarkerData(event);
+            panelController.isPanelOpen
+                ? panelController.close()
+                : panelController.open();
+            setState(() {});
+          },
         ),
-      ),
-    );
+      );
+    });
+    setState(() {}); // Trigger rebuild with updated markers
+  } catch (e) {
+    print('Error loading data: $e');
   }
+}
+
+Future<void> _disposeController() async {
+  final GoogleMapController controller = await _controller.future;
+  controller.dispose();
+}
+
+@override
+Widget build(BuildContext context) {
+  return MaterialApp(
+    home: Scaffold(
+      body: Stack(
+        children: [
+          GoogleMap(
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+            markers: Set.of(_markers),
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 16.0,
+            ),
+          ),
+          SlidingUpPanel(
+            controller: panelController,
+            minHeight: 0,
+            maxHeight: 450,
+            panel: selectedMarkerData != null
+                ? SlidingUpWidget(
+              markerData: selectedMarkerData!,
+              onClose: () {
+                panelController.close();
+              },
+            )
+                : Container(),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: loadData, // Trigger data loading on button press
+        child: Icon(Icons.refresh),
+      ),
+    ),
+  );
+}
 
   MarkerData getMarkerData(dynamic event) {
     print(event);
