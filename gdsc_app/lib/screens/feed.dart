@@ -120,6 +120,7 @@ Widget build(BuildContext context) {
       description: event['description'],
       location: "69 Pineapple St",
       time: "Feb 31, 7:99 AM",
+      comments: event['comments'],
       image: event['downloadURL'] ==
           ""
           ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'
