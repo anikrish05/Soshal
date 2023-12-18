@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
+import 'package:gdsc_app/classes/Comment.dart';
+import 'package:gdsc_app/classes/userData.dart';
+
+import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
+
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SlidingUpWidget extends StatefulWidget {
   final MarkerData markerData;
@@ -13,15 +21,70 @@ class SlidingUpWidget extends StatefulWidget {
 
 class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
-  List<Comment> comments = [
-    Comment(username: 'Kamble', text: 'Let\'s get lit!'),
-    Comment(username: 'Kamble', text: 'Let\'s get lit!'),
-    Comment(username: 'Kamble', text: 'Let\'s get lit!'),
-
-  ];
+  List<Comment> comments = [];
 
   // Controller for the comment text field
   TextEditingController commentController = TextEditingController();
+
+  late Future<void> commentsFuture = Future.value();
+
+  Future<void> getComments() async {
+    print("IN GET COMMENTS");
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "comments": widget.markerData.comments ?? [], // Ensure comments is not null
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("reponse code");
+        print(jsonDecode(response.body)['message']);
+        // Parse the response and update the comments list
+        List<dynamic>? responseData = jsonDecode(response.body)['message'];
+        if (responseData != null) {
+          List<Comment> newComments = responseData.map((data) {
+            print(data['comment']);
+            return Comment(
+              comment: data['comment'],
+              likedBy: List<String>.from(data['likedBy']),
+              user: UserData(
+                uid: data['userData']['uid'],
+                displayName: data['userData']['displayName'],
+                email: data['userData']['email'],
+                following: List<String>.from(data['userData']['following']),
+                role: data['userData']['role'],
+                myEvents: List<String>.from(data['userData']['myEvents']),
+                clubIds: List<String>.from(data['userData']['clubsOwned']),
+              ),
+            );
+          }).toList();
+          print("in comment");
+          print(newComments);
+          setState(() {
+            comments = newComments;
+          });
+        } else {
+          print('Response data is null');
+        }
+      } else {
+        print('Failed to fetch comments: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching comments: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the asynchronous method to fetch comments
+    commentsFuture = getComments();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +242,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                       border: InputBorder.none,
                       suffixIcon: IconButton(
                         onPressed: () {
-                          addComment(); // Function to add the comment
+                          //addComment(); // Function to add the comment
                         },
                         icon: Icon(Icons.send, color: Colors.white),
                       ),
@@ -188,75 +251,42 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 ),
               ),
             ),
-            SizedBox(height: 16), // Add padding under the text box
+            SizedBox(height: 16),
             // Comment section with scrollbar
-            Expanded(
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  reverse: true, // Set reverse to true
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
-                    shrinkWrap: true,
-                    itemCount: comments.length,
-                    itemBuilder: (context, index) {
-                      return buildCommentItem(comments[index]);
-                    },
-                  ),
-                ),
-              ),
+            FutureBuilder<void>(
+              future: commentsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Expanded(
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        reverse: true,
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            if (comments.isEmpty) {
+                              return Container();
+                            } else {
+                              return CommentCard(comment: comments[index]);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
       ),
     );
   }
-
-  Widget buildCommentItem(Comment comment) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16), // Increase vertical padding
-      child: Row(
-        children: [
-          Container(
-            width: 40, // Increase the width of the profile image container
-            height: 40, // Increase the height of the profile image container
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png'),
-              ),
-            ),
-          ),
-          SizedBox(width: 12), // Increase the spacing between the image and text
-          Expanded(
-            child: Text(
-              '${comment.username}: ${comment.text}',
-              style: TextStyle(color: Colors.grey, fontSize: 16), // Increase the font size
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  void addComment() {
-    // Get the text from the comment text field
-    String text = commentController.text.trim();
-    if (text.isNotEmpty) {
-      // Add a new comment to the list
-      setState(() {
-        comments.add(Comment(username: 'User', text: text));
-        commentController.clear(); // Clear the text field after adding the comment
-      });
-    }
-  }
-}
-
-class Comment {
-  final String username;
-  final String text;
-
-  Comment({required this.username, required this.text});
 }
