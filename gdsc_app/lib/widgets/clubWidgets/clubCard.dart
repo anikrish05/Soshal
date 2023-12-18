@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gdsc_app/screens/clubInfo.dart';
 
 class ClubCardWidget extends StatelessWidget {
   Color _cardColor = Color(0xffc8c9ca);
-  double _rating = 1.0;
   final ClubCardData club;
 
   ClubCardWidget({required this.club});
@@ -61,14 +61,20 @@ class ClubCardWidget extends StatelessWidget {
                               child: Row(
                                 children: [
                                   SizedBox(width: 14),
-                                  Row(
-                                    children: List.generate(5, (index) {
-                                      return Icon(
-                                        index < _rating ? Icons.star : Icons.star_border,
-                                        color: Colors.yellow,
-                                        size: 12,
-                                      );
-                                    }),
+                                  RatingBar.builder(
+                                    initialRating: 3,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print(rating);
+                                    },
                                   ),
                                 ],
                               ),

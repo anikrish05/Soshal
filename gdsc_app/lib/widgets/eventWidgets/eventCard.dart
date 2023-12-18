@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class EventCardWidget extends StatelessWidget {
 
   Color _cardColor = Color(0xffc8c9ca);
 
-  // Define the image dimensions
-  final double imageWidth = 100;
-  final double imageHeight = 80;
 
   @override
   Widget build(BuildContext context) {
+    final double imageWidth = MediaQuery.of(context).size.width * 0.25;
+    final double imageHeight = MediaQuery.of(context).size.height * 0.15;
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -44,8 +44,20 @@ class EventCardWidget extends StatelessWidget {
                         children: [
                           Text('By: '), // Replace 'Club Name' with your club name
                           SizedBox(width: 8), // Add more space between the "By:" text and stars
-                          Row(
-                            children: List.generate(5, (index) => Icon(Icons.star, color: Colors.yellow, size: 16)), // Make the stars smaller
+                          RatingBar.builder(
+                            initialRating: 3,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating) {
+                              print(rating);
+                            }, // Make the stars smaller
                           ),
                         ],
                       ),
