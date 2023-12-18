@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'package:gdsc_app/classes/Comment.dart';
 import 'package:gdsc_app/classes/userData.dart';
+import 'package:gdsc_app/classes/user.dart';
 
 import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
 
@@ -11,9 +12,10 @@ import 'package:http/http.dart' as http;
 
 class SlidingUpWidget extends StatefulWidget {
   final MarkerData markerData;
-  final VoidCallback onClose; // Callback to be called when the panel is closed
+  final VoidCallback onClose;
+  final User currUser;// Callback to be called when the panel is closed
 
-  SlidingUpWidget({required this.markerData, required this.onClose});
+  SlidingUpWidget({required this.markerData, required this.onClose, required this.currUser});
 
   @override
   _SlidingUpWidgetState createState() => _SlidingUpWidgetState();
@@ -26,7 +28,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // Controller for the comment text field
   TextEditingController commentController = TextEditingController();
 
-  late Future<void> commentsFuture = Future.value();
+  late Future<void> commentsFuture;
 
   Future<void> getComments() async {
     print("IN GET COMMENTS");
@@ -42,7 +44,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       );
 
       if (response.statusCode == 200) {
-        print("reponse code");
+        print("response code");
         print(jsonDecode(response.body)['message']);
         // Parse the response and update the comments list
         List<dynamic>? responseData = jsonDecode(response.body)['message'];
@@ -58,6 +60,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 email: data['userData']['email'],
                 following: List<String>.from(data['userData']['following']),
                 role: data['userData']['role'],
+                downloadURL: data['userData']['downloadURL'],
                 myEvents: List<String>.from(data['userData']['myEvents']),
                 clubIds: List<String>.from(data['userData']['clubsOwned']),
               ),
@@ -82,7 +85,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   @override
   void initState() {
     super.initState();
-    // Call the asynchronous method to fetch comments
+    // Assign the future directly without calling getComments
     commentsFuture = getComments();
   }
 
@@ -243,6 +246,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           //addComment(); // Function to add the comment
+                          addComment();
                         },
                         icon: Icon(Icons.send, color: Colors.white),
                       ),
@@ -251,42 +255,65 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
             // Comment section with scrollbar
-            FutureBuilder<void>(
-              future: commentsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Expanded(
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        reverse: true,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            if (comments.isEmpty) {
-                              return Container();
-                            } else {
+            KeyedSubtree(
+              key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
+              child: FutureBuilder<void>(
+                future: commentsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Expanded(
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          reverse: true,
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
                               return CommentCard(comment: comments[index]);
-                            }
-                          },
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void addComment() {
+    String text = commentController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        comments.add(
+          Comment(
+            comment: text,
+            likedBy: [],
+            user: UserData(
+              uid: widget.currUser.uid,
+              displayName: widget.currUser.displayName,
+              email: widget.currUser.email,
+              following: widget.currUser.following,
+              role: widget.currUser.role,
+              downloadURL: widget.currUser.downloadURL,
+              myEvents: widget.currUser.myEvents,
+              clubIds: widget.currUser.clubIds,
+            ),
+          ),
+        );
+        commentController.clear();
+      });
+    }
   }
 }
