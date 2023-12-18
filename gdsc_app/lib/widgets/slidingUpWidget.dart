@@ -26,7 +26,10 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // Controller for the comment text field
   TextEditingController commentController = TextEditingController();
 
+  late Future<void> commentsFuture = Future.value();
+
   Future<void> getComments() async {
+    print("IN GET COMMENTS");
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
@@ -34,29 +37,40 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "comments": widget.markerData.comments,
+          "comments": widget.markerData.comments ?? [], // Ensure comments is not null
         }),
       );
 
       if (response.statusCode == 200) {
+        print("reponse code");
+        print(jsonDecode(response.body)['message']);
         // Parse the response and update the comments list
-        List<dynamic> responseData = jsonDecode(response.body);
-        List<Comment> newComments = responseData.map((data) {
-          UserData tempUser = UserData(
-            uid: data['userData']['uid'],
-            displayName: data['userData']['displayName'],
-            email: data['userData']['email'],
-            following: data['userData']['following'],
-            role: data['userData']['role'],
-            myEvents: data['userData']['myEvents'],
-            clubIds: data['userData']['clubIds'],
-          );
-          return Comment(comment: data['comment'], likedBy: data['likedBy'], user: tempUser);
-        }).toList();
-
-        setState(() {
-          comments = newComments;
-        });
+        List<dynamic>? responseData = jsonDecode(response.body)['message'];
+        if (responseData != null) {
+          List<Comment> newComments = responseData.map((data) {
+            print(data['comment']);
+            return Comment(
+              comment: data['comment'],
+              likedBy: List<String>.from(data['likedBy']),
+              user: UserData(
+                uid: data['userData']['uid'],
+                displayName: data['userData']['displayName'],
+                email: data['userData']['email'],
+                following: List<String>.from(data['userData']['following']),
+                role: data['userData']['role'],
+                myEvents: List<String>.from(data['userData']['myEvents']),
+                clubIds: List<String>.from(data['userData']['clubsOwned']),
+              ),
+            );
+          }).toList();
+          print("in comment");
+          print(newComments);
+          setState(() {
+            comments = newComments;
+          });
+        } else {
+          print('Response data is null');
+        }
       } else {
         print('Failed to fetch comments: ${response.statusCode}');
       }
@@ -69,7 +83,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   void initState() {
     super.initState();
     // Call the asynchronous method to fetch comments
-    getComments();
+    commentsFuture = getComments();
   }
 
   @override
@@ -239,42 +253,40 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
             ),
             SizedBox(height: 16),
             // Comment section with scrollbar
-            Expanded(
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  reverse: true,
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: comments.length,
-                    itemBuilder: (context, index) {
-                      // Handle the case when comments are empty
-                      if (comments.length == 0) {
-                        return Container();
-                      } else {
-                        return CommentCard(comment: comments[index]);
-                      }
-                    },
-                  ),
-                ),
-              ),
+            FutureBuilder<void>(
+              future: commentsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Expanded(
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        reverse: true,
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            if (comments.isEmpty) {
+                              return Container();
+                            } else {
+                              return CommentCard(comment: comments[index]);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
       ),
     );
   }
-
-/*
-  void addComment() {
-    String text = commentController.text.trim();
-    if (text.isNotEmpty) {
-      setState(() {
-        comments.add(Comment(username: 'User', text: text));
-        commentController.clear();
-      });
-    }
-  }
-  */
 }

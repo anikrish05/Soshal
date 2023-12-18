@@ -11,7 +11,7 @@ async function associatedEventCommentAdd(comentID, eventId) {
 
 async function getAssociatedUserForComment(userID){
 	const data = await getDoc(doc(db, "users", userID)) 
-	return data;
+	return data.data();
 }
 
 const getCommentDataForEvent = async (req, res) => {
@@ -20,9 +20,10 @@ const getCommentDataForEvent = async (req, res) => {
 	for(var i =0; i<comments.length; i++){
 		    const commentDoc = doc(db, "comments", comments[i]);
         const commentData = (await getDoc(commentDoc)).data();
-        commentData.userData = getAssociatedUserForComment(commentData.user)
+        commentData.userData = await getAssociatedUserForComment(commentData.user)
         result.push(commentData);
 	}
+	console.log(result)
 
 		res.status(200).send(JSON.stringify({ message: result}))
 
