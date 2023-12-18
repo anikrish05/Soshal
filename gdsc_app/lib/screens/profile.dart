@@ -131,10 +131,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       controller: tabController,
       tabs: [
         Tab(
-          text: 'Events',
-        ),
+            child: Text(
+              'Events',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            )        ),
         Tab(
-          text: 'Clubs',
+            child: Text(
+              'Clubs',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            )
         ),
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
