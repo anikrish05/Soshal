@@ -7,6 +7,8 @@ import 'package:gdsc_app/screens/createClub.dart';
 import 'package:gdsc_app/screens/search.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
+import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:gdsc_app/screens/createEvent.dart';
 
 import 'package:http/http.dart';
 import 'dart:async';
@@ -26,7 +28,9 @@ void main() => runApp(MaterialApp(
     '/createUser': (context) => CreateUserScreen(),
     '/profile': (context) => ProfileScreen(),
     '/home': (context) => Home(),
-    '/search': (context) => SearchScreen()
+    '/search': (context) => SearchScreen(),
+    '/createEvent': (context) => CreateEventScreen(),
+    '/createEventMap': (context) => CreateEventMapScreen()
   },
 ));
 

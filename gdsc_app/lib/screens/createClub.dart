@@ -27,14 +27,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
 
-  int index = 1;
+  int indexPubOrPriv = 1;
   _CreateClubScreenState(currUserId){
     this.currUserId = currUserId;
   }
   void submit(){
     Club club = Club();
     late String type;
-    if (index==1){
+    if (indexPubOrPriv==1){
       type = "Public";
     }
     else{
@@ -142,14 +142,19 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 activeFgColor: Colors.white,
                 inactiveBgColor: Colors.grey,
                 inactiveFgColor: Colors.white,
-                initialLabelIndex: 1,
+                initialLabelIndex: 0,
                 totalSwitches: 2,
                 labels: ['Public', 'Private'],
                 radiusStyle: true,
                 onToggle: (index) {
-                  setState((){
-                    index = index;
-                  });
+                  if(index==1)
+                  {
+                    indexPubOrPriv = 0;
+                  }
+                  else if(index==0)
+                  {
+                    indexPubOrPriv = 1;
+                  }
                 },
               ),
             ]
