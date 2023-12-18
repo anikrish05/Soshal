@@ -40,6 +40,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     isUserSignedIn();
+    getData();
     loadData(); //might need to remove and just have reload capability
   }
 

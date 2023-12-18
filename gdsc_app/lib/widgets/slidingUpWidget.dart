@@ -31,7 +31,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   late Future<void> commentsFuture;
 
   Future<void> getComments() async {
-    print("IN GET COMMENTS");
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
@@ -50,7 +49,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         List<dynamic>? responseData = jsonDecode(response.body)['message'];
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
-            print(data['comment']);
             return Comment(
               comment: data['comment'],
               likedBy: List<String>.from(data['likedBy']),
@@ -66,7 +64,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
               ),
             );
           }).toList();
-          print("in comment");
           print(newComments);
           setState(() {
             comments = newComments;
@@ -293,6 +290,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   }
 
   void addComment() {
+    print(widget.currUser.uid);
     String text = commentController.text.trim();
     if (text.isNotEmpty) {
       setState(() {
