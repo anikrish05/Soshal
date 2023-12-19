@@ -39,6 +39,8 @@ class Comment {
   }
 
   Future<void> like() async{
+    isLiked = true;
+
     await post(
       Uri.parse('http://$hostName/api/comments/likeComment'),
       headers: <String, String>{
@@ -53,6 +55,16 @@ class Comment {
 
   }
   Future<void> disLike() async{
-    print("dislike");
+    isLiked = false;
+    await post(
+      Uri.parse('http://$hostName/api/comments/disLikeComment'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "uid": user.uid,
+        "commentID": commentID
+      }),
+    );
   }
 }

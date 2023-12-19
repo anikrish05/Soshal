@@ -31,6 +31,13 @@ class _CommentCardState extends State<CommentCard> {
     }
   }
 
+  @override
+  void initState() {
+    setState(() {
+      isLiked = widget.comment.isLiked;
+    });
+  }
+
   void toggleLike() {
     bool temp = !isLiked;
     setState(() {

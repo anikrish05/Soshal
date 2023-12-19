@@ -51,10 +51,12 @@ const addComment = async (req, res) => {
 
 const likeComment = async (req, res) => {
 	const { uid, commentID } = req.body;
+	console.log(uid)
+	console.log(commentID)
 	const commentDoc = doc(db, "comments", commentID);
     const commentData = (await getDoc(commentDoc)).data();
-    const updatedComments = commentData.likedBy ? [...commentData.likedBy, uid] : [uid];
-    await setDoc(commentDoc, { comments: updatedComments }, { merge: true });
+    const updatedLikes = commentData.likedBy ? [...commentData.likedBy, uid] : [uid];
+    await setDoc(commentDoc, { likedBy: updatedLikes }, { merge: true });
 
 }
 
@@ -62,13 +64,16 @@ const disLikeComment = async (req, res) => {
 	const { uid, commentID } = req.body;
 	const commentDoc = doc(db, "comments", commentID);
     const commentData = (await getDoc(commentDoc)).data();
-	const updatedComments = commentData.likedBy ? commentData.likedBy.filter(item => item !== uid) : [];
-	await setDoc(eventDoc, { comments: updatedComments }, { merge: true });
+	const updatedLikes = commentData.likedBy ? commentData.likedBy.filter(item => item !== uid) : [];
+	await setDoc(commentDoc, { likedBy: updatedLikes }, { merge: true });
 }
 
 
 
 module.exports = {
 	getCommentDataForEvent,
-	addComment
+	addComment,
+	likeComment,
+	disLikeComment
+
 };
