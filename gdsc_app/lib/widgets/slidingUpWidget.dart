@@ -50,6 +50,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
             return Comment(
+              isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
                 eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
@@ -296,6 +297,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     if (text.isNotEmpty) {
       Comment newComment =
       Comment(
+          isLiked: false,
           comment: text,
           likedBy: [],
           eventID: widget.markerData.eventID,

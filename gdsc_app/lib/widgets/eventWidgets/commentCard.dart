@@ -11,14 +11,30 @@ class CommentCard extends StatefulWidget {
 }
 
 class _CommentCardState extends State<CommentCard> {
+  bool isLiked = false;
+
   Widget _buildProfileImage() {
     if (widget.comment.user.downloadURL.isEmpty) {
-      return Image.asset('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
-          width: 40, height: 40, fit: BoxFit.cover);
+      return Image.asset(
+        'assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
     } else {
-      return Image.network(widget.comment.user.downloadURL,
-          width: 40, height: 40, fit: BoxFit.cover);
+      return Image.network(
+        widget.comment.user.downloadURL,
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
     }
+  }
+
+  void toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+    });
   }
 
   @override
@@ -30,9 +46,35 @@ class _CommentCardState extends State<CommentCard> {
           _buildProfileImage(),
           SizedBox(width: 12),
           Expanded(
-            child: Text(
-              '${widget.comment.user.displayName}: ${widget.comment.comment}',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '${widget.comment.user.displayName}:',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: toggleLike,
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : null,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  widget.comment.comment,
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ],
             ),
           ),
         ],

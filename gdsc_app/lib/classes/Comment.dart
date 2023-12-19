@@ -8,13 +8,15 @@ class Comment {
   final String comment;
   final List<String> likedBy;
   final UserData user;
-  final String eventID;// Updated to use UserData class
+  final String eventID;
+  bool isLiked;// Updated to use UserData class
 
   Comment({
     required this.user,
     required this.comment,
     required this.likedBy,
-    required this.eventID
+    required this.eventID,
+    required this.isLiked
   });
 
   Future<void> add() async{
@@ -32,5 +34,13 @@ class Comment {
         "eventID": eventID
       }),
     );
+  }
+
+  Future<void> like() async{
+    print("like");
+
+  }
+  Future<void> disLike() async{
+    print("dislike");
   }
 }
