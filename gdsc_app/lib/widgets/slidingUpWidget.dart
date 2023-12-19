@@ -51,6 +51,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
           List<Comment> newComments = responseData.map((data) {
             return Comment(
               comment: data['comment'],
+                eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
               user: UserData(
                 uid: data['userData']['uid'],
@@ -289,29 +290,34 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     );
   }
 
-  void addComment() {
+  Future<void> addComment() async {
     print(widget.currUser.uid);
     String text = commentController.text.trim();
     if (text.isNotEmpty) {
+      Comment newComment =
+      Comment(
+          comment: text,
+          likedBy: [],
+          eventID: widget.markerData.eventID,
+          user: UserData(
+            uid: widget.currUser.uid,
+            displayName: widget.currUser.displayName,
+            email: widget.currUser.email,
+            following: widget.currUser.following,
+            role: widget.currUser.role,
+            downloadURL: widget.currUser.downloadURL,
+            myEvents: widget.currUser.myEvents,
+            clubIds: widget.currUser.clubIds,
+          )
+      );
       setState(() {
         comments.add(
-          Comment(
-            comment: text,
-            likedBy: [],
-            user: UserData(
-              uid: widget.currUser.uid,
-              displayName: widget.currUser.displayName,
-              email: widget.currUser.email,
-              following: widget.currUser.following,
-              role: widget.currUser.role,
-              downloadURL: widget.currUser.downloadURL,
-              myEvents: widget.currUser.myEvents,
-              clubIds: widget.currUser.clubIds,
-            ),
-          ),
+            newComment
         );
         commentController.clear();
       });
+      newComment.add();
+
     }
   }
 }

@@ -43,6 +43,7 @@ const getFeedPosts = async (req, res) => {
 	allDocs = []
 	docsSnap.forEach(doc => {
 		data = doc.data()
+		data.eventID = doc.id
 		data.clubInfo = getAssociatedClubForEvent(data.admin)
 		allDocs.push(data)
 	res.status(200).send(JSON.stringify({ message: allDocs}))

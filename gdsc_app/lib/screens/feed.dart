@@ -149,6 +149,7 @@ class _MyAppState extends State<MyApp> {
   MarkerData getMarkerData(dynamic event) {
     print(event);
     return MarkerData(
+      eventID: event['eventID'],
       title: event['name'],
       description: event['description'],
       location: "69 Pineapple St",
