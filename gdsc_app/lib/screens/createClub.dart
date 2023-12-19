@@ -72,7 +72,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child:
-                  Image.network('https://raw.githubusercontent.com/anikrish05/Soshal/c54bb225182d1b0263a168f7aac91d8c661b24d3/gdsc_app/assets/ex1.jpeg',
+                  Image.asset('assets/ex1.jpeg',
                       height: 150,
                       width: 150,
                       fit: BoxFit.cover
