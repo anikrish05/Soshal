@@ -5,8 +5,8 @@ const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onA
 async function associatedEventCommentAdd(comentID, eventId) {
     const eventDoc = doc(db, "events", eventId);
     const eventData = (await getDoc(eventDoc)).data();
-    const updatedComments = clubData.comments ? [...clubData.comments, comentID] : [comentID];
-    await setDoc(eventDoc, { events: updatedComments }, { merge: true });
+    const updatedComments = eventData.comments ? [...eventData.comments, comentID] : [comentID];
+    await setDoc(eventDoc, { comments: updatedComments }, { merge: true });
 }
 
 async function getAssociatedUserForComment(userID){
@@ -15,33 +15,65 @@ async function getAssociatedUserForComment(userID){
 }
 
 const getCommentDataForEvent = async (req, res) => {
-	result = []
-	const { comments } = req.body;
-	for(var i =0; i<comments.length; i++){
-		    const commentDoc = doc(db, "comments", comments[i]);
-        const commentData = (await getDoc(commentDoc)).data();
-        commentData.userData = await getAssociatedUserForComment(commentData.user)
-        result.push(commentData);
-	}
-	console.log(result)
+  result = [];
+  const { comments } = req.body;
+  
+  for (var i = 0; i < comments.length; i++) {
+    const commentDoc = doc(db, "comments", comments[i]);
+    
+    // Get the comment ID using commentDoc.id
+    const commentID = commentDoc.id;
 
-		res.status(200).send(JSON.stringify({ message: result}))
+    const commentData = (await getDoc(commentDoc)).data();
+    commentData.commentID = commentID;
+    
+    // Assuming you have a function to get associated user data
+    commentData.userData = await getAssociatedUserForComment(commentData.user);
+    
+    result.push(commentData);
+  }
+
+  res.status(200).send(JSON.stringify({ message: result }));
+}
+
+
+const addComment = async (req, res) => {
+	console.log("in side add comments")
+	const { commentData, eventID } = req.body;
+	let data = JSON.parse(commentData)
+	data.likedBy = []
+	const myCollection = collection(db, 'comments');
+	const newDocRef = await addDoc(myCollection, data);
+	associatedEventCommentAdd(newDocRef.id, eventID)
+	res.status(200).send(JSON.stringify({ message: newDocRef.id}))
 
 }
 
-const addComment = async (req, res) => {
-	const { commentData, eventID } = req.body;
-	const myCollection = collection(db, 'comments');
-	const newDocRef = await addDoc(myCollection, commentData);
-	associatedEventCommentAdd(newDocRef.id, eventID)
-	res.status(200).send(JSON.stringify({ message: "Comment Added"}))
+const likeComment = async (req, res) => {
+	const { uid, commentID } = req.body;
+	console.log(uid)
+	console.log(commentID)
+	const commentDoc = doc(db, "comments", commentID);
+    const commentData = (await getDoc(commentDoc)).data();
+    const updatedLikes = commentData.likedBy ? [...commentData.likedBy, uid] : [uid];
+    await setDoc(commentDoc, { likedBy: updatedLikes }, { merge: true });
 
+}
 
+const disLikeComment = async (req, res) => {
+	const { uid, commentID } = req.body;
+	const commentDoc = doc(db, "comments", commentID);
+    const commentData = (await getDoc(commentDoc)).data();
+	const updatedLikes = commentData.likedBy ? commentData.likedBy.filter(item => item !== uid) : [];
+	await setDoc(commentDoc, { likedBy: updatedLikes }, { merge: true });
 }
 
 
 
 module.exports = {
 	getCommentDataForEvent,
-	addComment
+	addComment,
+	likeComment,
+	disLikeComment
+
 };

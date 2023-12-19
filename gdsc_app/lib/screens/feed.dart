@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:gdsc_app/widgets/slidingUpWidget.dart';
 import 'package:gdsc_app/widgets/loader.dart';
+import 'package:gdsc_app/classes/user.dart';
 
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
@@ -20,12 +21,26 @@ class _MyAppState extends State<MyApp> {
   PanelController panelController = PanelController();
   List<Marker> _markers = [];
   MarkerData? selectedMarkerData; // Track selected marker data
+  User user = User();
 
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
 
+  dynamic isUserSignedIn() async {
+    user.isUserSignedIn().then((check) async {
+      if (!check) {
+        Navigator.pushNamed(context, '/login');
+      }
+    });
+  }
+
+  Future<bool> getData() async {
+    return user.initUserData();
+  }
   @override
   void initState() {
     super.initState();
+    isUserSignedIn();
+    getData();
     loadData(); //might need to remove and just have reload capability
   }
 
@@ -114,6 +129,7 @@ class _MyAppState extends State<MyApp> {
               panel: selectedMarkerData != null
                   ? SlidingUpWidget(
                 markerData: selectedMarkerData!,
+                currUser: user,
                 onClose: () {
                   panelController.close();
                 },
@@ -133,6 +149,7 @@ class _MyAppState extends State<MyApp> {
   MarkerData getMarkerData(dynamic event) {
     print(event);
     return MarkerData(
+      eventID: event['eventID'],
       title: event['name'],
       description: event['description'],
       location: "69 Pineapple St",
