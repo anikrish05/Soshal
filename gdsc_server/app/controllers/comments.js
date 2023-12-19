@@ -15,18 +15,27 @@ async function getAssociatedUserForComment(userID){
 }
 
 const getCommentDataForEvent = async (req, res) => {
-	result = []
-	const { comments } = req.body;
-	for(var i =0; i<comments.length; i++){
-		    const commentDoc = doc(db, "comments", comments[i]);
-        const commentData = (await getDoc(commentDoc)).data();
-        commentData.userData = await getAssociatedUserForComment(commentData.user)
-        result.push(commentData);
-	}
+  result = [];
+  const { comments } = req.body;
+  
+  for (var i = 0; i < comments.length; i++) {
+    const commentDoc = doc(db, "comments", comments[i]);
+    
+    // Get the comment ID using commentDoc.id
+    const commentID = commentDoc.id;
 
-		res.status(200).send(JSON.stringify({ message: result}))
+    const commentData = (await getDoc(commentDoc)).data();
+    commentData.commentID = commentID;
+    
+    // Assuming you have a function to get associated user data
+    commentData.userData = await getAssociatedUserForComment(commentData.user);
+    
+    result.push(commentData);
+  }
 
+  res.status(200).send(JSON.stringify({ message: result }));
 }
+
 
 const addComment = async (req, res) => {
 	console.log("in side add comments")
@@ -36,8 +45,25 @@ const addComment = async (req, res) => {
 	const myCollection = collection(db, 'comments');
 	const newDocRef = await addDoc(myCollection, data);
 	associatedEventCommentAdd(newDocRef.id, eventID)
-	res.status(200).send(JSON.stringify({ message: "Comment Added"}))
+	res.status(200).send(JSON.stringify({ message: newDocRef.id}))
 
+}
+
+const likeComment = async (req, res) => {
+	const { uid, commentID } = req.body;
+	const commentDoc = doc(db, "comments", commentID);
+    const commentData = (await getDoc(commentDoc)).data();
+    const updatedComments = commentData.likedBy ? [...commentData.likedBy, uid] : [uid];
+    await setDoc(commentDoc, { comments: updatedComments }, { merge: true });
+
+}
+
+const disLikeComment = async (req, res) => {
+	const { uid, commentID } = req.body;
+	const commentDoc = doc(db, "comments", commentID);
+    const commentData = (await getDoc(commentDoc)).data();
+	const updatedComments = commentData.likedBy ? commentData.likedBy.filter(item => item !== uid) : [];
+	await setDoc(eventDoc, { comments: updatedComments }, { merge: true });
 }
 
 

@@ -9,18 +9,19 @@ class Comment {
   final List<String> likedBy;
   final UserData user;
   final String eventID;
-  bool isLiked;// Updated to use UserData class
+  bool isLiked;
+  String commentID;// Updated to use UserData class
 
   Comment({
     required this.user,
     required this.comment,
     required this.likedBy,
     required this.eventID,
-    required this.isLiked
+    required this.isLiked,
+    required this.commentID
   });
 
-  Future<void> add() async{
-    print("hello");
+  Future<String> add() async{
     final response = await post(
       Uri.parse('http://$hostName/api/comments/addComment'),
       headers: <String, String>{
@@ -34,10 +35,21 @@ class Comment {
         "eventID": eventID
       }),
     );
+    return(jsonDecode(response.body)['message']);
   }
 
   Future<void> like() async{
-    print("like");
+    await post(
+      Uri.parse('http://$hostName/api/comments/likeComment'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "uid": user.uid,
+        "commentID": commentID
+      }),
+    );
+
 
   }
   Future<void> disLike() async{

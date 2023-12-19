@@ -50,6 +50,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
             return Comment(
+              commentID: data['commentID'],
               isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
                 eventID: widget.markerData.eventID,
@@ -290,36 +291,43 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       ),
     );
   }
-
   Future<void> addComment() async {
     print(widget.currUser.uid);
     String text = commentController.text.trim();
-    if (text.isNotEmpty) {
-      Comment newComment =
-      Comment(
-          isLiked: false,
-          comment: text,
-          likedBy: [],
-          eventID: widget.markerData.eventID,
-          user: UserData(
-            uid: widget.currUser.uid,
-            displayName: widget.currUser.displayName,
-            email: widget.currUser.email,
-            following: widget.currUser.following,
-            role: widget.currUser.role,
-            downloadURL: widget.currUser.downloadURL,
-            myEvents: widget.currUser.myEvents,
-            clubIds: widget.currUser.clubIds,
-          )
-      );
-      setState(() {
-        comments.add(
-            newComment
-        );
-        commentController.clear();
-      });
-      newComment.add();
 
+    if (text.isNotEmpty) {
+      Comment newComment = Comment(
+        commentID: "temporary",
+        isLiked: false,
+        comment: text,
+        likedBy: [],
+        eventID: widget.markerData.eventID,
+        user: UserData(
+          uid: widget.currUser.uid,
+          displayName: widget.currUser.displayName,
+          email: widget.currUser.email,
+          following: widget.currUser.following,
+          role: widget.currUser.role,
+          downloadURL: widget.currUser.downloadURL,
+          myEvents: widget.currUser.myEvents,
+          clubIds: widget.currUser.clubIds,
+        ),
+      );
+
+      try {
+        // Add the comment to Firestore
+        String commentID = await newComment.add();
+
+        // Update the commentID and add to the UI
+        setState(() {
+          newComment.commentID = commentID;
+          comments.add(newComment);
+          commentController.clear();
+        });
+      } catch (error) {
+        print('Error adding comment: $error');
+      }
     }
   }
+
 }
