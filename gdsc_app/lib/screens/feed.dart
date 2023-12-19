@@ -36,12 +36,17 @@ class _MyAppState extends State<MyApp> {
   Future<bool> getData() async {
     return user.initUserData();
   }
+
   @override
   void initState() {
     super.initState();
-    isUserSignedIn();
-    getData();
-    loadData(); //might need to remove and just have reload capability
+    initializeData(); // Call a new method to handle the sequential flow
+  }
+
+  Future<void> initializeData() async {
+    await isUserSignedIn(); // Wait for isUserSignedIn to complete
+    await getData(); // Wait for getData to complete
+    await loadData(); // Wait for loadData to complete
   }
 
   // Added method to load data on demand
@@ -149,12 +154,14 @@ class _MyAppState extends State<MyApp> {
   MarkerData getMarkerData(dynamic event) {
     print(event);
     return MarkerData(
+      user: user,
       eventID: event['eventID'],
       title: event['name'],
       description: event['description'],
       location: "69 Pineapple St",
       time: "Feb 31, 7:99 AM",
       comments: event['comments'],
+      rating: event['rating'],
       image: event['downloadURL'] ==
           ""
           ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'

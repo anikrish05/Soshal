@@ -84,10 +84,22 @@ const userData  = async (req, res) => {
   });
 }
 
+const rsvp = async(req, res) => {
+        res.status(200).send(JSON.stringify({'message':"hi"}))
+
+}
+
+const deRSVP = async (req, res) => {
+        res.status(200).send(JSON.stringify({'message':"hello"}))
+
+}
+
 module.exports = {
   signup,
   login,
   signedIn,
   signout,
-  userData
+  userData,
+  rsvp,
+  deRSVP
 };

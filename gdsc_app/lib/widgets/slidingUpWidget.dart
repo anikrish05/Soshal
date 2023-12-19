@@ -150,7 +150,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            Text("By: Adithya "),
+                            Text("By: ${widget.markerData.user.displayName} "),
                             SizedBox(width: 8),
                             Row(
                               children: List.generate(

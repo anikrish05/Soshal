@@ -5,4 +5,7 @@ router.post('/login', controllers.login)
 router.get('/signedIn', controllers.signedIn)
 router.get('/signOut', controllers.signout)
 router.get('/userData',controllers.userData)
+router.post('/rsvp', controllers.login)
+router.post('/deRSVP', controllers.login)
+
 module.exports = router
