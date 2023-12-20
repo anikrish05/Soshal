@@ -72,7 +72,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child:
-                  Image.network('https://raw.githubusercontent.com/anikrish05/Soshal/c54bb225182d1b0263a168f7aac91d8c661b24d3/gdsc_app/assets/ex1.jpeg',
+                  Image.network('https://cdn.britannica.com/38/111338-050-D23BE7C8/Stars-NGC-290-Hubble-Space-Telescope.jpg?w=400&h=300&c=crop',
                       height: 150,
                       width: 150,
                       fit: BoxFit.cover
@@ -188,7 +188,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                     side: BorderSide.none,
-
                 )
             ),backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))
           ),

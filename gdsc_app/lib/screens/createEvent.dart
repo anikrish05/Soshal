@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
-import 'package:http/http.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:gdsc_app/classes/club.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 
 class CreateEventScreen extends StatefulWidget {
   _CreateEventScreenState createState() => _CreateEventScreenState();
@@ -13,17 +11,15 @@ class CreateEventScreen extends StatefulWidget {
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
-  GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
-  late TextEditingController _controller1;
-  String _valueChanged1 = '';
-  String _valueToValidate1 = '';
-  String _valueSaved1 = '';
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+  late DateTime selectedDateTime;
+
 
   var eventName = TextEditingController();
 
   var eventDesc = TextEditingController();
 
-  var location = TextEditingController();
+  LatLng? _selectedLatLng;
 
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
@@ -74,7 +70,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child:
-                          Image.network('https://raw.githubusercontent.com/anikrish05/Soshal/c54bb225182d1b0263a168f7aac91d8c661b24d3/gdsc_app/assets/ex1.jpeg',
+                          Image.network('https://cdn.britannica.com/38/111338-050-D23BE7C8/Stars-NGC-290-Hubble-Space-Telescope.jpg?w=400&h=300&c=crop',
                               height: 150,
                               width: 150,
                               fit: BoxFit.cover
@@ -90,7 +86,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                     height: 40,
                                     width: 150,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Borel', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
                                       controller: eventName,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -105,7 +101,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                     height: 110,
                                     width: 150,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Borel', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
                                       controller: eventDesc,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -164,6 +160,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     )
                 ),
                 Divider(),
+                RichText(
+                  text: TextSpan(
+                    text: 'Choose Date and Time',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 15),
+                  ),
+                ),
                 Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -173,21 +175,61 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             width: 240.0,
                             height: 30.0,
                             child:
-                            DateTimePicker
-                              (
-                              type: DateTimePickerType.dateTimeSeparate,
-                              dateMask: '[yyyy-MM-d hh:mm]',
-                              initialValue: DateTime.now().toString(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                              icon: Icon(Icons.event),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                              ),
-
-                            )
-                        )
-
+                            DateTimeField(
+                              format: format,
+                              onShowPicker: (context, currentValue) async {
+                                final dateTime = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2000),
+                                  initialDate: currentValue ?? DateTime.now(),
+                                  lastDate: DateTime(2101),
+                                );
+                                  if (dateTime != null) {
+                                  final timeOfDay = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now(),
+                                  ),
+                                );
+                                  if (timeOfDay != null) {
+                                    setState(() {
+                                      selectedDateTime = DateTime(
+                                        dateTime.year,
+                                        dateTime.month,
+                                        dateTime.day,
+                                        timeOfDay.hour,
+                                        timeOfDay.minute,
+                                      );
+                                    });
+                                    return selectedDateTime;
+                                  }
+                                  }
+                              },
+                            ),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (selectedDateTime != null) {
+                              final formattedDateTime = format.format(selectedDateTime);
+                              // For demonstration purposes, display the formatted date and time in a Snackbar
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Selected Date and Time: $formattedDateTime'),
+                                ),
+                              );
+                              // You can store `formattedDateTime` or `selectedDateTime` as needed
+                            } else {
+                              // Handle the case where no date and time are selected
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please select a date and time.'),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text('Show Snackbar'),
+                        ),
                       ],
                     )
                 ),

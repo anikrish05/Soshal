@@ -47,7 +47,7 @@ class _CreateEventMapScreenState extends State<CreateEventMapScreen> {
     setState(() {
       _selectedLatLng = tappedLatLng;
     });
-    print('Selected LatLng: $_selectedLatLng');
+
   }
 
 }

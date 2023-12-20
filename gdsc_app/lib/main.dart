@@ -25,7 +25,6 @@ void main() => runApp(MaterialApp(
     '/login': (context) => LoginScreen(),
     '/feed': (context) => MyApp(),
     '/sign': (context) => SignUpScreen(),
-    '/createUser': (context) => CreateUserScreen(),
     '/profile': (context) => ProfileScreen(),
     '/home': (context) => Home(),
     '/search': (context) => SearchScreen(),
