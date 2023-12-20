@@ -167,8 +167,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            clubText(),
-                            SizedBox(width: 8),
                             Row(
                               children: List.generate(
                                 5,
