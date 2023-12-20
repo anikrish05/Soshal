@@ -188,7 +188,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                     side: BorderSide.none,
-
                 )
             ),backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))
           ),
