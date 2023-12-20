@@ -3,6 +3,7 @@ import 'package:gdsc_app/classes/MarkerData.dart';
 import 'package:gdsc_app/classes/Comment.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
 
@@ -24,7 +25,9 @@ class SlidingUpWidget extends StatefulWidget {
 class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
   List<Comment> comments = [];
+  bool isRSVP = false;
 
+  String locationText = "Loading...";
   // Controller for the comment text field
   TextEditingController commentController = TextEditingController();
 
@@ -87,6 +90,20 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     super.initState();
     // Assign the future directly without calling getComments
     commentsFuture = getComments();
+    setState(() {
+      isRSVP = widget.markerData.isRSVP;
+    });
+    getStreetName();
+  }
+
+  Future<void> getStreetName() async{
+    print("in get street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(widget.markerData.latitude, widget.markerData.longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
+    });
   }
 
   @override
@@ -168,7 +185,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Icon(Icons.location_on),
                             Padding(padding: EdgeInsets.only(right: 4)),
-                            Text(widget.markerData.location),
+                            Text(locationText),
                           ],
                         ),
                         SizedBox(height: 8),
@@ -186,10 +203,22 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                             margin: EdgeInsets.only(bottom: 2, right: 40),
                             child: ElevatedButton(
                               onPressed: () {
+                                bool temp = !isRSVP;
+                                setState(() {
+                                  isRSVP = temp;
+                                });
+                                if(temp){
+                                  print(temp);
+                                  widget.markerData.rsvp();
+                                }
+                                else{
+                                  print(temp);
+                                  widget.markerData.unRsvp();
+                                }
                                 // Add RSVP button logic
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.grey,
+                                primary: isRSVP? Color(0xFFFF8050): Color(0xFFB2BEB5),
                                 textStyle: TextStyle(
                                   fontFamily: 'Borel',
                                   fontSize: 18,
@@ -199,7 +228,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: Text('rsvp'),
+                              child: textRSVP(),
                             ),
                           ),
                         ),
@@ -228,14 +257,14 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                     decoration: InputDecoration(
                       hintText: 'add comments',
                       filled: true,
-                      fillColor: Colors.grey,
+                      fillColor: Color(0xFFB2BEB5),
                       hintStyle: TextStyle(
                         fontFamily: 'Borel',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+                      contentPadding: EdgeInsets.symmetric(vertical: -5, horizontal: 10),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                       ),
@@ -327,6 +356,14 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       } catch (error) {
         print('Error adding comment: $error');
       }
+    }
+  }
+  Widget textRSVP(){
+    if(isRSVP){
+      return Text("rsvp'd");
+    }
+    else{
+      return Text("rsvp");
     }
   }
 

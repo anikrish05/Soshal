@@ -85,13 +85,19 @@ const userData  = async (req, res) => {
 }
 
 const rsvp = async(req, res) => {
-        res.status(200).send(JSON.stringify({'message':"hi"}))
-
+  const { uid, eventID } = req.body;
+  const userDoc = doc(db, "users", uid);
+    const userData = (await getDoc(userDoc)).data();
+    const updatedRSVP = userData.myEvents ? [...userData.myEvents, eventID] : [eventID];
+    await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
 }
 
 const deRSVP = async (req, res) => {
-        res.status(200).send(JSON.stringify({'message':"hello"}))
-
+  const { uid, eventID } = req.body;
+  const userDoc = doc(db, "users", uid);
+    const userData = (await getDoc(userDoc)).data();
+    const updatedRSVP = userData.myEvents ? userData.myEvents.filter(item => item !== eventID) : [];
+    await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
 }
 
 module.exports = {
