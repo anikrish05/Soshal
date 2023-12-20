@@ -1,3 +1,5 @@
+import 'package:gdsc_app/classes/ClubCardData.dart';
+
 class EventCardData {
   List<String> rsvpList;
   String name;
@@ -8,6 +10,8 @@ class EventCardData {
   double rating;
   List<String> comments;
   String id;
+  List<String> admin;
+  List<ClubCardData> clubInfo;
 
   EventCardData({
     required this.rsvpList,
@@ -18,6 +22,8 @@ class EventCardData {
     required this.longitude,
     required this.rating,
     required this.comments,
-    required this.id
+    required this.id,
+    required this.admin,
+    required this.clubInfo
   });
 }

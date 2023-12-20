@@ -99,11 +99,32 @@ class User {
 
           if (eventIteration.statusCode == 200) {
             var eventDataResponse = jsonDecode(eventIteration.body)['message'];
-            print(eventDataResponse);
+            List<ClubCardData> clubInfo = [];
+            /*
+            for(int i =0;i<eventDataResponse['clubInfo']; i++){
+              clubInfo.add(
+              ClubCardData(
+                admin: List<String>.from((eventDataResponse['clubInfo']['admin'] ?? []).map((event) => event.toString())),
+                category: eventDataResponse['clubInfo']['category'],
+                description: eventDataResponse['clubInfo']['description'],
+                downloadURL: eventDataResponse['clubInfo']['downloadURL'],
+                events: List<String>.from((eventDataResponse['clubInfo']['events'] ?? []).map((event) => event.toString())),
+                followers: List<String>.from((eventDataResponse['clubInfo']['followers'] ?? []).map((follower) => follower.toString())),
+                name: eventDataResponse['clubInfo']['name'],
+                type: eventDataResponse['clubInfo']['type'],
+                verified: eventDataResponse['clubInfo']['verified'],
+                id: eventDataResponse['clubInfo']['id'],
+                rating: eventDataResponse['clubInfo']['avgRating'].toDouble(),
+              ),
+              );
+
+            }
+            */
             eventData.add(
               EventCardData(
                 rsvpList: List<String>.from((eventDataResponse['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
                 name: eventDataResponse['name'],
+                admin: List<String>.from((eventDataResponse['admin'] ?? []).map((admin) => admin.toString())),
                 description: eventDataResponse['description'],
                 downloadURL: eventDataResponse['downloadURL'],
                 latitude: eventDataResponse['latitude'],
@@ -111,6 +132,7 @@ class User {
                 rating: eventDataResponse['rating'].toDouble(),
                 comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
                 id: this.myEvents[i],
+                clubInfo: clubInfo
               ),
             );
 
