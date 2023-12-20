@@ -6,6 +6,7 @@ import 'package:gdsc_app/screens/clubInfo.dart';
 class ClubCardWidget extends StatelessWidget {
   Color _cardColor = Color(0xffc8c9ca);
   final ClubCardData club;
+  double rating = 4.5; // Replace this with your dynamic rating variable
 
   ClubCardWidget({required this.club});
 
@@ -60,21 +61,16 @@ class ClubCardWidget extends StatelessWidget {
                             Flexible(
                               child: Row(
                                 children: [
-                                  SizedBox(width: 14),
-                                  RatingBar.builder(
-                                    initialRating: 3,
-                                    minRating: 1,
+                                  RatingBarIndicator(
+                                    rating: club.rating, // Replace '3' with your dynamic rating variable from the 'club' object
                                     direction: Axis.horizontal,
-                                    allowHalfRating: true,
                                     itemCount: 5,
+                                    itemSize: 8.0, // Adjust this value to change the size of the stars
                                     itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
                                     itemBuilder: (context, _) => Icon(
                                       Icons.star,
                                       color: Colors.amber,
                                     ),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
                                   ),
                                 ],
                               ),
