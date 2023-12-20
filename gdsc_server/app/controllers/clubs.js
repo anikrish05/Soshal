@@ -65,7 +65,6 @@ const getDataForSearchPage = async (req, res) => {
 			events[events.length-1].id = doc.id
 		})
 		a.events = events
-		console.log(a)
     res.status(200).send(JSON.stringify({'message':a}))
 
 	} catch (error){

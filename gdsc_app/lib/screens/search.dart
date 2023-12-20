@@ -25,82 +25,94 @@ class _SearchScreenState extends State<SearchScreen>
   List<ClubCardData> filteredItemsClubs = [];
   List<EventCardData> filteredItemsEvents = [];
 
-  final GlobalKey<AnimatedListState> _clubListKey = GlobalKey<AnimatedListState>();
-  final GlobalKey<AnimatedListState> _eventListKey = GlobalKey<AnimatedListState>();
-
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
-
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
   }
-
   void performSearch(String query) {
     setState(() {
       filteredItemsClubs = clubs
-          .where((club) => club.name.toLowerCase().contains(query.toLowerCase()))
+          .where((club) =>
+          club.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
 
       filteredItemsEvents = events
-          .where((event) => event.name.toLowerCase().contains(query.toLowerCase()))
+          .where((event) =>
+          event.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
-    });
 
-    _clubListKey.currentState?.insertItem(0);
-    _eventListKey.currentState?.insertItem(0);
+      // Keep only the first occurrence of each club based on id
+      final Set<String> clubIds = Set();
+      filteredItemsClubs.removeWhere((club) {
+        if (!clubIds.contains(club.id)) {
+          clubIds.add(club.id);
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+      // Keep only the first occurrence of each event based on id
+      final Set<String> eventIds = Set();
+      filteredItemsEvents.removeWhere((event) {
+        if (!eventIds.contains(event.id)) {
+          eventIds.add(event.id);
+          return false;
+        } else {
+          return true;
+        }
+      });
+    });
   }
+
+
 
   Future<bool> fetchClubs() async {
     print("IN FETCH CLUBS");
-    final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/api/clubs/getDataForSearchPage'));
+    final response =
+    await http.get(Uri.parse('http://10.0.2.2:3000/api/clubs/getDataForSearchPage'));
     print(response.statusCode);
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data =
-      json.decode(response.body)["message"];
-      for (int i = 0; i < data['clubs'].length; i++) {
+      final Map<String, dynamic> data = json.decode(response.body)["message"];
+      for(int i=0; i<data['clubs'].length; i++){
         clubs.add(
           ClubCardData(
-              admin: List<String>.from((data['clubs'][i]['admin'] ?? [])
-                  .map((admin) => admin.toString())),
+              admin: List<String>.from((data['clubs'][i]['admin'] ?? []).map((admin) => admin.toString())),
               category: data['clubs'][i]['category'],
               description: data['clubs'][i]['description'],
               downloadURL: data['clubs'][i]['downloadURL'],
-              events: List<String>.from((data['clubs'][i]['events'] ?? [])
-                  .map((event) => event.toString())),
-              followers: List<String>.from((data['clubs'][i]['followers'] ?? [])
-                  .map((follower) => follower.toString())),
+              events: List<String>.from((data['clubs'][i]['events'] ?? []).map((event) => event.toString())),
+              followers: List<String>.from((data['clubs'][i]['followers'] ?? []).map((follower) => follower.toString())),
               name: data['clubs'][i]['name'],
               type: data['clubs'][i]['type'],
               verified: data['clubs'][i]['verified'],
-              id: data['clubs'][i]['id']),
+              id: data['clubs'][i]['id'])
         );
       }
-      for (int i = 0; i < data['events'].length; i++) {
-        events.add(
-          EventCardData(
-              rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
-                  .map((rsvp) => rsvp.toString())),
-              name: data['events'][i]['name'],
-              description: data['events'][i]['description'],
-              downloadURL: data['events'][i]['downloadURL'],
-              latitude: data['events'][i]['latitude'],
-              longitude: data['events'][i]['longitude'],
-              rating: data['events'][i]['rating'].toDouble(),
-              comments: List<String>.from((data['events'][i]['comments'] ?? [])
-                  .map((comment) => comment.toString())),
-              id: data['events'][i]['id']),
-        );
+      for(int i = 0;i<data['events'].length;i++){
+          events.add(
+            EventCardData(
+                rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
+                name: data['events'][i]['name'],
+                description: data['events'][i]['description'],
+                downloadURL: data['events'][i]['downloadURL'],
+                latitude: data['events'][i]['latitude'],
+                longitude: data['events'][i]['longitude'],
+                rating: data['events'][i]['rating'].toDouble(),
+                comments: List<String>.from((data['events'][i]['comments'] ?? []).map((comment) => comment.toString())),
+                id: data['events'][i]['id']
+            )
+          );
       }
     } else {
       throw Exception('Failed to load clubs');
     }
     return true;
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +120,7 @@ class _SearchScreenState extends State<SearchScreen>
         future: fetchClubs(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoaderWidget();
+            return(LoaderWidget());
           } else if (snapshot.hasError) {
             return Center(
               child: Text('Error: ${snapshot.error}'),
@@ -122,6 +134,9 @@ class _SearchScreenState extends State<SearchScreen>
                   padding: EdgeInsets.all(10.0),
                 ),
                 buildTabBar(),
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                ),
                 buildSearchResultList(),
               ],
             );
@@ -133,10 +148,11 @@ class _SearchScreenState extends State<SearchScreen>
 
   Widget buildText() => SizedBox(
     width: 350,
-    child: TextFormField(
-      onChanged: (text) {
-        performSearch(text);
+    child: TextField(
+      onSubmitted: (value){
+        performSearch(searchController.text);
       },
+      textInputAction: TextInputAction.search,
       controller: searchController,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
@@ -149,7 +165,7 @@ class _SearchScreenState extends State<SearchScreen>
         filled: true,
         fillColor: _color2,
       ),
-    ),
+),
   );
 
   Widget buildTabBar() => TabBar(
@@ -174,36 +190,34 @@ class _SearchScreenState extends State<SearchScreen>
   Widget buildSearchResultList() {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: Row(
+      child: Column(
         children: <Widget>[
           Expanded(
-            child: AnimatedList(
-              key: _clubListKey,
-              initialItemCount: filteredItemsClubs.length,
-              itemBuilder: (context, index, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: ClubCardWidget(club: filteredItemsClubs[index]),
-                );
+            child: ListView.builder(
+              itemCount: filteredItemsClubs.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return ClubCardWidget(club: filteredItemsClubs[index]);
               },
             ),
           ),
           /*
-          Expanded(
-            child: AnimatedList(
-              key: _eventListKey,
-              initialItemCount: filteredItemsEvents.length,
-              itemBuilder: (context, index, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: EventCardWidget(event: filteredItemsEvents[index]),
-                );
-              },
-            ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: filteredItemsEvents.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return EventCardWidget(event: filteredItemsEvents[index]);
+            },
           ),
-         */
+        ),
+        */
         ],
       ),
     );
   }
+
 }
