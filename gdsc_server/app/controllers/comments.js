@@ -38,7 +38,6 @@ const getCommentDataForEvent = async (req, res) => {
 
 
 const addComment = async (req, res) => {
-	console.log("in side add comments")
 	const { commentData, eventID } = req.body;
 	let data = JSON.parse(commentData)
 	data.likedBy = []
@@ -51,8 +50,6 @@ const addComment = async (req, res) => {
 
 const likeComment = async (req, res) => {
 	const { uid, commentID } = req.body;
-	console.log(uid)
-	console.log(commentID)
 	const commentDoc = doc(db, "comments", commentID);
     const commentData = (await getDoc(commentDoc)).data();
     const updatedLikes = commentData.likedBy ? [...commentData.likedBy, uid] : [uid];

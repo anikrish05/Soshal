@@ -1,4 +1,6 @@
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
@@ -15,9 +17,9 @@ class MarkerData {
   bool isRSVP;
   final double latitude;
   final double longitude;
-
+  final List<ClubCardData> clubs;
   MarkerData({required this.title, required this.description, required this.time, required this.image, required this.comments, required this.eventID,
-    required this.user, required this.rating, required this.isRSVP, required this.latitude, required this.longitude
+    required this.user, required this.rating, required this.isRSVP, required this.latitude, required this.longitude, required this.clubs
   });
 
 

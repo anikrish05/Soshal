@@ -37,9 +37,7 @@ const createClub = async (req, res) => {
 const getClub = async (req, res) => {
   try {
     const id = req.params.id;
-	console.log(id);
     const docRef = await getDoc(doc(db, "clubs", id));
-	console.log(docRef.data());
         res.status(200).send(JSON.stringify({'message':docRef.data()}))
    
   } catch (error) {

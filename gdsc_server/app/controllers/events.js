@@ -13,6 +13,7 @@ async function getAssociatedClubForEvent(admin) {
     for (const clubId of admin) {
         const clubDoc = doc(db, "clubs", clubId);
         const clubData = (await getDoc(clubDoc)).data();
+        clubData.id = clubDoc.id
         clubInfo.push(clubData);
     }
     return clubInfo;
@@ -38,17 +39,25 @@ const createEvent = async (req, res) => {
 }
 
 const getFeedPosts = async (req, res) => {
-	const colRef = collection(db, "events");
-	const docsSnap = await getDocs(colRef);
-	allDocs = []
-	docsSnap.forEach(doc => {
-		data = doc.data()
-		data.eventID = doc.id
-		data.clubInfo = getAssociatedClubForEvent(data.admin)
-		allDocs.push(data)
-	res.status(200).send(JSON.stringify({ message: allDocs}))
-	})
-}
+  try {
+    const colRef = collection(db, "events");
+    const docsSnap = await getDocs(colRef);
+
+    const allDocs = [];
+    
+    for (const doc of docsSnap.docs) {
+      const data = doc.data();
+      data.eventID = doc.id;
+      data.clubInfo = await getAssociatedClubForEvent(data.admin);
+      allDocs.push(data);
+    }
+    res.status(200).send(JSON.stringify({ message: allDocs }));
+  } catch (error) {
+    console.error('Error in getFeedPosts:', error);
+    res.status(500).send(JSON.stringify({ error: 'Internal Server Error' }));
+  }
+};
+
 
 module.exports = {
 	createEvent,

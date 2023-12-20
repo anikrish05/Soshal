@@ -167,7 +167,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            Text("By: ${widget.markerData.user.displayName} "),
+                            clubText(),
                             SizedBox(width: 8),
                             Row(
                               children: List.generate(
@@ -357,6 +357,19 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         print('Error adding comment: $error');
       }
     }
+  }
+  Widget clubText(){
+    String text = "By: ";
+    for(int i =0;i<widget.markerData.clubs.length;i++){
+      if (i==widget.markerData.clubs.length-1){
+        text+=" ${widget.markerData.clubs[i].name}";
+      }
+      else{
+        text+="${widget.markerData.clubs[i].name}, ";
+      }
+
+    }
+    return(Text(text));
   }
   Widget textRSVP(){
     if(isRSVP){

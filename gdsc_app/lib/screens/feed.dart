@@ -5,6 +5,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:gdsc_app/widgets/slidingUpWidget.dart';
 import 'package:gdsc_app/widgets/loader.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
@@ -153,9 +154,27 @@ class _MyAppState extends State<MyApp> {
 
   MarkerData getMarkerData(dynamic event) {
     print("HELLLOO");
-    print(user.myEvents);
+    print(event);
+    List<ClubCardData> clubs = [];
+    event['clubInfo'].forEach((club) {
+        clubs.add(
+            ClubCardData(
+                admin: List<String>.from((club['admin'] ?? []).map((admin) => admin.toString())),
+                category: club['category'],
+                description: club['description'],
+                downloadURL: club['downloadURL'],
+                events: List<String>.from((club['events'] ?? []).map((event) => event.toString())),
+                followers: List<String>.from((club['followers'] ?? []).map((follower) => follower.toString())),
+                name: club['name'],
+                type: club['type'],
+                verified: club['verified'],
+                id: club['id']
+            )
+        );
+    });
     return MarkerData(
       user: user,
+      clubs: clubs,
       isRSVP: user.myEvents.contains(event['eventID']),
       eventID: event['eventID'],
       title: event['name'],
