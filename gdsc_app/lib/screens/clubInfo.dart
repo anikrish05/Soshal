@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/screens/createEvent.dart';
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -135,7 +136,45 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                             },
                             child: Row(
                               children: [
-                                Icon(Icons.edit, color: _orangeColor),
+                                // Edit icon
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isEditing = true;
+                                    });
+                                    _showEditSheet(context);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _orangeColor,
+                                    ),
+                                    child: Icon(Icons.edit, color: Colors.white),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                // Create Event button
+                                GestureDetector(
+                                  onTap: () {
+                                    // Add your logic for creating an event here
+                                    // For example, navigate to the create event screen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateEventScreen(club: club),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _orangeColor,
+                                    ),
+                                    child: Icon(Icons.add, color: Colors.white),
+                                  ),
+                                ),
                               ],
                             ),
                           ),

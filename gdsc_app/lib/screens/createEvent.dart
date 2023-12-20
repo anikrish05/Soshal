@@ -6,8 +6,11 @@ import 'package:http/http.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
 
 class CreateEventScreen extends StatefulWidget {
+  final ClubCardData club;
+  CreateEventScreen({required this.club});
   _CreateEventScreenState createState() => _CreateEventScreenState();
 
 }
@@ -74,7 +77,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child:
-                          Image.network('https://raw.githubusercontent.com/anikrish05/Soshal/c54bb225182d1b0263a168f7aac91d8c661b24d3/gdsc_app/assets/ex1.jpeg',
+                          Image.asset('assets/ex1.jpeg',
                               height: 150,
                               width: 150,
                               fit: BoxFit.cover
@@ -132,7 +135,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             child: ElevatedButton(
                               style: style2,
                               onPressed: () {onGetLocation();},
-                              child: const Text('Chose Location'),
+                              child: const Text('Choose Location'),
                             ),
                           ),
                           VerticalDivider(),
