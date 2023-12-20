@@ -22,7 +22,8 @@ const createClub = async (req, res) => {
 		category: category,
 		followers: [],
 		events: [],
-		admin: admin
+		admin: admin,
+		avgRating: 0
 	}
 	const clubCollection = collection(db, 'clubs');
 	  addDoc(clubCollection, data).then((docRef)=>{

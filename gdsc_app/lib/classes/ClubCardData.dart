@@ -9,6 +9,7 @@ class ClubCardData {
   String type;
   bool verified;
   String id;
+  double rating;
 
   ClubCardData({
     required this.admin,
@@ -20,6 +21,7 @@ class ClubCardData {
     required this.name,
     required this.type,
     required this.verified,
-    required this.id
+    required this.id,
+    required this.rating
   });
 }
