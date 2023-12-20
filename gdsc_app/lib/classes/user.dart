@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 
+import 'EventCardData.dart';
+
 const hostName = "10.0.2.2:3000";
 
 class User {
@@ -15,6 +17,7 @@ class User {
   List<String> following = [];
   String role = "";
   List<String> myEvents = [];
+  List<EventCardData> eventData = [];
   List<ClubCardData> clubData = [];
   List<String> clubIds = [];
   String gradYr = "update";
@@ -43,7 +46,7 @@ class User {
     return true;
   }
 
-  Future<bool> getClubData() async {
+  Future<void> getClubData() async {
     if (this.clubIds != null) {
       for (var i = 0; i < this.clubIds.length; i++) {
         print("loop" + i.toString());
@@ -81,9 +84,54 @@ class User {
     } else {
       print("clubIds is null");
     }
-    return true;
   }
 
+
+  Future<void> getEventData() async {
+    print(this.myEvents);
+    if (this.myEvents != null) {
+      for (var i = 0; i < this.myEvents.length; i++) {
+        print("loop" + i.toString());
+        try {
+          final eventIteration = await get(
+            Uri.parse('http://$hostName/api/events/getEvent/${this.myEvents[i]}'),
+          );
+
+          if (eventIteration.statusCode == 200) {
+            var eventDataResponse = jsonDecode(eventIteration.body)['message'];
+            print(eventDataResponse);
+            eventData.add(
+              EventCardData(
+                rsvpList: List<String>.from((eventDataResponse['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
+                name: eventDataResponse['name'],
+                description: eventDataResponse['description'],
+                downloadURL: eventDataResponse['downloadURL'],
+                latitude: eventDataResponse['latitude'],
+                longitude: eventDataResponse['longitude'],
+                rating: eventDataResponse['rating'].toDouble(),
+                comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
+                id: this.myEvents[i],
+              ),
+            );
+
+            print("Event data added for ID ${this.myEvents[i]}");
+          } else {
+            print("Error fetching event data for ID ${this.myEvents[i]} - StatusCode: ${eventIteration.statusCode}");
+          }
+        } catch (error) {
+          print("Error fetching event data for ID ${this.myEvents[i]}: $error");
+        }
+      }
+    } else {
+      print("myEvents is null");
+    }
+  }
+
+  Future<bool> getClubAndEventData() async{
+    await getClubData();
+    await getEventData();
+    return true;
+  }
 
   Future<bool> signIn(String email, String password) async {
     print("in SignIn");

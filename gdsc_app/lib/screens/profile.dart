@@ -47,8 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return user.initUserData();
   }
 
-  Future<bool> getClubs() async {
-    return user.getClubData();
+  Future<bool> getAllEventsClubs() async {
+    return user.getClubAndEventData();
   }
 
   Future<void> _pickImage() async {
@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return FutureBuilder<bool>(
-                future: getClubs(),
+                future: getAllEventsClubs(),
                 builder: (BuildContext context, AsyncSnapshot<bool> clubsSnapshot) {
                   if (clubsSnapshot.connectionState == ConnectionState.done) {
                     return buildProfileUI();
@@ -151,11 +151,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     height: MediaQuery.of(context).size.height,
     child: TabBarView(
       children: [
-        ListView(
-          children: [
-            EventCardWidget(),
-            EventCardWidget(),
-          ],
+        ListView.builder(
+            itemCount: user.eventData.length,
+            itemBuilder: (context, index){
+              return EventCardWidget(event: user.eventData[index]);
+            }
         ),
         ListView.builder(
           itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),

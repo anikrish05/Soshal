@@ -83,6 +83,7 @@ class _SearchScreenState extends State<SearchScreen>
           ClubCardData(
               admin: List<String>.from((data['clubs'][i]['admin'] ?? []).map((admin) => admin.toString())),
               category: data['clubs'][i]['category'],
+              rating: data['clubs'][i]['avgRating'].toDouble(),
               description: data['clubs'][i]['description'],
               downloadURL: data['clubs'][i]['downloadURL'],
               events: List<String>.from((data['clubs'][i]['events'] ?? []).map((event) => event.toString())),
@@ -186,38 +187,22 @@ class _SearchScreenState extends State<SearchScreen>
       ),
     ],
   );
-
   Widget buildSearchResultList() {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredItemsClubs.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return ClubCardWidget(club: filteredItemsClubs[index]);
-              },
-            ),
-          ),
-          /*
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredItemsEvents.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return EventCardWidget(event: filteredItemsEvents[index]);
-            },
-          ),
-        ),
-        */
-        ],
+      child: ListView.builder(
+        itemCount: filteredItemsClubs.length + filteredItemsEvents.length,
+        itemBuilder: (context, index) {
+          if (index < filteredItemsClubs.length) {
+            return ClubCardWidget(club: filteredItemsClubs[index]);
+          } else {
+            return EventCardWidget(event: filteredItemsEvents[index - filteredItemsClubs.length]);
+          }
+        },
       ),
     );
   }
+
+
 
 }

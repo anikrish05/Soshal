@@ -185,6 +185,7 @@ class _MyAppState extends State<MyApp> {
           admin: List<String>.from((club['admin'] ?? [])
               .map((admin) => admin.toString())),
           category: club['category'],
+          rating: club['avgRating'].toDouble(),
           description: club['description'],
           downloadURL: club['downloadURL'],
           events: List<String>.from((club['events'] ?? [])

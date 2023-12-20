@@ -65,8 +65,21 @@ const getFeedPosts = async (req, res) => {
   }
 };
 
+const getEvent = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const docRef = await getDoc(doc(db, "events", id));
+        res.status(200).send(JSON.stringify({'message':docRef.data()}))
+   
+  } catch (error) {
+    console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+  }
+};
+
 
 module.exports = {
 	createEvent,
-	getFeedPosts
+	getFeedPosts,
+	getEvent
 };

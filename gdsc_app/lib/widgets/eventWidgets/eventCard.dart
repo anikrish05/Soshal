@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:gdsc_app/classes/EventCardData.dart';
+import 'package:geocoding/geocoding.dart';
 
-class EventCardWidget extends StatelessWidget {
+class EventCardWidget extends StatefulWidget {
+  EventCardData event;
+  EventCardWidget({required this.event});
 
+  @override
+  State<EventCardWidget> createState() => _EventCardWidgetState();
+}
+
+class _EventCardWidgetState extends State<EventCardWidget> {
   Color _cardColor = Color(0xffc8c9ca);
-  double rating = 3.5; // Replace this with your dynamic rating variable
+  String locationText = "Loading...";
+  double rating = 3.5;
+ // Replace this with your dynamic rating variable
+  Future<void> getStreetName() async{
+    print("in get street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getStreetName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +69,7 @@ class EventCardWidget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Eventx', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), // Replace 'Title Header' with your title
+                              Text('${widget.event.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), // Replace 'Title Header' with your title
                               SizedBox(height: 8), // Add more spacing vertically
                               Row(
                                 children: [
@@ -65,7 +91,7 @@ class EventCardWidget extends StatelessWidget {
                               Row(
                                 children: [
                                   Icon(Icons.location_on), // Add a location icon
-                                  Text('X-Location'), // Replace 'Location' with your location
+                                  Text(locationText), // Replace 'Location' with your location
                                 ],
                               ),
                               SizedBox(height: 8), // Add more spacing vertically
