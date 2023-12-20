@@ -4,9 +4,10 @@ import 'package:gdsc_app/classes/Comment.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 
 import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -14,9 +15,10 @@ import 'package:http/http.dart' as http;
 class SlidingUpWidget extends StatefulWidget {
   final MarkerData markerData;
   final VoidCallback onClose;
-  final User currUser;// Callback to be called when the panel is closed
+  final User currUser; // Callback to be called when the panel is closed
 
-  SlidingUpWidget({required this.markerData, required this.onClose, required this.currUser});
+  SlidingUpWidget(
+      {required this.markerData, required this.onClose, required this.currUser});
 
   @override
   _SlidingUpWidgetState createState() => _SlidingUpWidgetState();
@@ -26,6 +28,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
   List<Comment> comments = [];
   bool isRSVP = false;
+  final format = DateFormat("yyyy-MM-dd HH:mm");
 
   String locationText = "Loading...";
   // Controller for the comment text field
@@ -36,7 +39,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   Future<void> getComments() async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
+        Uri.parse(
+            'http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -49,24 +53,28 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         print("response code");
         print(jsonDecode(response.body)['message']);
         // Parse the response and update the comments list
-        List<dynamic>? responseData = jsonDecode(response.body)['message'];
+        List<dynamic>? responseData =
+        jsonDecode(response.body)['message'];
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
             return Comment(
               commentID: data['commentID'],
               isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
-                eventID: widget.markerData.eventID,
+              eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
               user: UserData(
                 uid: data['userData']['uid'],
                 displayName: data['userData']['displayName'],
                 email: data['userData']['email'],
-                following: List<String>.from(data['userData']['following']),
+                following:
+                List<String>.from(data['userData']['following']),
                 role: data['userData']['role'],
                 downloadURL: data['userData']['downloadURL'],
-                myEvents: List<String>.from(data['userData']['myEvents']),
-                clubIds: List<String>.from(data['userData']['clubsOwned']),
+                myEvents:
+                List<String>.from(data['userData']['myEvents']),
+                clubIds:
+                List<String>.from(data['userData']['clubsOwned']),
               ),
             );
           }).toList();
@@ -96,14 +104,22 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     getStreetName();
   }
 
-  Future<void> getStreetName() async{
+  Future<void> getStreetName() async {
     print("in get street name");
-    List<Placemark> placemarks = await placemarkFromCoordinates(widget.markerData.latitude, widget.markerData.longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        widget.markerData.latitude, widget.markerData.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
       locationText = tempText;
     });
+  }
+
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime dateTime = format.parse(dateTimeString);
+    String formattedDateTime =
+    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    return formattedDateTime;
   }
 
   @override
@@ -151,7 +167,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Text(
                               widget.markerData.title,
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -160,7 +177,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Text(
                               widget.markerData.description,
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.normal),
                             ),
                           ],
                         ),
@@ -172,13 +190,13 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                 5,
                                     (index) => Padding(
                                   padding: EdgeInsets.only(right: 4),
-                                  child: Icon(Icons.star, color: Colors.grey, size: 16),
+                                  child: Icon(Icons.star,
+                                      color: Colors.grey, size: 16),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        //clubText(), //this is the function to get the widget fix the UI
                         SizedBox(height: 8),
                         Row(
                           children: [
@@ -192,7 +210,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Icon(Icons.access_time),
                             Padding(padding: EdgeInsets.only(right: 4)),
-                            Text(widget.markerData.time),
+                            Text(getFormattedDateTime(widget.markerData.time)),
                           ],
                         ),
                         SizedBox(height: 8),
@@ -206,18 +224,19 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                 setState(() {
                                   isRSVP = temp;
                                 });
-                                if(temp){
+                                if (temp) {
                                   print(temp);
                                   widget.markerData.rsvp();
-                                }
-                                else{
+                                } else {
                                   print(temp);
                                   widget.markerData.unRsvp();
                                 }
                                 // Add RSVP button logic
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: isRSVP? Color(0xFFFF8050): Color(0xFFB2BEB5),
+                                primary: isRSVP
+                                    ? Color(0xFFFF8050)
+                                    : Color(0xFFB2BEB5),
                                 textStyle: TextStyle(
                                   fontFamily: 'Borel',
                                   fontSize: 18,
@@ -263,7 +282,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      contentPadding: EdgeInsets.symmetric(vertical: -5, horizontal: 10),
+                      contentPadding:
+                      EdgeInsets.symmetric(vertical: -5, horizontal: 10),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                       ),
@@ -319,6 +339,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       ),
     );
   }
+
   Future<void> addComment() async {
     print(widget.currUser.uid);
     String text = commentController.text.trim();
@@ -357,26 +378,24 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       }
     }
   }
-  Widget clubText(){
-    String text = "By: ";
-    for(int i =0;i<widget.markerData.clubs.length;i++){
-      if (i==widget.markerData.clubs.length-1){
-        text+=" ${widget.markerData.clubs[i].name}";
-      }
-      else{
-        text+="${widget.markerData.clubs[i].name}, ";
-      }
 
+  Widget clubText() {
+    String text = "By: ";
+    for (int i = 0; i < widget.markerData.clubs.length; i++) {
+      if (i == widget.markerData.clubs.length - 1) {
+        text += " ${widget.markerData.clubs[i].name}";
+      } else {
+        text += "${widget.markerData.clubs[i].name}, ";
+      }
     }
-    return(Text(text));
+    return (Text(text));
   }
-  Widget textRSVP(){
-    if(isRSVP){
+
+  Widget textRSVP() {
+    if (isRSVP) {
       return Text("rsvp'd");
-    }
-    else{
+    } else {
       return Text("rsvp");
     }
   }
-
 }

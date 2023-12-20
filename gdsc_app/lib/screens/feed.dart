@@ -210,7 +210,7 @@ class _MyAppState extends State<MyApp> {
       description: eventDataCopy['description'],
       longitude: eventDataCopy['longitude'],
       latitude: eventDataCopy['latitude'],
-      time: "Feb 31, 7:99 AM",
+      time: eventDataCopy['timestamp'],
       comments: eventDataCopy['comments'],
       rating: eventDataCopy['rating'].toDouble(),
       image: eventDataCopy['downloadURL'] ==
