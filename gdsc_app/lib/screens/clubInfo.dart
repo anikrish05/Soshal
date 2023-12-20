@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/screens/createEvent.dart';
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -135,7 +136,45 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                             },
                             child: Row(
                               children: [
-                                Icon(Icons.edit, color: _orangeColor),
+                                // Edit icon
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isEditing = true;
+                                    });
+                                    _showEditSheet(context);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _orangeColor,
+                                    ),
+                                    child: Icon(Icons.edit, color: Colors.white),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                // Create Event button
+                                GestureDetector(
+                                  onTap: () {
+                                    // Add your logic for creating an event here
+                                    // For example, navigate to the create event screen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateEventScreen(club: club),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _orangeColor,
+                                    ),
+                                    child: Icon(Icons.add, color: Colors.white),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -165,9 +204,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                     isEditing = false;
                   });
                 },
-                child: Container(
-                  color: Colors.black.withOpacity(0.5),
-                ),
               ),
             ),
         ],
@@ -180,105 +216,120 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+        return Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  isEditing = false; // Reset isEditing state
+                });
+              },
+              color: _orangeColor,
+            ),
+            backgroundColor: Colors.white,
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          profilePicture(),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                // Add your logic for editing the profile picture here
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _orangeColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            profilePicture(),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Add your logic for editing the profile picture here
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _orangeColor,
+                                  ),
+                                  child: Icon(Icons.edit, color: Colors.white),
                                 ),
-                                child: Icon(Icons.edit, color: Colors.white),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Column(
-                        children: [
-                          TextField(
-                            controller: clubNameController,
-                            decoration: InputDecoration(labelText: 'Club Name'),
-                            maxLines: null,
-                          ),
-                          TextField(
-                            controller: clubTypeController,
-                            decoration: InputDecoration(labelText: 'Club Type'),
-                            maxLines: null,
-                          ),
-                          TextField(
-                            controller: clubDescController,
-                            decoration: InputDecoration(labelText: 'Club Description'),
-                            maxLines: null,
-                          ),
-                          // Add more text fields as needed
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                    ],
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Column(
+                          children: [
+                            TextField(
+                              controller: clubNameController,
+                              decoration: InputDecoration(labelText: 'Club Name'),
+                              maxLines: null,
+                            ),
+                            TextField(
+                              controller: clubTypeController,
+                              decoration: InputDecoration(labelText: 'Club Type'),
+                              maxLines: null,
+                            ),
+                            TextField(
+                              controller: clubDescController,
+                              decoration: InputDecoration(labelText: 'Club Description'),
+                              maxLines: null,
+                            ),
+                            // Add more text fields as needed
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Implement the logic for saving edits
-                  setState(() {
-                    isEditing = false;
-                    club.name = clubNameController.text;
-                    club.type = clubTypeController.text;
-                    club.description = clubDescController.text;
-                  });
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: _orangeColor,
-                  textStyle: TextStyle(
-                    fontFamily: 'Borel',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Implement the logic for saving edits
+                    setState(() {
+                      isEditing = false;
+                      club.name = clubNameController.text;
+                      club.type = clubTypeController.text;
+                      club.description = clubDescController.text;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: _orangeColor,
+                    textStyle: TextStyle(
+                      fontFamily: 'Borel',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  child: Text('save'),
                 ),
-                child: Text('save'),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
   }
+
 
 
 

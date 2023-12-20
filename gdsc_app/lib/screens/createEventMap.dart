@@ -35,7 +35,7 @@ class _CreateEventMapScreenState extends State<CreateEventMapScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigate to the previous screen
-          Navigator.pop(context);
+          Navigator.pop(context, _selectedLatLng);
         },
         child: Icon(Icons.check),
       ),

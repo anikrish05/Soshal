@@ -24,7 +24,6 @@ const signup  = async (req, res) => {
   else{
     data.role = "user"
   }
-  console.log(data)
   setDoc(doc(db, "users", data.uid), data).then(()=>{
        res.status(200).send(JSON.stringify({ message: user}))
 
@@ -37,12 +36,10 @@ const signup  = async (req, res) => {
     });
 }
 const login  = async (req, res) => {
-  console.log("login")
      const {email, password} = req.body;
   signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
   // Signed in
   var user = userCredential.user;
-  console.log(user);
    res.status(200).send(JSON.stringify({ message: user}))
     }).catch((error) => {
         var errorCode = error.code;
@@ -84,10 +81,28 @@ const userData  = async (req, res) => {
   });
 }
 
+const rsvp = async(req, res) => {
+  const { uid, eventID } = req.body;
+  const userDoc = doc(db, "users", uid);
+    const userData = (await getDoc(userDoc)).data();
+    const updatedRSVP = userData.myEvents ? [...userData.myEvents, eventID] : [eventID];
+    await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
+}
+
+const deRSVP = async (req, res) => {
+  const { uid, eventID } = req.body;
+  const userDoc = doc(db, "users", uid);
+    const userData = (await getDoc(userDoc)).data();
+    const updatedRSVP = userData.myEvents ? userData.myEvents.filter(item => item !== eventID) : [];
+    await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
+}
+
 module.exports = {
   signup,
   login,
   signedIn,
   signout,
-  userData
+  userData,
+  rsvp,
+  deRSVP
 };

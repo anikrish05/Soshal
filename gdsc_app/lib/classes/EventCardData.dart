@@ -6,7 +6,7 @@ class EventCardData {
   double latitude;
   double longitude;
   double rating;
-  Map<String, String> comments;
+  List<String> comments;
   String id;
 
   EventCardData({

@@ -28,8 +28,6 @@ void main() => runApp(MaterialApp(
     '/profile': (context) => ProfileScreen(),
     '/home': (context) => Home(),
     '/search': (context) => SearchScreen(),
-    '/createEvent': (context) => CreateEventScreen(),
-    '/createEventMap': (context) => CreateEventMapScreen()
   },
 ));
 

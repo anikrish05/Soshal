@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/Comment.dart';
 
 class CommentCard extends StatefulWidget {
-  final Comment comment; // Define a variable to hold the comment object
+  final Comment comment;
 
-  // Constructor that takes a Comment parameter
   CommentCard({required this.comment});
 
   @override
@@ -12,7 +11,45 @@ class CommentCard extends StatefulWidget {
 }
 
 class _CommentCardState extends State<CommentCard> {
+  bool isLiked = false;
 
+  Widget _buildProfileImage() {
+    if (widget.comment.user.downloadURL.isEmpty) {
+      return Image.asset(
+        'assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        widget.comment.user.downloadURL,
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    setState(() {
+      isLiked = widget.comment.isLiked;
+    });
+  }
+
+  void toggleLike() {
+    bool temp = !isLiked;
+    setState(() {
+      isLiked = temp;
+    });
+    if(temp){
+      widget.comment.like();
+    }
+    else{
+      widget.comment.disLike();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,22 +57,38 @@ class _CommentCardState extends State<CommentCard> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png'),
-              ),
-            ),
-          ),
+          _buildProfileImage(),
           SizedBox(width: 12),
           Expanded(
-            child: Text(
-              '${widget.comment.user.displayName}: ${widget.comment.comment}', // Accessing the comment object
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '${widget.comment.user.displayName}:',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: toggleLike,
+                      child: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.orange : null,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  widget.comment.comment,
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ],
             ),
           ),
         ],

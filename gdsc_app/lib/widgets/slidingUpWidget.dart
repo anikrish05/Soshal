@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'package:gdsc_app/classes/Comment.dart';
 import 'package:gdsc_app/classes/userData.dart';
+import 'package:gdsc_app/classes/user.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
 
@@ -11,9 +13,10 @@ import 'package:http/http.dart' as http;
 
 class SlidingUpWidget extends StatefulWidget {
   final MarkerData markerData;
-  final VoidCallback onClose; // Callback to be called when the panel is closed
+  final VoidCallback onClose;
+  final User currUser;// Callback to be called when the panel is closed
 
-  SlidingUpWidget({required this.markerData, required this.onClose});
+  SlidingUpWidget({required this.markerData, required this.onClose, required this.currUser});
 
   @override
   _SlidingUpWidgetState createState() => _SlidingUpWidgetState();
@@ -22,14 +25,15 @@ class SlidingUpWidget extends StatefulWidget {
 class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
   List<Comment> comments = [];
+  bool isRSVP = false;
 
+  String locationText = "Loading...";
   // Controller for the comment text field
   TextEditingController commentController = TextEditingController();
 
-  late Future<void> commentsFuture = Future.value();
+  late Future<void> commentsFuture;
 
   Future<void> getComments() async {
-    print("IN GET COMMENTS");
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
@@ -42,15 +46,17 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       );
 
       if (response.statusCode == 200) {
-        print("reponse code");
+        print("response code");
         print(jsonDecode(response.body)['message']);
         // Parse the response and update the comments list
         List<dynamic>? responseData = jsonDecode(response.body)['message'];
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
-            print(data['comment']);
             return Comment(
+              commentID: data['commentID'],
+              isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
+                eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
               user: UserData(
                 uid: data['userData']['uid'],
@@ -58,12 +64,12 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 email: data['userData']['email'],
                 following: List<String>.from(data['userData']['following']),
                 role: data['userData']['role'],
+                downloadURL: data['userData']['downloadURL'],
                 myEvents: List<String>.from(data['userData']['myEvents']),
                 clubIds: List<String>.from(data['userData']['clubsOwned']),
               ),
             );
           }).toList();
-          print("in comment");
           print(newComments);
           setState(() {
             comments = newComments;
@@ -82,8 +88,22 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   @override
   void initState() {
     super.initState();
-    // Call the asynchronous method to fetch comments
+    // Assign the future directly without calling getComments
     commentsFuture = getComments();
+    setState(() {
+      isRSVP = widget.markerData.isRSVP;
+    });
+    getStreetName();
+  }
+
+  Future<void> getStreetName() async{
+    print("in get street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(widget.markerData.latitude, widget.markerData.longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
+    });
   }
 
   @override
@@ -147,8 +167,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            Text("By: Adithya "),
-                            SizedBox(width: 8),
                             Row(
                               children: List.generate(
                                 5,
@@ -165,7 +183,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Icon(Icons.location_on),
                             Padding(padding: EdgeInsets.only(right: 4)),
-                            Text(widget.markerData.location),
+                            Text(locationText),
                           ],
                         ),
                         SizedBox(height: 8),
@@ -183,10 +201,22 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                             margin: EdgeInsets.only(bottom: 2, right: 40),
                             child: ElevatedButton(
                               onPressed: () {
+                                bool temp = !isRSVP;
+                                setState(() {
+                                  isRSVP = temp;
+                                });
+                                if(temp){
+                                  print(temp);
+                                  widget.markerData.rsvp();
+                                }
+                                else{
+                                  print(temp);
+                                  widget.markerData.unRsvp();
+                                }
                                 // Add RSVP button logic
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.grey,
+                                primary: isRSVP? Color(0xFFFF8050): Color(0xFFB2BEB5),
                                 textStyle: TextStyle(
                                   fontFamily: 'Borel',
                                   fontSize: 18,
@@ -196,7 +226,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: Text('rsvp'),
+                              child: textRSVP(),
                             ),
                           ),
                         ),
@@ -225,14 +255,14 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                     decoration: InputDecoration(
                       hintText: 'add comments',
                       filled: true,
-                      fillColor: Colors.grey,
+                      fillColor: Color(0xFFB2BEB5),
                       hintStyle: TextStyle(
                         fontFamily: 'Borel',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+                      contentPadding: EdgeInsets.symmetric(vertical: -5, horizontal: 10),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                       ),
@@ -243,6 +273,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           //addComment(); // Function to add the comment
+                          addComment();
                         },
                         icon: Icon(Icons.send, color: Colors.white),
                       ),
@@ -251,42 +282,100 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
             // Comment section with scrollbar
-            FutureBuilder<void>(
-              future: commentsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Expanded(
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        reverse: true,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            if (comments.isEmpty) {
-                              return Container();
-                            } else {
+            KeyedSubtree(
+              key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
+              child: FutureBuilder<void>(
+                future: commentsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Expanded(
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          reverse: true,
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
                               return CommentCard(comment: comments[index]);
-                            }
-                          },
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),
       ),
     );
   }
+  Future<void> addComment() async {
+    print(widget.currUser.uid);
+    String text = commentController.text.trim();
+
+    if (text.isNotEmpty) {
+      Comment newComment = Comment(
+        commentID: "temporary",
+        isLiked: false,
+        comment: text,
+        likedBy: [],
+        eventID: widget.markerData.eventID,
+        user: UserData(
+          uid: widget.currUser.uid,
+          displayName: widget.currUser.displayName,
+          email: widget.currUser.email,
+          following: widget.currUser.following,
+          role: widget.currUser.role,
+          downloadURL: widget.currUser.downloadURL,
+          myEvents: widget.currUser.myEvents,
+          clubIds: widget.currUser.clubIds,
+        ),
+      );
+
+      try {
+        // Add the comment to Firestore
+        String commentID = await newComment.add();
+
+        // Update the commentID and add to the UI
+        setState(() {
+          newComment.commentID = commentID;
+          comments.add(newComment);
+          commentController.clear();
+        });
+      } catch (error) {
+        print('Error adding comment: $error');
+      }
+    }
+  }
+  Widget clubText(){
+    String text = "By: ";
+    for(int i =0;i<widget.markerData.clubs.length;i++){
+      if (i==widget.markerData.clubs.length-1){
+        text+=" ${widget.markerData.clubs[i].name}";
+      }
+      else{
+        text+="${widget.markerData.clubs[i].name}, ";
+      }
+
+    }
+    return(Text(text));
+  }
+  Widget textRSVP(){
+    if(isRSVP){
+      return Text("rsvp'd");
+    }
+    else{
+      return Text("rsvp");
+    }
+  }
+
 }

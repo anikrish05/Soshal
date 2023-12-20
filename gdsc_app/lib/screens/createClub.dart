@@ -72,7 +72,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child:
-                  Image.network('https://cdn.britannica.com/38/111338-050-D23BE7C8/Stars-NGC-290-Hubble-Space-Telescope.jpg?w=400&h=300&c=crop',
+                  Image.asset('assets/ex1.jpeg',
                       height: 150,
                       width: 150,
                       fit: BoxFit.cover

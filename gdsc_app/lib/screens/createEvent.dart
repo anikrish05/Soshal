@@ -5,7 +5,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
+import 'package:gdsc_app/classes/club.dart';
+import 'package:date_time_picker/date_time_picker.dart';
+import 'package:gdsc_app/classes/ClubCardData.dart';
+
 class CreateEventScreen extends StatefulWidget {
+  final ClubCardData club;
+  CreateEventScreen({required this.club});
   _CreateEventScreenState createState() => _CreateEventScreenState();
 
 }
@@ -14,6 +20,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   late DateTime selectedDateTime;
 
+
+  GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
+  late TextEditingController _controller1;
+  String _valueChanged1 = '';
+  String _valueToValidate1 = '';
+  String _valueSaved1 = '';
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   var eventName = TextEditingController();
 
@@ -25,11 +39,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   late String currUserId;
 
   @override
-  void onGetLocation() {
-    Navigator.push(
+  void onGetLocation() async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
     );
+    result.latitude = latitude;
+    result.longitude = longitude;
   }
 
   bool repeatable = true;
@@ -70,7 +86,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child:
-                          Image.network('https://cdn.britannica.com/38/111338-050-D23BE7C8/Stars-NGC-290-Hubble-Space-Telescope.jpg?w=400&h=300&c=crop',
+                          Image.asset('assets/ex1.jpeg',
                               height: 150,
                               width: 150,
                               fit: BoxFit.cover
@@ -128,7 +144,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             child: ElevatedButton(
                               style: style2,
                               onPressed: () {onGetLocation();},
-                              child: const Text('Chose Location'),
+                              child: const Text('Choose Location'),
                             ),
                           ),
                           VerticalDivider(),
