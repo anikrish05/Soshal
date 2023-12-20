@@ -18,6 +18,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String _valueChanged1 = '';
   String _valueToValidate1 = '';
   String _valueSaved1 = '';
+  String date = "";
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   var eventName = TextEditingController();
 
@@ -29,11 +32,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   late String currUserId;
 
   @override
-  void onGetLocation() {
-    Navigator.push(
+  void onGetLocation() async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
     );
+    result.latitude = latitude;
+    result.longitude = longitude;
   }
 
   bool repeatable = true;
@@ -176,6 +181,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             DateTimePicker
                               (
                               type: DateTimePickerType.dateTimeSeparate,
+                              onChanged: (date) {
+                                date = date;
+                              },
                               dateMask: '[yyyy-MM-d hh:mm]',
                               initialValue: DateTime.now().toString(),
                               firstDate: DateTime(2000),

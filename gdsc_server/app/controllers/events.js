@@ -1,11 +1,14 @@
 const { db, auth } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
-async function associatedClubEventAdd(club, eventId) {
-    const clubDoc = doc(db, "clubs", club);
-    const clubData = (await getDoc(clubDoc)).data();
-    const updatedEvents = clubData.events ? [...clubData.events, eventId] : [eventId];
-    await setDoc(clubDoc, { events: updatedEvents }, { merge: true });
+async function associatedClubEventAdd(clubList, eventId) {
+	for (const clubID of clubList){
+		const clubDoc = doc(db, "clubs", clubID);
+    	const clubData = (await getDoc(clubDoc)).data();
+    	const updatedEvents = clubData.events ? [...clubData.events, eventId] : [eventId];
+    	await setDoc(clubDoc, { events: updatedEvents }, { merge: true });
+	}
+
 }
 
 async function getAssociatedClubForEvent(admin) {
@@ -20,18 +23,22 @@ async function getAssociatedClubForEvent(admin) {
 }
 
 const createEvent = async (req, res) => {
-	const {name, description, image, location, time, repeat, associatedClub} = req.body;
+	const {admin, name, description, donwnloadURL, latitude, longitude, timestamp, repeat} = req.body;
 	const data = {
 		name: name,
+		admin: admin,
+		comments: [],
 		description: description,
-		image: image,
-		location: location,
-		time: time,
+		donwnloadURL: image,
+		latitude: latitude,
+		longitude: longitude,
+		rating: 0,
+		timestamp: time,
 		repeat: repeat,
 		rsvpList: []
 	}
 	addDoc(doc(db, "events"), data).then((docRef)=>{
-		associatedClubEventAdd(associatedClub, docRef.id)
+		associatedClubEventAdd(admin, docRef.id)
 		res.status(200).send(JSON.stringify({ message: "Event Added"}))
 	}).catch(error => {
         res.status(500).send(JSON.stringify({ message: "Failed"}))
