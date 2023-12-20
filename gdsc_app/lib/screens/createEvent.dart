@@ -4,6 +4,10 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
@@ -44,11 +48,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       context,
       MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
     );
-    result.latitude = latitude;
-    result.longitude = longitude;
+    print("-------------");
+    print(result);
+    latitude = result.latitude;
+    longitude = result.longitude;
   }
 
-  bool repeatable = true;
+  Future<void> postRequest() async {
+    print("post requ");
+    String timeStamp = format.format(DateTime.now());
+    await http.post(
+      Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "admin": [widget.club.id],
+        "name": eventName.text,
+        "description": eventDesc.text,
+        "downloadURL": "",
+        "latitude": latitude,
+        "longitude": longitude,
+        "timestamp": timeStamp,
+        "repeat": repeatable,
+      }),
+    );
+    Navigator.pop(context);
+  }
+
+  bool repeatable = false;
   final ButtonStyle style2 =
   ElevatedButton.styleFrom(
       backgroundColor: Colors.orange,
@@ -287,7 +315,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         child:
                         ElevatedButton(
                           style: style,
-                          onPressed: () {},
+                          onPressed: () {postRequest();},
                           child: const Text('post'),
                         ),
                       )

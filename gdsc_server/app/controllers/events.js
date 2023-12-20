@@ -23,21 +23,21 @@ async function getAssociatedClubForEvent(admin) {
 }
 
 const createEvent = async (req, res) => {
-	const {admin, name, description, donwnloadURL, latitude, longitude, timestamp, repeat} = req.body;
+	const {admin, name, description, downloadURL, latitude, longitude, timestamp, repeat} = req.body;
 	const data = {
 		name: name,
 		admin: admin,
 		comments: [],
 		description: description,
-		donwnloadURL: image,
+		donwnloadURL: downloadURL,
 		latitude: latitude,
 		longitude: longitude,
 		rating: 0,
-		timestamp: time,
+		timestamp: timestamp,
 		repeat: repeat,
 		rsvpList: []
 	}
-	addDoc(doc(db, "events"), data).then((docRef)=>{
+	addDoc(collection(db, "events"), data).then((docRef)=>{
 		associatedClubEventAdd(admin, docRef.id)
 		res.status(200).send(JSON.stringify({ message: "Event Added"}))
 	}).catch(error => {

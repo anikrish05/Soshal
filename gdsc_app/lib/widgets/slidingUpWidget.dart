@@ -178,6 +178,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                             ),
                           ],
                         ),
+                        //clubText(), //this is the function to get the widget fix the UI
                         SizedBox(height: 8),
                         Row(
                           children: [
