@@ -46,7 +46,36 @@ const getClub = async (req, res) => {
   }
 };
 
+const getDataForSearchPage = async (req, res) => {
+	try{
+		let a = {}
+		const clubRef = collection(db, "clubs");
+		const eventsRef = collection(db, "events");
+		const clubData = await getDocs(clubRef);
+		const eventData = await getDocs(eventsRef);
+		clubs = []
+		clubData.forEach(doc => {
+			clubs.push(doc.data())
+			clubs[clubs.length-1].id = doc.id
+		})
+		a.clubs = clubs
+		events = []
+		eventData.forEach(doc => {
+			events.push(doc.data())
+			events[events.length-1].id = doc.id
+		})
+		a.events = events
+		console.log(a)
+    res.status(200).send(JSON.stringify({'message':a}))
+
+	} catch (error){
+		console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+	}
+}
+
 module.exports = {
 	createClub,
-	getClub
+	getClub,
+	getDataForSearchPage
 };
