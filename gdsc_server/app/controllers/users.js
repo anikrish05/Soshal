@@ -5,7 +5,7 @@ const { ref, uploadBytes } = require('firebase/storage');
 
 const signup = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, classOf } = req.body;
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -17,7 +17,8 @@ const signup = async (req, res) => {
       role: false,
       email: email,
       myEvents: [],
-      clubsOwned: []
+      clubsOwned: [],
+      classOf: classOf
     };
 
     await setDoc(doc(db, "users", data.uid), data);
