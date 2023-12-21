@@ -97,6 +97,13 @@ const deRSVP = async (req, res) => {
     await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
 }
 
+const updateProfile = async(req, res) => {
+  const {displayName, classOf, uid} = req.body;
+  const userDoc = doc(db, "users", uid);
+    const userData = (await getDoc(userDoc)).data();
+    await setDoc(userDoc, { displayName: displayName, classOf: classOf }, { merge: true });
+}
+
 module.exports = {
   signup,
   login,
@@ -104,5 +111,6 @@ module.exports = {
   signout,
   userData,
   rsvp,
-  deRSVP
+  deRSVP,
+  updateProfile
 };
