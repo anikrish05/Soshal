@@ -64,6 +64,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
               eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
               user: UserData(
+                classOf: data['userData']['classOf'],
                 uid: data['userData']['uid'],
                 displayName: data['userData']['displayName'],
                 email: data['userData']['email'],
@@ -352,6 +353,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         likedBy: [],
         eventID: widget.markerData.eventID,
         user: UserData(
+          classOf: widget.currUser.classOf,
           uid: widget.currUser.uid,
           displayName: widget.currUser.displayName,
           email: widget.currUser.email,

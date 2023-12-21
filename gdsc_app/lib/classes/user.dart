@@ -20,7 +20,7 @@ class User {
   List<EventCardData> eventData = [];
   List<ClubCardData> clubData = [];
   List<String> clubIds = [];
-  String gradYr = "update";
+  int classOf = 0;
 
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('http://$hostName/api/users/signedIn'));
@@ -42,6 +42,7 @@ class User {
     this.role = data['role'];
     this.myEvents = List<String>.from(data['myEvents'] ?? []);
     this.clubIds = List<String>.from(data['clubsOwned'] ?? []);
+    this.classOf = data['classOf'];
 
     return true;
   }

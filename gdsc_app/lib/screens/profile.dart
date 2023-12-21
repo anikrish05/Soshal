@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           image: user.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user.downloadURL,
           onClicked: _pickImage,
           name: user.displayName,
-          graduationYear: 2027,
+          graduationYear: user.classOf,
         ),
         CreateButtonsWidget(
           onUpdateProfile,

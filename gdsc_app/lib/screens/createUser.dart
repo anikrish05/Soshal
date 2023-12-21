@@ -68,7 +68,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                 controller: newGradYr,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  hintText: widget.user.gradYr,
+                  hintText: widget.user.classOf.toString(),
                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 ),
               ),
@@ -105,7 +105,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     }
     if (newGradYr.text != null)
       {
-        widget.user.gradYr = newGradYr.text;
+        widget.user.classOf = int.parse(newGradYr.text);
       }
     Navigator.pop(context);
   }
