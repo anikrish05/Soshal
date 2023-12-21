@@ -5,7 +5,7 @@ const { ref, uploadBytes } = require('firebase/storage');
 
 const signup = async (req, res) => {
   try {
-    const { email, password, name, isOwner } = req.body;
+    const { email, password, name } = req.body;
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -14,7 +14,7 @@ const signup = async (req, res) => {
       downloadURL: "",
       following: [],
       displayName: name,
-      role: isOwner === true || isOwner === 'true' ? 'owner' : 'user',
+      role: false,
       email: email,
       myEvents: [],
       clubsOwned: []

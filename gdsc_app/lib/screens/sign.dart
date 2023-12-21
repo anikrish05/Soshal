@@ -14,7 +14,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passWordController = TextEditingController();
   final usernameController = TextEditingController();
 
-  bool isChecked = false;
   Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
 
@@ -46,19 +45,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "email": emailController.text,
         "password": passWordController.text,
         "name": usernameController.text,
-        "isOwner": isChecked ? "true" : "false"
       }),
     );
 
     if (response.statusCode == 200) {
-      if (isChecked) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(),
-          ),
-        );
-      }
       Navigator.pushNamed(context, '/home');
     } else {
       // Handle other error cases
@@ -116,32 +106,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(padding: EdgeInsets.only(bottom: 8)),
             buildPasswordWidget(),
             Padding(padding: EdgeInsets.only(bottom: 8)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Are you a club owner?',
-                    style: TextStyle(
-                        fontSize: 10,
-                        letterSpacing: 2.0,
-                        color: Colors.black,
-                        fontFamily: 'Borel')),
-                Checkbox(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
-                  side: MaterialStateBorderSide.resolveWith(
-                          (states) => BorderSide(width: 1.0, color: Colors.black)),
-                  checkColor: Colors.black,
-                  fillColor: MaterialStateProperty.resolveWith(getColor),
-                  value: isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
