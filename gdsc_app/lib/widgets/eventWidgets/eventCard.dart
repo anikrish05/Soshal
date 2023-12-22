@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:gdsc_app/screens/viewYourOwnScreen/eventInfo.dart';
-
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 class EventCardWidget extends StatefulWidget {
   final EventCardData event;
   final bool isOwner;
@@ -17,7 +19,11 @@ class _EventCardWidgetState extends State<EventCardWidget> {
   Color _cardColor = Color(0xffc8c9ca);
   String locationText = "Loading...";
   double rating = 3.5;
- // Replace this with your dynamic rating variable
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+
+  String clubs = "...";
+
+  // Replace this with your dynamic rating variable
   Future<void> getStreetName() async{
     print("in get street name");
     List<Placemark> placemarks = await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
@@ -27,11 +33,34 @@ class _EventCardWidgetState extends State<EventCardWidget> {
       locationText = tempText;
     });
   }
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime dateTime = format.parse(dateTimeString);
+    String formattedDateTime =
+    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    return formattedDateTime;
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getStreetName();
+    displayClubNames();
+  }
+
+  Future<void> displayClubNames() async{
+    String tempClubs = "";
+    await widget.event.getAllClubsForEvent();
+    for(var i =0;i<widget.event.clubInfo.length;i++){
+      if(i!=widget.event.clubInfo.length-1){
+        tempClubs+=widget.event.clubInfo[i].name + ", ";
+      }
+      else{
+        tempClubs+=widget.event.clubInfo[i].name;
+      }
+    }
+    setState(() {
+      clubs = tempClubs;
+    });
   }
 
   @override
@@ -87,7 +116,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                               SizedBox(height: 8), // Add more spacing vertically
                               Row(
                                 children: [
-                                  Text('By: '), // Replace 'Club Name' with your club name
+                                  Text('By: $clubs'), // Replace 'Club Name' with your club name
                                   SizedBox(width: 8), // Add more space between the "By:" text and stars
                                   RatingBarIndicator(
                                     rating: rating,
@@ -111,8 +140,9 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                               SizedBox(height: 8), // Add more spacing vertically
                               Row(
                                 children: [
-                                  Icon(Icons.access_time), // Add a clock icon
-                                  Text('Event Time'), // Replace 'Event Time' with your event time
+                                  Icon(Icons.access_time),
+                                  Text(" "),// Add a clock icon
+                                  Text(getFormattedDateTime(widget.event.time)),
                                 ],
                               ),
                             ],

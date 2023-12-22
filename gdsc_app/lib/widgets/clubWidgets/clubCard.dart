@@ -10,10 +10,11 @@ class ClubCardWidget extends StatelessWidget {
   Color _cardColor = Color(0xffc8c9ca);
   final ClubCardData club;
   final bool isOwner;
+  final UserData currUser;
   double rating = 4.5; // Replace this with your dynamic rating variable
 
 
-  ClubCardWidget({required this.club, required this.isOwner});
+  ClubCardWidget({required this.club, required this.isOwner, required this.currUser});
 
   @override
   Widget build(BuildContext context) {

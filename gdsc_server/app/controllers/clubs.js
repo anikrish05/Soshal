@@ -39,7 +39,9 @@ const getClub = async (req, res) => {
   try {
     const id = req.params.id;
     const docRef = await getDoc(doc(db, "clubs", id));
-        res.status(200).send(JSON.stringify({'message':docRef.data()}))
+    const data = docRef.data()
+    data.id = docRef.id
+        res.status(200).send(JSON.stringify({'message':data}))
    
   } catch (error) {
     console.error("Error getting document:", error);
