@@ -123,6 +123,22 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userDoc = await getDoc(doc(db, "users", id));
+
+        if (userDoc.exists()) {
+            res.status(200).send(JSON.stringify({ "message": userDoc.data() }));
+        } else {
+            res.status(404).send(JSON.stringify({ "message": "User not found" }));
+        }
+    } catch (error) {
+        console.error("Error getting user document:", error);
+        res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+    }
+}
+
 
 module.exports = {
   signup,
@@ -133,5 +149,6 @@ module.exports = {
   rsvp,
   deRSVP,
   updateProfile,
-  getAllUsers
+  getAllUsers,
+  getUser
 };

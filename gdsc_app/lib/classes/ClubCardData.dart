@@ -1,4 +1,5 @@
 import 'package:gdsc_app/classes/EventCardData.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 const hostName = "10.0.2.2:3000";
@@ -15,6 +16,7 @@ class ClubCardData {
   final String id;
   double rating;
   List<EventCardData> eventData = [];
+  List<UserData> followerData = [];
   ClubCardData({
     required this.admin,
     required this.category,
@@ -67,4 +69,5 @@ class ClubCardData {
       print("myEvents is null");
     }
   }
+
 }
