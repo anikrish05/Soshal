@@ -33,6 +33,7 @@ class UserData {
             var clubDataResponse = jsonDecode(clubIteration.body)['message'];
             clubData.add(
               ClubCardData(
+                rating: clubDataResponse['rating'],
                   admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
                   category: clubDataResponse['category'],
                   description: clubDataResponse['description'],
