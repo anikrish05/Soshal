@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:gdsc_app/screens/viewYourOwnScreen/eventInfo.dart';
+
+
 
 class EventCardWidget extends StatefulWidget {
   EventCardData event;
-  EventCardWidget({required this.event});
+  final bool isOwner;
+
+  EventCardWidget({required this.event, required this.isOwner});
+
 
   @override
   State<EventCardWidget> createState() => _EventCardWidgetState();
@@ -40,6 +46,18 @@ class _EventCardWidgetState extends State<EventCardWidget> {
     return Align(
       alignment: Alignment.center,
       child: SingleChildScrollView(
+        child: GestureDetector(
+          onTap: () {
+            print(widget.isOwner);
+            if(widget.isOwner){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventProfilePage(widget.event),
+                ),
+              );
+            }
+          },
         child: Container(
           width: MediaQuery.of(context).size.width * 0.89, // Adjust the width here
           child: Card(
@@ -123,6 +141,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
           ),
         ),
       ),
+    ),
     );
   }
 }
