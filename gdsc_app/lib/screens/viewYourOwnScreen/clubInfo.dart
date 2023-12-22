@@ -379,7 +379,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
 
   Widget buildTabContent(String tabName) {
     return FutureBuilder<void>(
-      future: fetchTabData(), // Replace with your future function
+      future: fetchTabData(tabName), // Replace with your future function
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoaderWidget(); // or any loading indicator
