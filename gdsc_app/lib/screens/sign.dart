@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:http/http.dart';
 
+int currYear = DateTime.now().year;
+
+List<int> list = <int>[currYear, currYear + 1,currYear + 2, currYear + 3, currYear + 4];
+
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -13,6 +17,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
   final usernameController = TextEditingController();
+  int gradYear = list.first;
 
   Color _color1 = Color(0xFFFF8050);
   Color _color2 = Color(0xFFF0F0F0);
@@ -41,10 +46,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         "email": emailController.text,
         "password": passWordController.text,
         "name": usernameController.text,
+        "classOf": gradYear
       }),
     );
 
@@ -105,6 +111,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             buildEmailWidget(),
             Padding(padding: EdgeInsets.only(bottom: 8)),
             buildPasswordWidget(),
+            Padding(padding: EdgeInsets.only(bottom: 8)),
+            buildClassOfWidget(),
             Padding(padding: EdgeInsets.only(bottom: 8)),
             TextButton(
               style: TextButton.styleFrom(
@@ -183,4 +191,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
           )),
     );
   }
+
+  Widget buildClassOfWidget()
+  {
+    return Container(
+        width: 175,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50.0),
+          color: Colors.grey[200], // Change the color as needed
+        ),
+        child:DropdownButton<int>(
+          value: gradYear,
+          hint: Text('Select Graduation Year'),
+          isExpanded: true,
+          elevation: 16,
+          underline: SizedBox(),
+          onChanged: (int? value) {
+            // This is called when the user selects an item.
+            setState(() {
+              gradYear = value!;
+            });
+          },
+          items: list.map<DropdownMenuItem<int>>((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text('Graduation Year: $value'),
+            );
+          }).toList(),
+
+        )
+    );
+  }
+
+
+
 }

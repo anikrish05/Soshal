@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
-import 'package:gdsc_app/screens/login.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
@@ -23,8 +22,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _buttonColor = Color(0xFF88898C);
   Color _slideColor = Colors.orange;
   Color _colorTab = Color(0xFFFF8050);
-  UserData? user;
+  late UserData user;
   late TabController tabController;
+  String newName = "";
+  int newGradYr = 0;
 
   Future<void> getUser() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/signedIn'));
@@ -32,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => ProfileScreen(),
         ),
       );
     } else {
@@ -51,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       );
       user = tempUser;
     }
-    await user!.getClubAndEventData();
+    await user.getClubAndEventData();
   }
   @override
   void initState() {
@@ -70,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      user!.downloadURL = pickedFile.path;
+      user.downloadURL = pickedFile.path;
       setState(() {});
       // Perform any additional actions, e.g., upload the image to a server
     }
@@ -102,10 +103,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return ListView(
       children: [
         ProfileHeaderWidget(
-          image: user!.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user?.downloadURL,
+          image: user.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user.downloadURL,
           onClicked: _pickImage,
-          name: user!.displayName,
-          graduationYear: user!.classOf,
+          name: user.displayName,
+          graduationYear: user.classOf,
         ),
         CreateButtonsWidget(
           onUpdateProfile,
@@ -158,26 +159,27 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     child: TabBarView(
       children: [
         ListView.builder(
-            itemCount: user!.eventData.length,
+            itemCount: user.eventData.length,
             itemBuilder: (context, index){
-              return EventCardWidget(event: user!.eventData[index], isOwner: false);
+              //I currently put isOwner true as temporary, change it afterwards
+              return EventCardWidget(event: user.eventData[index], isOwner: true,);
             }
         ),
         ListView.builder(
-          itemCount: user!.clubData.length ~/ 2 + (user!.clubData.length % 2),
+          itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),
           itemBuilder: (BuildContext context, int index) {
             int firstIndex = index * 2;
             int secondIndex = firstIndex + 1;
 
-            return index == user!.clubData.length ~/ 2
+            return index == user.clubData.length ~/ 2
                 ? Center(
-              child: ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true),
+              child: ClubCardWidget(club: user.clubData[firstIndex], isOwner: true),
             )
                 : Row(
               children: <Widget>[
-                ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true),
-                if (secondIndex < user!.clubData.length)
-                  ClubCardWidget(club: user!.clubData[secondIndex], isOwner: true),
+                ClubCardWidget(club: user.clubData[firstIndex], isOwner: true),
+                if (secondIndex < user.clubData.length)
+                  ClubCardWidget(club: user.clubData[secondIndex], isOwner: true),
               ],
             );
           },
@@ -192,16 +194,19 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   void onCreateClub() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreateClubScreen(user!.uid)),
+      MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
     ).then(onGoBack);
   }
 
 
-  void onUpdateProfile(){
-    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CreateUserScreen(user:user!)),
-    ).then(onGoBack);
+  void onUpdateProfile() async{
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateUserScreen(user: user)),
+    );
+    newName = result[1];
+    newGradYr = result[0];
+    print("New Name: $newName");
+    print("New Grad Year: $newGradYr");
   }
 }
-
