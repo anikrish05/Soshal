@@ -8,5 +8,6 @@ router.get('/userData',controllers.userData)
 router.post('/rsvp', controllers.rsvp)
 router.post('/deRSVP', controllers.deRSVP)
 router.post('/updateProfile', controllers.updateProfile)
+router.get('/getAllUsers', controllers.getAllUsers)
 
 module.exports = router

@@ -108,6 +108,22 @@ const updateProfile = async(req, res) => {
 
 }
 
+const getAllUsers = async (req, res) => {
+  try {
+    let users = [];
+    const userRef = collection(db, "users");
+    const userData = await getDocs(userRef);
+
+    users = userData.docs.map(doc => doc.data());
+
+    res.status(200).send(JSON.stringify({ "message": users }));
+  } catch (error) {
+    console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+  }
+};
+
+
 module.exports = {
   signup,
   login,
@@ -116,5 +132,6 @@ module.exports = {
   userData,
   rsvp,
   deRSVP,
-  updateProfile
+  updateProfile,
+  getAllUsers
 };
