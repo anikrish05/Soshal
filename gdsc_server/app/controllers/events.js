@@ -23,21 +23,21 @@ async function getAssociatedClubForEvent(admin) {
 }
 
 const createEvent = async (req, res) => {
-	const {admin, name, description, donwnloadURL, latitude, longitude, timestamp, repeat} = req.body;
+	const {admin, name, description, downloadURL, latitude, longitude, timestamp, repeat} = req.body;
 	const data = {
 		name: name,
 		admin: admin,
 		comments: [],
 		description: description,
-		donwnloadURL: image,
+		donwnloadURL: downloadURL,
 		latitude: latitude,
 		longitude: longitude,
 		rating: 0,
-		timestamp: time,
+		timestamp: timestamp,
 		repeat: repeat,
 		rsvpList: []
 	}
-	addDoc(doc(db, "events"), data).then((docRef)=>{
+	addDoc(collection(db, "events"), data).then((docRef)=>{
 		associatedClubEventAdd(admin, docRef.id)
 		res.status(200).send(JSON.stringify({ message: "Event Added"}))
 	}).catch(error => {
@@ -65,8 +65,23 @@ const getFeedPosts = async (req, res) => {
   }
 };
 
+const getEvent = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const docRef = await getDoc(doc(db, "events", id));
+    const data = docRef.data();
+    data.clubInfo = await getAssociatedClubForEvent(data.admin)
+        res.status(200).send(JSON.stringify({'message':data}))
+   
+  } catch (error) {
+    console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+  }
+};
+
 
 module.exports = {
 	createEvent,
-	getFeedPosts
+	getFeedPosts,
+	getEvent
 };

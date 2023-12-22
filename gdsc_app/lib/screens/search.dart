@@ -153,13 +153,89 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
     });
   }
 
+  Future<bool> fetchClubs() async {
+    print("IN FETCH CLUBS");
+    final response = await http.get(Uri.parse(
+        'http://10.0.2.2:3000/api/clubs/getDataForSearchPage'));
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data =
+      json.decode(response.body)["message"];
+      print(data['clubs']);
+      print(data['events']);
+      for (int i = 0; i < data['clubs'].length; i++) {
+        clubs.add(
+          ClubCardData(
+              admin: List<String>.from((data['clubs'][i]['admin'] ?? [])
+                  .map((admin) => admin.toString())),
+              category: data['clubs'][i]['category'],
+              rating: data['clubs'][i]['avgRating'].toDouble(),
+              description: data['clubs'][i]['description'],
+              downloadURL: data['clubs'][i]['downloadURL'],
+              events: List<String>.from((data['clubs'][i]['events'] ?? [])
+                  .map((event) => event.toString())),
+              followers: List<String>.from((data['clubs'][i]['followers'] ?? [])
+                  .map((follower) => follower.toString())),
+              name: data['clubs'][i]['name'],
+              type: data['clubs'][i]['type'],
+              verified: data['clubs'][i]['verified'],
+              id: data['clubs'][i]['id']),
+        );
+      }
+      for (int i = 0; i < data['events'].length; i++) {
+        List<ClubCardData> temp = [];
+        /*
+        for (int z = 0; z < data['events']['clubInfo'].length; z++) {
+          temp.add(
+            ClubCardData(
+                admin: List<String>.from((data['events']['clubInfo'][z]['admin'] ?? []).map((admin) => admin.toString())),
+                category: data['events']['clubInfo'][z]['category'],
+                rating: data['events']['clubInfo'][z]['avgRating'].toDouble(),
+                description: data['events']['clubInfo'][z]['description'],
+                downloadURL: data['events']['clubInfo'][z]['downloadURL'],
+                events: List<String>.from((data['events']['clubInfo'][z]['events'] ?? []).map((event) => event.toString())),
+                followers: List<String>.from((data['events']['clubInfo'][z]['followers'] ?? []).map((follower) => follower.toString())),
+                name: data['events']['clubInfo'][z]['name'],
+                type: data['events']['clubInfo'][z]['type'],
+                verified: data['events']['clubInfo'][z]['verified'],
+                id: data['events']['clubInfo'][z]['id']
+            ),
+          );
+        }
+         */
+
+        events.add(
+          EventCardData(
+            admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
+            clubInfo: temp,
+            rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
+                .map((rsvp) => rsvp.toString())),
+            name: data['events'][i]['name'],
+            description: data['events'][i]['description'],
+            downloadURL: data['events'][i]['downloadURL'],
+            latitude: data['events'][i]['latitude'],
+            longitude: data['events'][i]['longitude'],
+            rating: data['events'][i]['rating'].toDouble(),
+            comments: List<String>.from((data['events'][i]['comments'] ?? [])
+                .map((comment) => comment.toString())),
+            id: data['events'][i]['id'],
+          ),
+        );
+      }
+    } else {
+      throw Exception('Failed to load clubs');
+    }
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<void>(
         future: fetchData(), // Wait for both getUser and fetchClubs
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoaderWidget(); // Show loader while data is being fetched
+            return (LoaderWidget());
           } else if (snapshot.hasError) {
             return Center(
               child: Text('Error: ${snapshot.error}'),
@@ -233,32 +309,17 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
   Widget buildSearchResultList() {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredItemsClubs.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user.clubIds.contains(filteredItemsClubs[index].id));
-              },
-            ),
-          ),
-          /*
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredItemsEvents.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return EventCardWidget(event: filteredItemsEvents[index]);
-            },
-          ),
-        ),
-        */
-        ],
+
+      child: ListView.builder(
+        itemCount: filteredItemsClubs.length + filteredItemsEvents.length,
+        itemBuilder: (context, index) {
+          if (index < filteredItemsClubs.length) {
+            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user.clubIds.contains(filteredItemsClubs[index].id);
+          } else {
+            return EventCardWidget(
+                event: filteredItemsEvents[index - filteredItemsClubs.length]);
+          }
+        },
       ),
     );
   }

@@ -1,9 +1,14 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
-import 'package:http/http.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
@@ -16,12 +21,15 @@ class CreateEventScreen extends StatefulWidget {
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+  late DateTime selectedDateTime;
+
+
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
   late TextEditingController _controller1;
   String _valueChanged1 = '';
   String _valueToValidate1 = '';
   String _valueSaved1 = '';
-  String date = "";
   double latitude = 0.0;
   double longitude = 0.0;
 
@@ -29,7 +37,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   var eventDesc = TextEditingController();
 
-  var location = TextEditingController();
+  LatLng? _selectedLatLng;
 
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
@@ -40,11 +48,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       context,
       MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
     );
-    result.latitude = latitude;
-    result.longitude = longitude;
+    print("-------------");
+    print(result);
+    latitude = result.latitude;
+    longitude = result.longitude;
   }
 
-  bool repeatable = true;
+  Future<void> postRequest() async {
+    print("post requ");
+    String timeStamp = format.format(DateTime.now());
+    await http.post(
+      Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "admin": [widget.club.id],
+        "name": eventName.text,
+        "description": eventDesc.text,
+        "downloadURL": "",
+        "latitude": latitude,
+        "longitude": longitude,
+        "timestamp": timeStamp,
+        "repeat": repeatable,
+      }),
+    );
+    Navigator.pop(context);
+  }
+
+  bool repeatable = false;
   final ButtonStyle style2 =
   ElevatedButton.styleFrom(
       backgroundColor: Colors.orange,
@@ -98,7 +130,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                     height: 40,
                                     width: 150,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Borel', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
                                       controller: eventName,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -113,7 +145,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                     height: 110,
                                     width: 150,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Borel', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
                                       controller: eventDesc,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -172,6 +204,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     )
                 ),
                 Divider(),
+                RichText(
+                  text: TextSpan(
+                    text: 'Choose Date and Time',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 15),
+                  ),
+                ),
                 Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -181,24 +219,61 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             width: 240.0,
                             height: 30.0,
                             child:
-                            DateTimePicker
-                              (
-                              type: DateTimePickerType.dateTimeSeparate,
-                              onChanged: (date) {
-                                date = date;
+                            DateTimeField(
+                              format: format,
+                              onShowPicker: (context, currentValue) async {
+                                final dateTime = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2000),
+                                  initialDate: currentValue ?? DateTime.now(),
+                                  lastDate: DateTime(2101),
+                                );
+                                  if (dateTime != null) {
+                                  final timeOfDay = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now(),
+                                  ),
+                                );
+                                  if (timeOfDay != null) {
+                                    setState(() {
+                                      selectedDateTime = DateTime(
+                                        dateTime.year,
+                                        dateTime.month,
+                                        dateTime.day,
+                                        timeOfDay.hour,
+                                        timeOfDay.minute,
+                                      );
+                                    });
+                                    return selectedDateTime;
+                                  }
+                                  }
                               },
-                              dateMask: '[yyyy-MM-d hh:mm]',
-                              initialValue: DateTime.now().toString(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                              icon: Icon(Icons.event),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                              ),
-
-                            )
-                        )
-
+                            ),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (selectedDateTime != null) {
+                              final formattedDateTime = format.format(selectedDateTime);
+                              // For demonstration purposes, display the formatted date and time in a Snackbar
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Selected Date and Time: $formattedDateTime'),
+                                ),
+                              );
+                              // You can store `formattedDateTime` or `selectedDateTime` as needed
+                            } else {
+                              // Handle the case where no date and time are selected
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please select a date and time.'),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text('Show Snackbar'),
+                        ),
                       ],
                     )
                 ),
@@ -240,7 +315,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         child:
                         ElevatedButton(
                           style: style,
-                          onPressed: () {},
+                          onPressed: () {postRequest();},
                           child: const Text('post'),
                         ),
                       )

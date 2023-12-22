@@ -330,11 +330,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     );
   }
 
-
-
-
-
-
   Widget profilePicture() {
     if (club.downloadURL != "") {
       return CircleAvatar(

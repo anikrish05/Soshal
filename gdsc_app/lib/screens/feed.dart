@@ -6,7 +6,6 @@ import 'package:gdsc_app/widgets/slidingUpWidget.dart';
 import 'package:gdsc_app/widgets/loader.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
-
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
@@ -23,8 +22,10 @@ class _MyAppState extends State<MyApp> {
   List<Marker> _markers = [];
   MarkerData? selectedMarkerData; // Track selected marker data
   User user = User();
-
+  List<dynamic> eventData = [];
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
+
+  Map<MarkerId, dynamic> _markerEventMap = {};
 
   dynamic isUserSignedIn() async {
     user.isUserSignedIn().then((check) async {
@@ -69,26 +70,43 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> loadData() async {
     try {
-      List<dynamic> eventData = await getEventData();
+      eventData = await getEventData();
       _markers.clear(); // Clear existing markers
-      eventData.forEach((event) {
+      _markerEventMap.clear(); // Clear existing event mapping
+
+      eventData.asMap().forEach((index, event) {
+        MarkerId markerId = MarkerId(index.toString());
+
         _markers.add(
           Marker(
-            markerId: MarkerId(event['id'].toString()),
+            markerId: markerId,
             position: LatLng(event['latitude'], event['longitude']),
             onTap: () {
-              selectedMarkerData = getMarkerData(event);
-              panelController.isPanelOpen
-                  ? panelController.close()
-                  : panelController.open();
-              setState(() {});
+              handleMarkerTap(markerId);
             },
           ),
         );
+
+        _markerEventMap[markerId] = event;
       });
+
       setState(() {}); // Trigger rebuild with updated markers
     } catch (e) {
       print('Error loading data: $e');
+    }
+  }
+
+  void handleMarkerTap(MarkerId markerId) {
+    dynamic event = _markerEventMap[markerId];
+    print("LSKJAKJQEJKFHEQ");
+    print(event);
+    if (event != null) {
+      print("Marker Tapped: ${event['id']}");
+      selectedMarkerData = getMarkerData(event);
+      panelController.isPanelOpen
+          ? panelController.close()
+          : panelController.open();
+      setState(() {});
     }
   }
 
@@ -156,39 +174,50 @@ class _MyAppState extends State<MyApp> {
   MarkerData getMarkerData(dynamic event) {
     print("HELLLOO");
     print(event);
+
+    // Create a copy of the event data to avoid potential modifications
+    Map<String, dynamic> eventDataCopy = Map.from(event);
+
     List<ClubCardData> clubs = [];
-    event['clubInfo'].forEach((club) {
-        clubs.add(
-            ClubCardData(
-                admin: List<String>.from((club['admin'] ?? []).map((admin) => admin.toString())),
-                category: club['category'],
-                description: club['description'],
-                downloadURL: club['downloadURL'],
-                events: List<String>.from((club['events'] ?? []).map((event) => event.toString())),
-                followers: List<String>.from((club['followers'] ?? []).map((follower) => follower.toString())),
-                name: club['name'],
-                type: club['type'],
-                verified: club['verified'],
-                id: club['id']
-            )
-        );
+    eventDataCopy['clubInfo'].forEach((club) {
+      clubs.add(
+        ClubCardData(
+          admin: List<String>.from((club['admin'] ?? [])
+              .map((admin) => admin.toString())),
+          category: club['category'],
+          rating: club['avgRating'].toDouble(),
+          description: club['description'],
+          downloadURL: club['downloadURL'],
+          events: List<String>.from((club['events'] ?? [])
+              .map((event) => event.toString())),
+          followers: List<String>.from((club['followers'] ?? [])
+              .map((follower) => follower.toString())),
+          name: club['name'],
+          type: club['type'],
+          verified: club['verified'],
+          id: club['id'],
+        ),
+      );
     });
+
+    // Use the copied eventDataCopy instead of the original event for certain properties
     return MarkerData(
       user: user,
       clubs: clubs,
-      isRSVP: user.myEvents.contains(event['eventID']),
-      eventID: event['eventID'],
-      title: event['name'],
-      description: event['description'],
-      longitude: event['longitude'],
-      latitude: event['latitude'],
-      time: "Feb 31, 7:99 AM",
-      comments: event['comments'],
-      rating: event['rating'].toDouble(),
-      image: event['downloadURL'] ==
+      isRSVP: user.myEvents.contains(eventDataCopy['eventID']),
+      eventID: eventDataCopy['eventID'],
+      title: eventDataCopy['name'],
+      description: eventDataCopy['description'],
+      longitude: eventDataCopy['longitude'],
+      latitude: eventDataCopy['latitude'],
+      time: eventDataCopy['timestamp'],
+      comments: eventDataCopy['comments'],
+      rating: eventDataCopy['rating'].toDouble(),
+      image: eventDataCopy['downloadURL'] ==
           ""
           ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'
-          : event['downloadURL'],
+          : eventDataCopy['downloadURL'],
     );
   }
+
 }

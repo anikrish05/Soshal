@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/screens/createUser.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
@@ -46,8 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return user.initUserData();
   }
 
-  Future<bool> getClubs() async {
-    return user.getClubData();
+  Future<bool> getAllEventsClubs() async {
+    return user.getClubAndEventData();
   }
 
   Future<void> _pickImage() async {
@@ -73,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return FutureBuilder<bool>(
-                future: getClubs(),
+                future: getAllEventsClubs(),
                 builder: (BuildContext context, AsyncSnapshot<bool> clubsSnapshot) {
                   if (clubsSnapshot.connectionState == ConnectionState.done) {
                     return buildProfileUI();
@@ -98,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           image: user.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user.downloadURL,
           onClicked: _pickImage,
           name: user.displayName,
-          graduationYear: 2027,
+          graduationYear: user.classOf,
         ),
         CreateButtonsWidget(
           onUpdateProfile,
@@ -150,11 +151,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     height: MediaQuery.of(context).size.height,
     child: TabBarView(
       children: [
-        ListView(
-          children: [
-            EventCardWidget(),
-            EventCardWidget(),
-          ],
+        ListView.builder(
+            itemCount: user.eventData.length,
+            itemBuilder: (context, index){
+              return EventCardWidget(event: user.eventData[index]);
+            }
         ),
         ListView.builder(
           itemCount: user.clubData.length ~/ 2 + (user.clubData.length % 2),
@@ -180,16 +181,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     ),
   );
 
-  @override
-  void onUpdateProfile() {
-    print("on create event");
-  }
 
   @override
   void onCreateClub() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateClubScreen(user.uid)),
+    ).then(onGoBack);
+  }
+
+
+  void onUpdateProfile(){
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CreateUserScreen(user:user)),
     ).then(onGoBack);
   }
 }
