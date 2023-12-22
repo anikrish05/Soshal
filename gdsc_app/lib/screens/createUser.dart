@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:http/http.dart';
-import 'package:gdsc_app/classes/user.dart';
 
 class CreateUserScreen extends StatefulWidget {
-  final User user;
+  final UserData user;
   CreateUserScreen({required this.user});
   @override
   _CreateUserScreenState createState() => _CreateUserScreenState();

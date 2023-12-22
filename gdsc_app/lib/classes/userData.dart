@@ -1,4 +1,6 @@
 import 'package:gdsc_app/classes/ClubCardData.dart';
+import 'package:gdsc_app/classes/EventCardData.dart';
+
 import 'dart:convert';
 import 'package:http/http.dart';
 const hostName = "10.0.2.2:3000";
@@ -14,7 +16,7 @@ class UserData {
   List<String> clubIds;
   List<ClubCardData> clubData = [];
   int classOf;
-
+  List<EventCardData> eventData = [];
 
   UserData({required this.uid, required this.displayName, required this.email, required this.following,
     required this.role, required this.myEvents, required this.clubIds, required this.downloadURL, required this.classOf
@@ -58,6 +60,73 @@ class UserData {
     } else {
       print("clubIds is null");
     }
+  }
+
+  Future<void> getEventData() async {
+    print(this.myEvents);
+    if (this.myEvents != null) {
+      for (var i = 0; i < this.myEvents.length; i++) {
+        print("loop" + i.toString());
+        try {
+          final eventIteration = await get(
+            Uri.parse('http://$hostName/api/events/getEvent/${this.myEvents[i]}'),
+          );
+
+          if (eventIteration.statusCode == 200) {
+            var eventDataResponse = jsonDecode(eventIteration.body)['message'];
+            List<ClubCardData> clubInfo = [];
+            /*
+            for(int i =0;i<eventDataResponse['clubInfo']; i++){
+              clubInfo.add(
+              ClubCardData(
+                admin: List<String>.from((eventDataResponse['clubInfo']['admin'] ?? []).map((event) => event.toString())),
+                category: eventDataResponse['clubInfo']['category'],
+                description: eventDataResponse['clubInfo']['description'],
+                downloadURL: eventDataResponse['clubInfo']['downloadURL'],
+                events: List<String>.from((eventDataResponse['clubInfo']['events'] ?? []).map((event) => event.toString())),
+                followers: List<String>.from((eventDataResponse['clubInfo']['followers'] ?? []).map((follower) => follower.toString())),
+                name: eventDataResponse['clubInfo']['name'],
+                type: eventDataResponse['clubInfo']['type'],
+                verified: eventDataResponse['clubInfo']['verified'],
+                id: eventDataResponse['clubInfo']['id'],
+                rating: eventDataResponse['clubInfo']['avgRating'].toDouble(),
+              ),
+              );
+
+            }
+            */
+            eventData.add(
+              EventCardData(
+                  rsvpList: List<String>.from((eventDataResponse['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
+                  name: eventDataResponse['name'],
+                  admin: List<String>.from((eventDataResponse['admin'] ?? []).map((admin) => admin.toString())),
+                  description: eventDataResponse['description'],
+                  downloadURL: eventDataResponse['downloadURL'],
+                  latitude: eventDataResponse['latitude'],
+                  longitude: eventDataResponse['longitude'],
+                  rating: eventDataResponse['rating'].toDouble(),
+                  comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
+                  id: this.myEvents[i],
+                  clubInfo: clubInfo
+              ),
+            );
+
+            print("Event data added for ID ${this.myEvents[i]}");
+          } else {
+            print("Error fetching event data for ID ${this.myEvents[i]} - StatusCode: ${eventIteration.statusCode}");
+          }
+        } catch (error) {
+          print("Error fetching event data for ID ${this.myEvents[i]}: $error");
+        }
+      }
+    } else {
+      print("myEvents is null");
+    }
+  }
+
+  Future<void> getClubAndEventData() async{
+    await getClubData();
+    await getEventData();
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
@@ -10,6 +11,8 @@ import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'createClub.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -19,14 +22,40 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Color _buttonColor = Color(0xFF88898C);
   Color _slideColor = Colors.orange;
   Color _colorTab = Color(0xFFFF8050);
-  User user = User();
+  late UserData user;
   late TabController tabController;
 
+  Future<void> getUser() async {
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/signedIn'));
+    if ((jsonDecode(response.body))['message'] == false) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(),
+        ),
+      );
+    } else {
+      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/userData'));
+      var data = jsonDecode(response.body)['message'];
+      UserData tempUser = UserData(
+        classOf: data['classOf'],
+        uid: data['uid'],
+        displayName: data['displayName'],
+        email: data['email'],
+        following: List<String>.from((data['following'] ?? []).map((follow) => follow.toString())),
+        role: data['role'],
+        myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
+        clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
+        downloadURL: data['downloadURL'],
+      );
+      user = tempUser;
+    }
+    await user.getClubAndEventData();
+  }
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    isUserSignedIn();
   }
 
   @override
@@ -35,21 +64,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     tabController.dispose();
   }
 
-  dynamic isUserSignedIn() async {
-    user.isUserSignedIn().then((check) async {
-      if (!check) {
-        Navigator.pushNamed(context, '/login');
-      }
-    });
-  }
-
-  Future<bool> getData() async {
-    return user.initUserData();
-  }
-
-  Future<bool> getAllEventsClubs() async {
-    return user.getClubAndEventData();
-  }
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -69,20 +83,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder<bool>(
-          future: getData(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        body: FutureBuilder<void>(
+          future: getUser(),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return FutureBuilder<bool>(
-                future: getAllEventsClubs(),
-                builder: (BuildContext context, AsyncSnapshot<bool> clubsSnapshot) {
-                  if (clubsSnapshot.connectionState == ConnectionState.done) {
-                    return buildProfileUI();
-                  } else {
-                    return LoaderWidget();
-                  }
-                },
-              );
+              return buildProfileUI();
             } else {
               return LoaderWidget();
             }
