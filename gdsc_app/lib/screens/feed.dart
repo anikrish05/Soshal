@@ -190,8 +190,7 @@ class _MyAppState extends State<MyApp> {
           downloadURL: club['downloadURL'],
           events: List<String>.from((club['events'] ?? [])
               .map((event) => event.toString())),
-          followers: List<String>.from((club['followers'] ?? [])
-              .map((follower) => follower.toString())),
+          followers: club['followers'],
           name: club['name'],
           type: club['type'],
           verified: club['verified'],

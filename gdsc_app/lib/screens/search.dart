@@ -50,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen>
         uid: data['uid'],
         displayName: data['displayName'],
         email: data['email'],
-        following: List<String>.from((data['following'] ?? []).map((follow) => follow.toString())),
+        following: data['following'],
         role: data['role'],
         myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
         clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
@@ -131,8 +131,7 @@ class _SearchScreenState extends State<SearchScreen>
               downloadURL: data['clubs'][i]['downloadURL'],
               events: List<String>.from((data['clubs'][i]['events'] ?? [])
                   .map((event) => event.toString())),
-              followers: List<String>.from((data['clubs'][i]['followers'] ?? [])
-                  .map((follower) => follower.toString())),
+              followers: data['clubs'][i]['followers'],
               name: data['clubs'][i]['name'],
               type: data['clubs'][i]['type'],
               verified: data['clubs'][i]['verified'],

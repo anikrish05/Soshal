@@ -5,13 +5,15 @@ import 'package:gdsc_app/classes/user.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import '../../classes/EventCardData.dart';
+import '../../classes/userData.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
 
 class OtherClubProfilePage extends StatefulWidget {
   final ClubCardData club;
+  final UserData currUser;
 
-  OtherClubProfilePage(this.club);
+  OtherClubProfilePage(this.club, this.currUser);
 
   @override
   _OtherClubProfilePageState createState() => _OtherClubProfilePageState();
@@ -41,6 +43,11 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    if (widget.currUser.following.containsKey(widget.club.id)){
+      setState(() {
+        isFollowing = true;
+      });
+    }
   }
 
   @override

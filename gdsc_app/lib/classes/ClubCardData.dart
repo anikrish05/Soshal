@@ -8,7 +8,7 @@ class ClubCardData {
   String description;
   String downloadURL;
   List<String> events;
-  List<String> followers; // Updated to List<String>
+  Map<String, dynamic> followers; // Updated to List<String>
   String name;
   String type;
   bool verified;

@@ -14,7 +14,7 @@ class User {
   String displayName = "";
   String downloadURL = "";
   String email = "";
-  List<String> following = [];
+  Map<String, dynamic> following = {};
   String role = "";
   List<String> myEvents = [];
   List<EventCardData> eventData = [];
@@ -38,7 +38,7 @@ class User {
     this.displayName = data['displayName'];
     this.downloadURL = data['downloadURL'];
     this.email = data['email'];
-    this.following = List<String>.from(data['following'] ?? []);
+    this.following = data['following'];
     this.role = data['role'];
     this.myEvents = List<String>.from(data['myEvents'] ?? []);
     this.clubIds = List<String>.from(data['clubsOwned'] ?? []);
@@ -65,7 +65,7 @@ class User {
                 description: clubDataResponse['description'],
                 downloadURL: clubDataResponse['downloadURL'],
                 events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
-                followers: List<String>.from((clubDataResponse['followers'] ?? []).map((follower) => follower.toString())),
+                followers: clubDataResponse['followers'],
                 name: clubDataResponse['name'],
                 type: clubDataResponse['type'],
                 verified: clubDataResponse['verified'],

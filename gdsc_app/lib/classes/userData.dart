@@ -9,7 +9,7 @@ class UserData {
   final String uid;
   String displayName;
   final String email;
-  List<String> following;
+  Map<String, dynamic> following;
   String role;
   String downloadURL;
   List<String> myEvents;
@@ -43,7 +43,7 @@ class UserData {
                   description: clubDataResponse['description'],
                   downloadURL: clubDataResponse['downloadURL'],
                   events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
-                  followers: List<String>.from((clubDataResponse['followers'] ?? []).map((follower) => follower.toString())),
+                  followers: clubDataResponse['followers'],
                   name: clubDataResponse['name'],
                   type: clubDataResponse['type'],
                   verified: clubDataResponse['verified'],

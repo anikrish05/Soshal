@@ -40,7 +40,7 @@ class ClubCardWidget extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => OtherClubProfilePage(this.club),
+                  builder: (context) => OtherClubProfilePage(this.club, this.currUser),
                 ),
               );
             }

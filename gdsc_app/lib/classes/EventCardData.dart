@@ -50,7 +50,7 @@ class EventCardData {
                   description: clubDataResponse['description'],
                   downloadURL: clubDataResponse['downloadURL'],
                   events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
-                  followers: List<String>.from((clubDataResponse['followers'] ?? []).map((follower) => follower.toString())),
+                  followers: clubDataResponse['followers'],
                   name: clubDataResponse['name'],
                   type: clubDataResponse['type'],
                   verified: clubDataResponse['verified'],

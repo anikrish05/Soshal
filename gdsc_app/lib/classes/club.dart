@@ -11,7 +11,7 @@ class Club{
   late String downloadURL;
   late String type;
   late String category;
-  late List<dynamic> followers;
+  late Map<String, dynamic> followers;
   late List<dynamic> events;
   late List<dynamic> admin;
   Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {

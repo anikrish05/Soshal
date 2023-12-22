@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         uid: data['uid'],
         displayName: data['displayName'],
         email: data['email'],
-        following: List<String>.from((data['following'] ?? []).map((follow) => follow.toString())),
+        following: data['following'],
         role: data['role'],
         myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
         clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),

@@ -69,7 +69,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 displayName: data['userData']['displayName'],
                 email: data['userData']['email'],
                 following:
-                List<String>.from(data['userData']['following']),
+                data['userData']['following'],
                 role: data['userData']['role'],
                 downloadURL: data['userData']['downloadURL'],
                 myEvents:
