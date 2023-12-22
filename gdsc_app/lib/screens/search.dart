@@ -164,7 +164,6 @@ class _SearchScreenState extends State<SearchScreen>
         events.add(
           EventCardData(
             admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
-            clubInfo: temp,
             rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
                 .map((rsvp) => rsvp.toString())),
             name: data['events'][i]['name'],
@@ -176,6 +175,7 @@ class _SearchScreenState extends State<SearchScreen>
             comments: List<String>.from((data['events'][i]['comments'] ?? [])
                 .map((comment) => comment.toString())),
             id: data['events'][i]['id'],
+            time: data['events'][i]['timestamp']
           ),
         );
       }
@@ -266,7 +266,7 @@ class _SearchScreenState extends State<SearchScreen>
         itemCount: filteredItemsClubs.length + filteredItemsEvents.length,
         itemBuilder: (context, index) {
           if (index < filteredItemsClubs.length) {
-            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user!.clubIds.contains(filteredItemsClubs[index].id));
+            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user!.clubIds.contains(filteredItemsClubs[index].id), currUser: user!);
           } else {
             return EventCardWidget(
                 event: filteredItemsEvents[index - filteredItemsClubs.length], isOwner: false);

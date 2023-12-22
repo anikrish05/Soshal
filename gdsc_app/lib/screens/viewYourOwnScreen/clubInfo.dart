@@ -4,6 +4,8 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/screens/createEvent.dart';
 
+import '../../widgets/loader.dart';
+
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
 
@@ -33,7 +35,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     isUserSignedIn();
     clubNameController = TextEditingController(text: club.name);
     clubTypeController = TextEditingController(text: club.type);
-    clubDescController = TextEditingController(text: club.description);// Initialize the controller
+    clubDescController = TextEditingController(text: club.description);
   }
 
   @override
@@ -136,7 +138,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                             },
                             child: Row(
                               children: [
-                                // Edit icon
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -154,11 +155,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                                   ),
                                 ),
                                 SizedBox(width: 16),
-                                // Create Event button
                                 GestureDetector(
                                   onTap: () {
-                                    // Add your logic for creating an event here
-                                    // For example, navigate to the create event screen
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -192,8 +190,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                 endIndent: 24,
               ),
               SizedBox(height: 16),
-              // Add your TabBar here
               buildTabBar(),
+              getDataTabs(),
             ],
           ),
           if (isEditing)
@@ -222,7 +220,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  isEditing = false; // Reset isEditing state
+                  isEditing = false;
                 });
               },
               color: _orangeColor,
@@ -254,9 +252,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                               right: 0,
                               bottom: 0,
                               child: GestureDetector(
-                                onTap: () {
-                                  // Add your logic for editing the profile picture here
-                                },
+                                onTap: () {},
                                 child: Container(
                                   padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -287,7 +283,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                               decoration: InputDecoration(labelText: 'Club Description'),
                               maxLines: null,
                             ),
-                            // Add more text fields as needed
                           ],
                         ),
                         SizedBox(height: 16),
@@ -300,7 +295,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Implement the logic for saving edits
                     setState(() {
                       isEditing = false;
                       club.name = clubNameController.text;
@@ -370,5 +364,48 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
+  }
+
+  Widget getDataTabs() => SizedBox(
+    height: MediaQuery.of(context).size.height,
+    child: TabBarView(
+      children: [
+        buildTabContent("Upcoming"),
+        buildTabContent("Previous"),
+      ],
+      controller: tabController,
+    ),
+  );
+
+  Widget buildTabContent(String tabName) {
+    return FutureBuilder<void>(
+      future: fetchTabData(), // Replace with your future function
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoaderWidget(); // or any loading indicator
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          // Here you can use the result from the future function to build your tab content
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(tabName),
+                // Use 'snapshot.data' to display the content based on the future result
+                // Example: Text('Data: ${snapshot.data.toString()}'),
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> fetchTabData(String tabName) async {
+    // Implement your logic to fetch data for the specified tab
+    await widget.club.getALlEventsForClub();
   }
 }

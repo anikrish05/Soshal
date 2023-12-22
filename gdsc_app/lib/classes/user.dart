@@ -123,6 +123,7 @@ class User {
             */
             eventData.add(
               EventCardData(
+                time: eventDataResponse['name']['timestamp'],
                 rsvpList: List<String>.from((eventDataResponse['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
                 name: eventDataResponse['name'],
                 admin: List<String>.from((eventDataResponse['admin'] ?? []).map((admin) => admin.toString())),
@@ -133,7 +134,6 @@ class User {
                 rating: eventDataResponse['rating'].toDouble(),
                 comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
                 id: this.myEvents[i],
-                clubInfo: clubInfo
               ),
             );
 

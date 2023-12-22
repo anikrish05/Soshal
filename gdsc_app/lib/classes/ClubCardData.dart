@@ -28,9 +28,43 @@ class ClubCardData {
     required this.id,
     required this.rating
   });
-  Future<void> getAllEventsForClub() async{
-    for(var i=0;i<events.length;i++){
+  Future<void> getALlEventsForClub() async {
+    if (this.events != null) {
+      for (var i = 0; i < this.events.length; i++) {
+        print("loop" + i.toString());
+        try {
+          final eventIteration = await get(
+            Uri.parse('http://$hostName/api/events/getEvent/${this.events[i]}'),
+          );
 
+          if (eventIteration.statusCode == 200) {
+            var eventDataResponse = jsonDecode(eventIteration.body)['message'];
+            eventData.add(
+              EventCardData(
+                time: eventDataResponse['timestamp'],
+                rsvpList: List<String>.from((eventDataResponse['rsvpList'] ?? []).map((rsvp) => rsvp.toString())),
+                name: eventDataResponse['name'],
+                admin: List<String>.from((eventDataResponse['admin'] ?? []).map((admin) => admin.toString())),
+                description: eventDataResponse['description'],
+                downloadURL: eventDataResponse['downloadURL'],
+                latitude: eventDataResponse['latitude'],
+                longitude: eventDataResponse['longitude'],
+                rating: eventDataResponse['rating'].toDouble(),
+                comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
+                id: this.events[i],
+              ),
+            );
+
+            print("Event data added for ID ${this.events[i]}");
+          } else {
+            print("Error fetching event data for ID ${this.events[i]} - StatusCode: ${eventIteration.statusCode}");
+          }
+        } catch (error) {
+          print("Error fetching event data for ID ${this.events[i]}: $error");
+        }
+      }
+    } else {
+      print("myEvents is null");
     }
   }
 }
