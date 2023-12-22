@@ -237,21 +237,45 @@ class _SearchScreenState extends State<SearchScreen>
       ),
     ],
   );
-
   Widget buildSearchResultList() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: filteredItemsClubs.length + filteredItemsEvents.length,
-        itemBuilder: (context, index) {
-          if (index < filteredItemsClubs.length) {
-            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user!.clubIds.contains(filteredItemsClubs[index].id), currUser: user!);
-          } else {
-            return EventCardWidget(
-                event: filteredItemsEvents[index - filteredItemsClubs.length], isOwner: false);
-          }
-        },
-      ),
+    List<Widget> clubPairs = [];
+
+    for (int i = 0; i < filteredItemsClubs.length; i += 2) {
+      // Create pairs of club cards
+      List<Widget> pair = [];
+      pair.add(ClubCardWidget(
+        club: filteredItemsClubs[i],
+        isOwner: user!.clubIds.contains(filteredItemsClubs[i].id),
+        currUser: user!,
+      ));
+      if (i + 1 < filteredItemsClubs.length) {
+        pair.add(SizedBox(width: 8.0)); // Add spacing between club cards
+        pair.add(ClubCardWidget(
+          club: filteredItemsClubs[i + 1],
+          isOwner: user!.clubIds.contains(filteredItemsClubs[i + 1].id),
+          currUser: user!,
+        ));
+      }
+      clubPairs.add(SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: pair),
+      ));
+    }
+
+    List<Widget> eventWidgets = filteredItemsEvents.map((event) =>
+        EventCardWidget(event: event, isOwner: false)).toList();
+
+    return Column(
+      children: [
+        // Display pairs of club cards
+        ...clubPairs,
+        SizedBox(height: 16.0), // Add spacing between club cards and event cards
+        // Display event cards
+        ...eventWidgets,
+      ],
     );
   }
+
+
+
 }

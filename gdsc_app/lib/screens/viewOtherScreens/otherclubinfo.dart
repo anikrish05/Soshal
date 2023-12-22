@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
+import '../../classes/EventCardData.dart';
+import '../../widgets/eventWidgets/eventCard.dart';
+import '../../widgets/loader.dart';
 
 class OtherClubProfilePage extends StatefulWidget {
   final ClubCardData club;
@@ -15,7 +20,23 @@ class OtherClubProfilePage extends StatefulWidget {
 class _OtherClubProfilePageState extends State<OtherClubProfilePage> with SingleTickerProviderStateMixin {
   late TabController tabController;
   Color _colorTab = Color(0xFFFF8050);
+  List<EventCardData> upcommingEvents = [];
+  List<EventCardData> finishedEvents = [];
+  final format = DateFormat("yyyy-MM-dd HH:mm");
 
+
+  Future<void> getTabContent() async {
+    await widget.club.getALlEventsForClub();
+    final now = DateTime.now();
+
+    // Filter events based on the date
+    upcommingEvents = widget.club.eventData
+        .where((event) => format.parse(event.time).isAfter(now))
+        .toList();
+    finishedEvents = widget.club.eventData
+        .where((event) => format.parse(event.time).isBefore(now))
+        .toList();
+  }
   @override
   void initState() {
     super.initState();
@@ -136,6 +157,8 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
           SizedBox(height: 16),
           // Add your TabBar here
           buildTabBar(),
+          SizedBox(height: 16),
+          buildTabContent()
         ],
       ),
     );
@@ -181,6 +204,53 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
         ),
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+  Widget buildTabContent() {
+    return FutureBuilder<void>(
+      future: getTabContent(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoaderWidget(); // or any loading indicator
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          List<EventCardData> eventsToDisplay = [];
+
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: TabBarView(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: upcommingEvents.length,
+                    itemBuilder: (context, index) {
+                      return EventCardWidget(
+                        event: upcommingEvents[index],
+                        isOwner: true,
+                      );
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: finishedEvents.length,
+                    itemBuilder: (context, index) {
+                      return EventCardWidget(
+                        event: finishedEvents[index],
+                        isOwner: true,
+                      );
+                    },
+                  ),
+                ),
+              ],
+              controller: tabController,
+            ),
+          );
+        }
+      },
     );
   }
 }
