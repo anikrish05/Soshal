@@ -27,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen>
 
   List<ClubCardData> filteredItemsClubs = [];
   List<EventCardData> filteredItemsEvents = [];
-  late UserData user;
+  UserData? user;
 
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
@@ -265,7 +265,7 @@ class _SearchScreenState extends State<SearchScreen>
         itemCount: filteredItemsClubs.length + filteredItemsEvents.length,
         itemBuilder: (context, index) {
           if (index < filteredItemsClubs.length) {
-            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user.clubIds.contains(filteredItemsClubs[index].id));
+            return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user!.clubIds.contains(filteredItemsClubs[index].id));
           } else {
             return EventCardWidget(
                 event: filteredItemsEvents[index - filteredItemsClubs.length]);
