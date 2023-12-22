@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/clubInfo.dart';
+
+import '../../screens/otherclubinfo.dart';
 
 class ClubCardWidget extends StatelessWidget {
   Color _cardColor = Color(0xffc8c9ca);
   final ClubCardData club;
+  final bool isOwner;
 
-  ClubCardWidget({required this.club});
+  ClubCardWidget({required this.club, required this.isOwner});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +24,23 @@ class ClubCardWidget extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ClubProfilePage(this.club),
-              ),
-            );
+            print(isOwner);
+            if(isOwner){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ClubProfilePage(this.club),
+                ),
+              );
+            }
+            else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OtherClubProfilePage(this.club),
+                ),
+              );
+            }
           },
           child: Container(
             height: screenWidth * 0.25,
