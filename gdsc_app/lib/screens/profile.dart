@@ -160,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         ListView.builder(
             itemCount: user!.eventData.length,
             itemBuilder: (context, index){
-              return EventCardWidget(event: user!.eventData[index]);
+              return EventCardWidget(event: user!.eventData[index], isOwner: false);
             }
         ),
         ListView.builder(

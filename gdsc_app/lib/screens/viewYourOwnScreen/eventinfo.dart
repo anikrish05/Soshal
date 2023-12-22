@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 class EventProfilePage extends StatefulWidget {
-  late EventCardData event;
+  final EventCardData event;
 
-  EventProfilePage(EventCardData club) {
-    this.event = event;
-  }
+  EventProfilePage({required this.event});
 
   @override
-  _EventProfilePageState createState() => _EventProfilePageState(this.event);
+  State<EventProfilePage> createState() => _EventProfilePageState();
 }
 
 class _EventProfilePageState extends State<EventProfilePage>
     with SingleTickerProviderStateMixin {
-  late EventCardData event;
   bool isEditing = false;
   late TabController tabController;
   late TextEditingController eventNameController;
@@ -27,8 +24,8 @@ class _EventProfilePageState extends State<EventProfilePage>
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     isUserSignedIn();
-    eventNameController = TextEditingController(text: event.name);
-    eventDescController = TextEditingController(text: event.description);// Initialize the controller
+    eventNameController = TextEditingController(text: widget.event.name);
+    eventDescController = TextEditingController(text: widget.event.description);// Initialize the controller
   }
 
   @override
@@ -45,9 +42,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     });
   }
 
-  _EventProfilePageState(EventCardData club) {
-    this.event = event;
-  }
 
   Color _orangeColor = Color(0xFFFF8050);
 
@@ -84,7 +78,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${event.name}',
+                            '${widget.event.name}',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -108,7 +102,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                           ),
                           SizedBox(height: 5),
                           Text(
-                            '${event.description}',
+                            '${widget.event.description}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
@@ -266,8 +260,8 @@ class _EventProfilePageState extends State<EventProfilePage>
                     // Implement the logic for saving edits
                     setState(() {
                       isEditing = false;
-                      event.name = eventNameController.text;
-                      event.description = eventDescController.text;
+                      widget.event.name = eventNameController.text;
+                      widget.event.description = eventDescController.text;
                     });
                     Navigator.of(context).pop();
                   },
@@ -293,10 +287,10 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
   Widget profilePicture() {
-    if (event.downloadURL != "") {
+    if (widget.event.downloadURL != "") {
       return CircleAvatar(
         radius: 60,
-        backgroundImage: NetworkImage(event.downloadURL),
+        backgroundImage: NetworkImage(widget.event.downloadURL),
       );
     } else {
       return CircleAvatar(

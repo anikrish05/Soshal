@@ -4,15 +4,11 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:gdsc_app/screens/viewYourOwnScreen/eventInfo.dart';
 
-
-
 class EventCardWidget extends StatefulWidget {
-  EventCardData event;
+  final EventCardData event;
   final bool isOwner;
 
   EventCardWidget({required this.event, required this.isOwner});
-
-
   @override
   State<EventCardWidget> createState() => _EventCardWidgetState();
 }
@@ -53,7 +49,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventProfilePage(widget.event),
+                  builder: (context) => EventProfilePage(event: widget.event),
                 ),
               );
             }

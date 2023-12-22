@@ -269,7 +269,7 @@ class _SearchScreenState extends State<SearchScreen>
             return ClubCardWidget(club: filteredItemsClubs[index], isOwner: user!.clubIds.contains(filteredItemsClubs[index].id));
           } else {
             return EventCardWidget(
-                event: filteredItemsEvents[index - filteredItemsClubs.length]);
+                event: filteredItemsEvents[index - filteredItemsClubs.length], isOwner: false);
           }
         },
       ),
