@@ -85,6 +85,8 @@ const rsvp = async(req, res) => {
     const userData = (await getDoc(userDoc)).data();
     const updatedRSVP = userData.myEvents ? [...userData.myEvents, eventID] : [eventID];
     await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
+    res.status(200).send(JSON.stringify({'message':"success"}))
+
 }
 
 const deRSVP = async (req, res) => {
@@ -93,6 +95,8 @@ const deRSVP = async (req, res) => {
     const userData = (await getDoc(userDoc)).data();
     const updatedRSVP = userData.myEvents ? userData.myEvents.filter(item => item !== eventID) : [];
     await setDoc(userDoc, { myEvents: updatedRSVP }, { merge: true });
+    res.status(200).send(JSON.stringify({'message':"success"}))
+
 }
 
 const updateProfile = async(req, res) => {
@@ -100,6 +104,8 @@ const updateProfile = async(req, res) => {
   const userDoc = doc(db, "users", uid);
     const userData = (await getDoc(userDoc)).data();
     await setDoc(userDoc, { displayName: displayName, classOf: classOf }, { merge: true });
+   res.status(200).send(JSON.stringify({'message':"success"}))
+
 }
 
 module.exports = {
