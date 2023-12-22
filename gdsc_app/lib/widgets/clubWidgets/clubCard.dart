@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gdsc_app/classes/userData.dart';
-import 'package:gdsc_app/screens/clubInfo.dart';
+import 'package:gdsc_app/screens/viewYourOwnScreen/clubInfo.dart';
 
-import '../../screens/otherclubinfo.dart';
+import '../../screens/viewOtherScreens/otherclubinfo.dart';
 
 class ClubCardWidget extends StatelessWidget {
   Color _cardColor = Color(0xffc8c9ca);
