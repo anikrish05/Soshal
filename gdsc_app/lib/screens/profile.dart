@@ -165,13 +165,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
             return index == user.clubData.length ~/ 2
                 ? Center(
-              child: ClubCardWidget(club: user.clubData[firstIndex]),
+              child: ClubCardWidget(club: user.clubData[firstIndex], isOwner: true),
             )
                 : Row(
               children: <Widget>[
-                ClubCardWidget(club: user.clubData[firstIndex]),
+                ClubCardWidget(club: user.clubData[firstIndex], isOwner: true),
                 if (secondIndex < user.clubData.length)
-                  ClubCardWidget(club: user.clubData[secondIndex]),
+                  ClubCardWidget(club: user.clubData[secondIndex], isOwner: true),
               ],
             );
           },
