@@ -74,8 +74,28 @@ const getDataForSearchPage = async (req, res) => {
 	}
 }
 
+const getAllEventsForClub = async (req, res) => {
+	const {eventIDS} = req.body;
+	try{
+		let result = []
+		for(const id of eventIDS){
+			docRef = await getDoc(doc(db, "events", id))
+			data = docRef.data()
+			data.id = docRef.id
+			result.push(data);
+		}
+		res.status(200).send(JSON.stringify({'message':result}))
+
+
+	} catch(error){
+		console.error("Error getting document:", error);
+    res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+	}
+}
+
 module.exports = {
 	createClub,
 	getClub,
-	getDataForSearchPage
+	getDataForSearchPage,
+	getAllEventsForClub
 };

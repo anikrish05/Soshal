@@ -1,3 +1,7 @@
+import 'package:gdsc_app/classes/EventCardData.dart';
+import 'dart:convert';
+import 'package:http/http.dart';
+const hostName = "10.0.2.2:3000";
 class ClubCardData {
   List<String> admin;
   String category;
@@ -8,9 +12,9 @@ class ClubCardData {
   String name;
   String type;
   bool verified;
-  String id;
+  final String id;
   double rating;
-
+  List<EventCardData> eventData = [];
   ClubCardData({
     required this.admin,
     required this.category,
@@ -24,4 +28,9 @@ class ClubCardData {
     required this.id,
     required this.rating
   });
+  Future<void> getAllEventsForClub() async{
+    for(var i=0;i<events.length;i++){
+
+    }
+  }
 }

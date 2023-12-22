@@ -25,7 +25,7 @@ class ClubCardWidget extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerLeft,
         child: GestureDetector(
-          onTap: () {
+          onTap: () async {
             print(isOwner);
             if(isOwner){
               Navigator.push(

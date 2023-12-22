@@ -44,6 +44,7 @@ class _SearchScreenState extends State<SearchScreen>
     } else {
       final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/userData'));
       var data = jsonDecode(response.body)['message'];
+      print(data);
       UserData tempUser = UserData(
         classOf: data['classOf'],
         uid: data['uid'],

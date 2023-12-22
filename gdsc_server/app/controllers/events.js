@@ -29,7 +29,7 @@ const createEvent = async (req, res) => {
 		admin: admin,
 		comments: [],
 		description: description,
-		donwnloadURL: downloadURL,
+		downloadURL: downloadURL,
 		latitude: latitude,
 		longitude: longitude,
 		rating: 0,
