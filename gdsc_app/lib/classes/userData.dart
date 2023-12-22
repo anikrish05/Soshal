@@ -28,14 +28,16 @@ class UserData {
         print("loop" + i.toString());
         try {
           final clubIteration = await get(
-            Uri.parse('http:///api/clubs/getClub/${this.clubIds[i]}'),
+            Uri.parse('http://$hostName/api/clubs/getClub/${this.clubIds[i]}'),
           );
 
           if (clubIteration.statusCode == 200) {
             var clubDataResponse = jsonDecode(clubIteration.body)['message'];
+            print("HIII");
+            print(clubDataResponse);
             clubData.add(
               ClubCardData(
-                rating: clubDataResponse['rating'],
+                rating: clubDataResponse['avgRating'].toDouble(),
                   admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
                   category: clubDataResponse['category'],
                   description: clubDataResponse['description'],
