@@ -140,27 +140,6 @@ class _SearchScreenState extends State<SearchScreen>
         );
       }
       for (int i = 0; i < data['events'].length; i++) {
-        List<ClubCardData> temp = [];
-        /*
-        for (int z = 0; z < data['events']['clubInfo'].length; z++) {
-          temp.add(
-            ClubCardData(
-                admin: List<String>.from((data['events']['clubInfo'][z]['admin'] ?? []).map((admin) => admin.toString())),
-                category: data['events']['clubInfo'][z]['category'],
-                rating: data['events']['clubInfo'][z]['avgRating'].toDouble(),
-                description: data['events']['clubInfo'][z]['description'],
-                downloadURL: data['events']['clubInfo'][z]['downloadURL'],
-                events: List<String>.from((data['events']['clubInfo'][z]['events'] ?? []).map((event) => event.toString())),
-                followers: List<String>.from((data['events']['clubInfo'][z]['followers'] ?? []).map((follower) => follower.toString())),
-                name: data['events']['clubInfo'][z]['name'],
-                type: data['events']['clubInfo'][z]['type'],
-                verified: data['events']['clubInfo'][z]['verified'],
-                id: data['events']['clubInfo'][z]['id']
-            ),
-          );
-        }
-         */
-
         events.add(
           EventCardData(
             admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),

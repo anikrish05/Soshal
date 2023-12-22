@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/screens/createEvent.dart';
-
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
+import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
 
 class ClubProfilePage extends StatefulWidget {
@@ -20,6 +23,8 @@ class ClubProfilePage extends StatefulWidget {
 class _ClubProfilePageState extends State<ClubProfilePage>
     with SingleTickerProviderStateMixin {
   late ClubCardData club;
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+
   bool isEditing = false;
   late TabController tabController;
   late TextEditingController clubNameController;
@@ -27,6 +32,21 @@ class _ClubProfilePageState extends State<ClubProfilePage>
   late TextEditingController clubDescController;
   User user = User();
   Color _colorTab = Color(0xFFFF8050);
+  List<EventCardData> upcommingEvents = [];
+  List<EventCardData> finishedEvents = [];
+
+  Future<void> getTabContent() async {
+    await club.getALlEventsForClub();
+    final now = DateTime.now();
+
+    // Filter events based on the date
+    upcommingEvents = club.eventData
+        .where((event) => format.parse(event.time).isAfter(now))
+        .toList();
+    finishedEvents = club.eventData
+        .where((event) => format.parse(event.time).isBefore(now))
+        .toList();
+  }
 
   @override
   void initState() {
@@ -191,7 +211,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
               ),
               SizedBox(height: 16),
               buildTabBar(),
-              getDataTabs(),
+              SizedBox(height: 16),
+              buildTabContent(),
             ],
           ),
           if (isEditing)
@@ -366,20 +387,10 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     );
   }
 
-  Widget getDataTabs() => SizedBox(
-    height: MediaQuery.of(context).size.height,
-    child: TabBarView(
-      children: [
-        buildTabContent("Upcoming"),
-        buildTabContent("Previous"),
-      ],
-      controller: tabController,
-    ),
-  );
 
-  Widget buildTabContent(String tabName) {
+  Widget buildTabContent() {
     return FutureBuilder<void>(
-      future: fetchTabData(tabName), // Replace with your future function
+      future: getTabContent(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoaderWidget(); // or any loading indicator
@@ -388,24 +399,40 @@ class _ClubProfilePageState extends State<ClubProfilePage>
             child: Text('Error: ${snapshot.error}'),
           );
         } else {
-          // Here you can use the result from the future function to build your tab content
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          List<EventCardData> eventsToDisplay = [];
+
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: TabBarView(
               children: [
-                Text(tabName),
-                // Use 'snapshot.data' to display the content based on the future result
-                // Example: Text('Data: ${snapshot.data.toString()}'),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: upcommingEvents.length,
+                    itemBuilder: (context, index) {
+                      return EventCardWidget(
+                        event: upcommingEvents[index],
+                        isOwner: true,
+                      );
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: finishedEvents.length,
+                    itemBuilder: (context, index) {
+                      return EventCardWidget(
+                        event: finishedEvents[index],
+                        isOwner: true,
+                      );
+                    },
+                  ),
+                ),
               ],
+              controller: tabController,
             ),
           );
         }
       },
     );
-  }
-
-  Future<void> fetchTabData(String tabName) async {
-    // Implement your logic to fetch data for the specified tab
-    await widget.club.getALlEventsForClub();
   }
 }
