@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
@@ -17,13 +16,11 @@ class CreateEventScreen extends StatefulWidget {
   final ClubCardData club;
   CreateEventScreen({required this.club});
   _CreateEventScreenState createState() => _CreateEventScreenState();
-
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   late DateTime selectedDateTime;
-
 
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
   late TextEditingController _controller1;
@@ -34,13 +31,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   double longitude = 0.0;
 
   var eventName = TextEditingController();
-
   var eventDesc = TextEditingController();
 
   LatLng? _selectedLatLng;
 
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
+
+  final ButtonStyle style = ElevatedButton.styleFrom(
+    backgroundColor: Colors.orange,
+    shape: StadiumBorder(),
+    textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 30, color: Colors.grey),
+  );
 
   @override
   void onGetLocation() async {
@@ -77,16 +79,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   bool repeatable = false;
-  final ButtonStyle style2 =
-  ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: StadiumBorder(),
-      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 15, color: Colors.grey ));
-  final ButtonStyle style =
-  ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: StadiumBorder(),
-      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 30, color: Colors.grey ));
 
   int indexPubOrPriv = 0;
   @override
@@ -99,6 +91,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             title: Text("Create an Event",
               style: TextStyle(
                 color: Color(0xFF88898C),
+                fontFamily: 'Garret',
               ),),
             backgroundColor: Colors.white
         ),
@@ -121,209 +114,203 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           ),
                         ),
                         VerticalDivider(),
-                        Container(
+                        Expanded(  // Wrap your Column in an Expanded widget
+                          child: Padding(  // Add padding to the left of the Column
+                            padding: EdgeInsets.only(left: 35.0),  // Adjust this value as needed
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children:[
                                   SizedBox(
                                     height: 40,
-                                    width: 150,
+                                    width: 170,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garret', color: Colors.black, fontSize: 15),  // Change input text color to black
                                       controller: eventName,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
                                         hintText: "Event Title",
+                                        hintStyle: TextStyle(color: Colors.black),
                                         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                                       ),
-
                                     ),
                                   ),
                                   Divider(),
                                   SizedBox(
                                     height: 110,
-                                    width: 150,
+                                    width: 170,
                                     child: TextField(
-                                      style: TextStyle(fontFamily: 'Garet', color: Colors.grey, fontSize: 15),
+                                      style: TextStyle(fontFamily: 'Garret', color: Colors.black, fontSize: 15),  // Change input text color to black
                                       controller: eventDesc,
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
                                         hintText: "Event Description",
-                                        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),                              ),
+                                        hintStyle: TextStyle(color: Colors.black),
+                                        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                      ),
                                       maxLines: 3,
                                     ),
-                                  )
-                                ]
-                            )
-                        )
-                      ],
-                    )
-                ),
-                Divider(),
-                Container(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 40,
-                            width: 150,
-                            child: ElevatedButton(
-                              style: style2,
-                              onPressed: () {onGetLocation();},
-                              child: const Text('Choose Location'),
-                            ),
-                          ),
-                          VerticalDivider(),
-                          ToggleSwitch(
-                            minWidth: 77.5,
-                            cornerRadius: 20.0,
-                            activeBgColors: [[_orangeColor], [_orangeColor]],
-                            activeFgColor: Colors.white,
-                            inactiveBgColor: Colors.grey,
-                            inactiveFgColor: Colors.white,
-                            initialLabelIndex: 0,
-                            totalSwitches: 2,
-                            labels: ['Public', 'Private'],
-                            radiusStyle: true,
-                            onToggle: (index) {
-                              if(index==1)
-                              {
-                                indexPubOrPriv = 0;
-
-                              }
-                              else if(index==0)
-                              {
-                                indexPubOrPriv = 1;
-
-                              };
-                            },
-                          ),
-                        ]
-                    )
-                ),
-                Divider(),
-                RichText(
-                  text: TextSpan(
-                    text: 'Choose Date and Time',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 15),
-                  ),
-                ),
-                Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            width: 240.0,
-                            height: 30.0,
-                            child:
-                            DateTimeField(
-                              format: format,
-                              onShowPicker: (context, currentValue) async {
-                                final dateTime = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(2000),
-                                  initialDate: currentValue ?? DateTime.now(),
-                                  lastDate: DateTime(2101),
-                                );
-                                  if (dateTime != null) {
-                                  final timeOfDay = await showTimePicker(
-                                  context: context,
-                                  initialTime: TimeOfDay.fromDateTime(
-                                  currentValue ?? DateTime.now(),
                                   ),
-                                );
-                                  if (timeOfDay != null) {
-                                    setState(() {
-                                      selectedDateTime = DateTime(
-                                        dateTime.year,
-                                        dateTime.month,
-                                        dateTime.day,
-                                        timeOfDay.hour,
-                                        timeOfDay.minute,
-                                      );
-                                    });
-                                    return selectedDateTime;
-                                  }
-                                  }
-                              },
+                                ]
                             ),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (selectedDateTime != null) {
-                              final formattedDateTime = format.format(selectedDateTime);
-                              // For demonstration purposes, display the formatted date and time in a Snackbar
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Selected Date and Time: $formattedDateTime'),
-                                ),
-                              );
-                              // You can store `formattedDateTime` or `selectedDateTime` as needed
-                            } else {
-                              // Handle the case where no date and time are selected
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Please select a date and time.'),
-                                ),
-                              );
-                            }
-                          },
-                          child: Text('Show Snackbar'),
-                        ),
+                          ),
+                        )
                       ],
                     )
                 ),
-                Divider(),
-                Container(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Repeatable',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 30),
-
-
-                          ),
-                        ),
-                        Switch(
-                          // This bool value toggles the switch.
-                          value: repeatable,
-                          activeColor: Colors.orange,
-                          onChanged: (bool value) {
-                            // This is called when the user toggles the switch.
-                            setState(() {
-                              repeatable = value;
-                            });
-                          },
-                        )
-                      ]
-                  ),
-                ),
-                Center(
+                Padding(  // Add padding to center the elements
+                  padding: EdgeInsets.symmetric(horizontal: 28.1),  // Adjust this value as needed
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 50,
-                        width: 200,
-                        child:
-                        ElevatedButton(
-                          style: style,
-                          onPressed: () {postRequest();},
-                          child: const Text('post'),
+                    children: [
+                      Divider(),
+                      Container(
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 150,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: _orangeColor,  // Change the button color to _orangeColor
+                                      shape: StadiumBorder(),
+                                      textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.grey),
+                                    ),
+                                    onPressed: () {onGetLocation();},
+                                    child: const Text('Choose Location'),
+                                  ),
+                                ),
+                                VerticalDivider(),
+                                Expanded(  // Wrap the ToggleSwitch in an Expanded widget
+                                  child: ToggleSwitch(
+                                    minWidth: 70.0,  // Reduce the minWidth property
+                                    cornerRadius: 20.0,
+                                    activeBgColors: [[_orangeColor], [_orangeColor]],
+                                    activeFgColor: Colors.white,
+                                    inactiveBgColor: Colors.grey,
+                                    inactiveFgColor: Colors.white,
+                                    initialLabelIndex: 0,
+                                    totalSwitches: 2,
+                                    labels: ['Public', 'Private'],
+                                    radiusStyle: true,
+                                    onToggle: (index) {
+                                      if(index==1)
+                                      {
+                                        indexPubOrPriv = 0;
+
+                                      }
+                                      else if(index==0)
+                                      {
+                                        indexPubOrPriv = 1;
+
+                                      };
+                                    },
+                                  ),
+                                ),
+                              ]
+                          )
+                      ),
+                      Divider(),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Choose Date and Time',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Garret', fontSize: 15),
+                        ),
+                      ),
+                      Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 295.0,
+                                child: DateTimeField(
+                                  format: format,
+                                  onShowPicker: (context, currentValue) async {
+                                    final dateTime = await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(2000),
+                                      initialDate: currentValue ?? DateTime.now(),
+                                      lastDate: DateTime(2101),
+                                    );
+                                    if (dateTime != null) {
+                                      final timeOfDay = await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.fromDateTime(
+                                          currentValue ?? DateTime.now(),
+                                        ),
+                                      );
+                                      if (timeOfDay != null) {
+                                        setState(() {
+                                          selectedDateTime = DateTime(
+                                            dateTime.year,
+                                            dateTime.month,
+                                            dateTime.day,
+                                            timeOfDay.hour,
+                                            timeOfDay.minute,
+                                          );
+                                        });
+                                        return selectedDateTime;
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                      Divider(),
+                      Container(
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Repeatable',
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Garret', fontSize: 30),
+                                ),
+                              ),
+                              Switch(
+                                // This bool value toggles the switch.
+                                value: repeatable,
+                                activeColor: Colors.orange,
+                                onChanged: (bool value) {
+                                  // This is called when the user toggles the switch.
+                                  setState(() {
+                                    repeatable = value;
+                                  });
+                                },
+                              )
+                            ]
+                        ),
+                      ),
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 50,
+                              width: 200,
+                              child:
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: _orangeColor,  // Change the button color to _orangeColor
+                                  shape: StadiumBorder(),
+                                  textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 30, color: Colors.grey),
+                                ),
+                                onPressed: () {postRequest();},
+                                child: const Text('post'),
+                              ),
+                            )
+                          ],
                         ),
                       )
                     ],
                   ),
-                )
-
+                ),
               ]),
         ));
   }
 }
+

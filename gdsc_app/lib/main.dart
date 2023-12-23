@@ -15,9 +15,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:gdsc_app/classes/user.dart';
 
-
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
+
+// Define the color as a global variable
+Color _orangeColor = Color(0xFFFF8050);
 
 void main() => runApp(MaterialApp(
   initialRoute: '/login',
@@ -74,28 +76,24 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 40,
-        selectedIconTheme: IconThemeData(color: Colors.orange, size: 40),
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey),
+        selectedIconTheme: IconThemeData(color: _orangeColor, size: 40), // Use the global variable here
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
-            label: 'Map',
+            label: '', // Remove the label
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
-            label: 'Search',
+            label: '', // Remove the label
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: '', // Remove the label
           ),
         ],
-        currentIndex: selectedIndex, //New
+        currentIndex: selectedIndex,
         onTap: onClicked,
       ),
     );
   }
 }
-
-
-

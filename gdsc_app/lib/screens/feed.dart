@@ -11,6 +11,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import '../widgets/loader.dart';
 
+// Define the color as a global variable
+Color _orangeColor = Color(0xFFFF8050);
+
 class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
@@ -163,7 +166,7 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.orange,
+          backgroundColor: _orangeColor, // Use the global variable here
           onPressed: loadData, // Trigger data loading on button press
           child: Icon(Icons.refresh),
         ),

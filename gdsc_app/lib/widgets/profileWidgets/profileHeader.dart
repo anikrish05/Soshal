@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+// Define the color as a global variable
+Color _orangeColor = Color(0xFFFF8050);
+
 class ProfileHeaderWidget extends StatefulWidget {
   final dynamic image;
   final String name;
@@ -50,7 +53,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             Positioned(
               bottom: 8,
               right: 8,
-              child: buildEditIcon(Colors.orange),
+              child: buildEditIcon(_orangeColor), // Use the global variable here
             ),
           ],
         ),
@@ -64,7 +67,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     color: Colors.white,
     all: 3,
     child: buildCircle(
-      color: Colors.orange,
+      color: color, // Use the passed color here
       all: 8,
       child: Icon(
         Icons.edit,
