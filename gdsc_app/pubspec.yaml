@@ -44,7 +44,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   datetime_picker_formfield_new: ^2.1.0
   flutter_map:
-
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:

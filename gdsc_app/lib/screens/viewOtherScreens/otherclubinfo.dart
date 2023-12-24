@@ -43,10 +43,18 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    if (widget.currUser.following.containsKey(widget.club.id)){
+    if (widget.currUser.following.containsKey(widget.club.id) &&
+        widget.currUser.following[widget.club.id] == "Accepted"){
       setState(() {
         isFollowing = true;
         followButton = "Unfollow";
+      });
+    }
+    else if(widget.currUser.following.containsKey(widget.club.id) &&
+        widget.currUser.following[widget.club.id] == "Requested"){
+      setState(() {
+        isFollowing = true;
+        followButton = "Requested";
       });
     }
   }
@@ -230,52 +238,77 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
-  }
-  Widget buildTabContent() {
-    return FutureBuilder<void>(
-      future: getTabContent(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoaderWidget(); // or any loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          List<EventCardData> eventsToDisplay = [];
+  }Widget buildTabContent() {
+    if (widget.club.type == "Private" &&
+        widget.currUser.following.containsKey(widget.club.id) &&
+        widget.currUser.following[widget.club.id] == "Accepted") {
+      // User is following the club with "Accepted" status
+      // Proceed with displaying content or perform actions accordingly
+      return FutureBuilder<void>(
+        future: getTabContent(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return LoaderWidget(); // or any loading indicator
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            List<EventCardData> eventsToDisplay = [];
 
-          return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: TabBarView(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: upcommingEvents.length,
-                    itemBuilder: (context, index) {
-                      return EventCardWidget(
-                        event: upcommingEvents[index],
-                        isOwner: true,
-                      );
-                    },
+            return SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: TabBarView(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: upcommingEvents.length,
+                      itemBuilder: (context, index) {
+                        return EventCardWidget(
+                          event: upcommingEvents[index],
+                          isOwner: true,
+                        );
+                      },
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: finishedEvents.length,
-                    itemBuilder: (context, index) {
-                      return EventCardWidget(
-                        event: finishedEvents[index],
-                        isOwner: true,
-                      );
-                    },
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: finishedEvents.length,
+                      itemBuilder: (context, index) {
+                        return EventCardWidget(
+                          event: finishedEvents[index],
+                          isOwner: true,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-              controller: tabController,
+                ],
+                controller: tabController,
+              ),
+            );
+          }
+        },
+      );
+    } else {
+      // User is not following the club or the status is not "Accepted"
+      // Display a message or UI element accordingly
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Follow the club to see private posts',
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.grey,
+              fontStyle: FontStyle.italic,
             ),
-          );
-        }
-      },
-    );
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
   }
+
+
+
 }
