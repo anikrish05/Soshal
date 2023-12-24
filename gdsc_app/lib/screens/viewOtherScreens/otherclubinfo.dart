@@ -149,6 +149,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                               });
                             }
                             else{
+                              widget.currUser.followPrivateClub(widget.club.id);
                               setState(() {
                                 followButton = "Requested";
                               });

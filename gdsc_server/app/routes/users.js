@@ -11,6 +11,8 @@ router.post('/updateProfile', controllers.updateProfile)
 router.get('/getAllUsers', controllers.getAllUsers)
 router.get('/getUser/:id', controllers.getUser)
 router.post('/followPublicClub', controllers.followPublicClub)
+router.post('/followPrivateClub', controllers.followPrivateClub)
+
 router.post('/unfollowClub', controllers.unfollowClub)
 
 module.exports = router
