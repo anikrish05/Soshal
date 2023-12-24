@@ -69,15 +69,26 @@ const getEvent = async (req, res) => {
   try {
     const id = req.params.id;
     const docRef = await getDoc(doc(db, "events", id));
-    const data = docRef.data();
-    data.clubInfo = await getAssociatedClubForEvent(data.admin)
-        res.status(200).send(JSON.stringify({'message':data}))
-   
+
+    if (docRef.exists()) {
+      const data = docRef.data();
+      console.log(data);
+      console.log(data.admin);
+      console.log(data['admin']);
+
+      // Assuming getAssociatedClubForEvent is an asynchronous function
+      data.clubInfo = await getAssociatedClubForEvent(data.admin);
+
+      res.status(200).send(JSON.stringify({ 'message': data }));
+    } else {
+      res.status(404).send(JSON.stringify({ 'message': 'Event not found' }));
+    }
   } catch (error) {
     console.error("Error getting document:", error);
     res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
   }
 };
+
 
 
 module.exports = {

@@ -25,7 +25,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
   List<EventCardData> upcommingEvents = [];
   List<EventCardData> finishedEvents = [];
   final format = DateFormat("yyyy-MM-dd HH:mm");
-
+  String followButton = "Follow";
 
   Future<void> getTabContent() async {
     await widget.club.getALlEventsForClub();
@@ -46,6 +46,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
     if (widget.currUser.following.containsKey(widget.club.id)){
       setState(() {
         isFollowing = true;
+        followButton = "Unfollow";
       });
     }
   }
@@ -132,21 +133,37 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                       // Follow Button
                       ElevatedButton(
                         onPressed: () {
+                          bool temp = !isFollowing;
                           setState(() {
                             // Toggle the follow state
-                            isFollowing = !isFollowing;
+                            isFollowing = temp;
                           });
 
                           // Add your logic for follow/unfollow here
-                          if (isFollowing) {
+                          if (temp) {
                             // Logic for follow
+                            if(widget.club.type == "Public"){
+                              widget.currUser.followPublicClub(widget.club.id);
+                              setState(() {
+                                followButton = "Unfollow";
+                              });
+                            }
+                            else{
+                              setState(() {
+                                followButton = "Requested";
+                              });
+                            }
                             // You can implement the logic to follow the club here
                           } else {
+                            widget.currUser.unfollowClub(widget.club.id);
+                            setState(() {
+                              followButton = "Follow";
+                            });
                             // Logic for unfollow
                             // You can implement the logic to unfollow the club here
                           }
                         },
-                        child: Text(isFollowing ? 'Unfollow' : 'Follow'),
+                        child: Text(followButton),
                       ),
                     ],
                   ),

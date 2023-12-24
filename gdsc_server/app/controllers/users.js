@@ -139,6 +139,70 @@ const getUser = async (req, res) => {
     }
 }
 
+const followPublicClub = async (req, res) => {
+  try {
+    const { clubId, uid } = req.body;
+
+    // Update user's following field
+    const userDocRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userDocRef);
+    const userData = userDoc.data();
+    
+    // Assuming userData.following is a map
+    userData.following[clubId] = "Accepted";
+
+    await setDoc(userDocRef, { following: userData.following }, { merge: true });
+
+    // Update club's followers field
+    const clubDocRef = doc(db, "clubs", clubId);
+    const clubDoc = await getDoc(clubDocRef);
+    const clubData = clubDoc.data();
+    
+    // Assuming clubData.followers is a map
+    clubData.followers[uid] = "Accepted";
+
+    await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
+
+    res.status(200).send(JSON.stringify({ "message": "Success" }));
+  } catch (error) {
+    console.error("Error following public club:", error);
+    res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+  }
+}
+
+const unfollowClub = async (req, res) => {
+  console.log("INGGG");
+  try {
+    const { clubId, uid } = req.body;
+
+    // Remove user from club's followers
+    const clubDocRef = doc(db, "clubs", clubId);
+    const clubDoc = await getDoc(clubDocRef);
+    const clubData = clubDoc.data();
+
+    // Assuming clubData.followers is a map
+    delete clubData.followers[uid];
+
+    await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
+
+    // Remove club from user's following
+    const userDocRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userDocRef);
+    const userData = userDoc.data();
+
+    // Assuming userData.following is a map
+    delete userData.following[clubId];
+
+    await setDoc(userDocRef, { following: userData.following }, { merge: true });
+
+    res.status(200).send(JSON.stringify({ "message": "Success" }));
+  } catch (error) {
+    console.error("Error unfollowing club:", error);
+    res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+  }
+}
+
+
 
 module.exports = {
   signup,
@@ -150,5 +214,7 @@ module.exports = {
   deRSVP,
   updateProfile,
   getAllUsers,
-  getUser
+  getUser,
+  followPublicClub,
+  unfollowClub
 };

@@ -10,5 +10,7 @@ router.post('/deRSVP', controllers.deRSVP)
 router.post('/updateProfile', controllers.updateProfile)
 router.get('/getAllUsers', controllers.getAllUsers)
 router.get('/getUser/:id', controllers.getUser)
+router.post('/followPublicClub', controllers.followPublicClub)
+router.post('/unfollowClub', controllers.unfollowClub)
 
 module.exports = router

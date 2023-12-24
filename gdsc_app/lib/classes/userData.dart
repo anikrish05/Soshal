@@ -110,4 +110,59 @@ class UserData {
     await getEventData();
   }
 
+  Future<void> followPublicClub(String clubId) async {
+    try {
+      final response = await post(
+        Uri.parse('http://$hostName/api/users/followPublicClub'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "clubId": clubId,
+          "uid": uid,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        following[clubId] = "Accepted";
+        // Request was successful, you might want to handle the response here
+      } else {
+        // Request failed, handle the error or throw an exception
+        throw Exception('Failed to follow public club: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions thrown during the asynchronous operation
+      print('Error in followPublicClub: $error');
+      throw Exception('Failed to follow public club: $error');
+    }
+  }
+
+  Future<void> unfollowClub(String clubId) async {
+    try {
+      final response = await post(
+        Uri.parse('http://$hostName/api/users/unfollowClub'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "clubId": clubId,
+          "uid": uid,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+         following.remove(clubId);
+        // Request was successful, you might want to handle the response here
+      } else {
+        // Request failed, handle the error or throw an exception
+        throw Exception('Failed to unfollow club: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions thrown during the asynchronous operation
+      print('Error in unfollowClub: $error');
+      throw Exception('Failed to unfollow club: $error');
+    }
+  }
+
+
 }
