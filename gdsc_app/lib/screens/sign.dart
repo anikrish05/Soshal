@@ -24,11 +24,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   String errorMessage = '';
 
-  bool isValidEmail(input) {
-    return RegExp(
+  bool isValidEmail(String input) {
+    // Check if the email is a valid UCSC email
+    bool isValidFormat = RegExp(
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(input);
+
+    bool containsUCSCDomain = input.endsWith("@ucsc.edu");
+
+    return isValidFormat && containsUCSCDomain;
   }
+
 
   void createAccount() async {
     // Check if the email is a valid UCSC email
@@ -36,6 +42,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // Show an error message for an invalid email
       setState(() {
         errorMessage = 'Invalid email. Please use a UCSC email.';
+      });
+      return;
+    }
+
+    // Check if the password meets the minimum length requirement
+    if (passWordController.text.length < 6) {
+      // Show an error message for a weak password
+      setState(() {
+        errorMessage = 'Password should be at least 6 characters.';
       });
       return;
     }
@@ -59,12 +74,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       // Handle other error cases
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-
+      print(responseData);
       if (responseData.containsKey('error') &&
           responseData['error']['code'] == 'auth/invalid-email') {
         // Show an error message for invalid email from Firebase
         setState(() {
           errorMessage = 'Invalid email. Please check your email address.';
+        });
+      } else if (responseData.containsKey('error') &&
+          responseData['error']['code'] == 'auth/weak-password') {
+        // Show an error message for a weak password
+        setState(() {
+          errorMessage = 'Password should be at least 6 characters.';
         });
       } else {
         // Show a generic error message for other errors
@@ -74,6 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     }
   }
+
 
 
 
