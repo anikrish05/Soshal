@@ -13,7 +13,6 @@ class ClubCardWidget extends StatelessWidget {
   final UserData currUser;
   double rating = 4.5; // Replace this with your dynamic rating variable
 
-
   ClubCardWidget({required this.club, required this.isOwner, required this.currUser});
 
   @override
@@ -48,57 +47,70 @@ class ClubCardWidget extends StatelessWidget {
           child: Container(
             height: screenWidth * 0.25,
             width: screenWidth * 0.50,
-            child: Card(
-              color: _cardColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: InkWell(
-                splashColor: Colors.blueGrey.withAlpha(30),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: imageWidth,
-                        height: imageHeight,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: imageBuild(),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            SizedBox(height: 20),
-                            Flexible(
-                              child: Row(
-                                children: [
-                                  RatingBarIndicator(
-                                    rating: club.rating, // Replace '3' with your dynamic rating variable from the 'club' object
-                                    direction: Axis.horizontal,
-                                    itemCount: 5,
-                                    itemSize: 15.0, // Adjust this value to change the size of the stars
-                                    itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),
-                                  ),
-                                ],
-                              ),
+            child: Stack(
+              children: [
+                Card(
+                  color: _cardColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: InkWell(
+                    splashColor: Colors.blueGrey.withAlpha(30),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: imageWidth,
+                            height: imageHeight,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: imageBuild(),
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                SizedBox(height: 20),
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      RatingBarIndicator(
+                                        rating: club.rating, // Replace '3' with your dynamic rating variable from the 'club' object
+                                        direction: Axis.horizontal,
+                                        itemCount: 5,
+                                        itemSize: 15.0, // Adjust this value to change the size of the stars
+                                        itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                if (club.verified)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.verified, color: Colors.blue, size: 24.0),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
