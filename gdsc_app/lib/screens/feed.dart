@@ -100,11 +100,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void handleMarkerTap(MarkerId markerId) {
-    dynamic event = _markerEventMap[markerId];
+    Map<String, dynamic> event = Map.from(_markerEventMap[markerId]);
     print("LSKJAKJQEJKFHEQ");
-    print(event);
     if (event != null) {
-      print("Marker Tapped: ${event['id']}");
+      print("Marker Tapped: ${event['eventID'].toString()}");
       selectedMarkerData = getMarkerData(event);
       panelController.isPanelOpen
           ? panelController.close()
@@ -160,6 +159,12 @@ class _MyAppState extends State<MyApp> {
                 onClose: () {
                   panelController.close();
                 },
+                resetStateCallback: () {
+                  setState(() {
+                    // Reset the state variables in MyApp
+                    selectedMarkerData = null;
+                  });
+                },
               )
                   : Container(),
             ),
@@ -180,7 +185,7 @@ class _MyAppState extends State<MyApp> {
 
     // Create a copy of the event data to avoid potential modifications
     Map<String, dynamic> eventDataCopy = Map.from(event);
-
+    print(eventDataCopy['comments']);
     List<ClubCardData> clubs = [];
     eventDataCopy['clubInfo'].forEach((club) {
       clubs.add(
