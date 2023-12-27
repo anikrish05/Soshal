@@ -11,6 +11,7 @@ import 'package:gdsc_app/classes/user.dart';
 import '../widgets/loader.dart';
 import 'createClub.dart';
 import 'dart:async';
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 class ProfileScreen extends StatefulWidget {
@@ -65,17 +66,52 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     super.dispose();
     tabController.dispose();
   }
-
-
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      user!.downloadURL = pickedFile.path;
-      setState(() {});
-      // Perform any additional actions, e.g., upload the image to a server
+      String filePath = pickedFile.path;
+
+      // Read the image file as bytes
+      List<int> imageBytes = await File(filePath).readAsBytes();
+
+      // Convert the bytes to a base64-encoded string
+      String base64Image = base64Encode(imageBytes);
+
+      // Send the base64-encoded image to the server
+      await sendImageToServer(base64Image);
     }
   }
+
+  Future<void> sendImageToServer(String base64Image) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/api/users/updateProfileImage'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "image": base64Image,
+          "uid": "your_user_id", // Replace with the actual user ID
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully');
+        setState(() {
+
+        });
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error uploading image: $error');
+    }
+  }
+
+
+
+
 
   FutureOr onGoBack(dynamic value) {
     setState(() {});
