@@ -74,7 +74,18 @@ class ClubCardWidget extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                    ),
+                                    if (club.verified)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 4.0),
+                                        child: Icon(Icons.verified, color: Colors.blue, size: 20.0), // Reduced the size to 20.0
+                                      ),
+                                  ],
+                                ),
                                 SizedBox(height: 20),
                                 Flexible(
                                   child: Row(
@@ -101,15 +112,6 @@ class ClubCardWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (club.verified)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.verified, color: Colors.blue, size: 24.0),
-                    ),
-                  ),
               ],
             ),
           ),
