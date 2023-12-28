@@ -11,14 +11,18 @@ import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+typedef ResetStateCallback = void Function();
 
 class SlidingUpWidget extends StatefulWidget {
   final MarkerData markerData;
   final VoidCallback onClose;
   final User currUser; // Callback to be called when the panel is closed
+  final ResetStateCallback resetStateCallback;
+
 
   SlidingUpWidget(
-      {required this.markerData, required this.onClose, required this.currUser});
+      {required this.markerData, required this.onClose, required this.currUser, required this.resetStateCallback,
+      });
 
   @override
   _SlidingUpWidgetState createState() => _SlidingUpWidgetState();
@@ -97,12 +101,21 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   @override
   void initState() {
     super.initState();
-    // Assign the future directly without calling getComments
+    isRSVP = false;
+    comments = [];
     commentsFuture = getComments();
-    setState(() {
-      isRSVP = widget.markerData.isRSVP;
-    });
     getStreetName();
+
+    // Reset the state callback
+    widget.resetStateCallback();
+  }
+
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    // Clear any other resources or state variables
+    super.dispose();
   }
 
   Future<void> getStreetName() async {

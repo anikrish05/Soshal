@@ -141,19 +141,19 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
-            admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
-            rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
-                .map((rsvp) => rsvp.toString())),
-            name: data['events'][i]['name'],
-            description: data['events'][i]['description'],
-            downloadURL: data['events'][i]['downloadURL'],
-            latitude: data['events'][i]['latitude'],
-            longitude: data['events'][i]['longitude'],
-            rating: data['events'][i]['rating'].toDouble(),
-            comments: List<String>.from((data['events'][i]['comments'] ?? [])
-                .map((comment) => comment.toString())),
-            id: data['events'][i]['id'],
-            time: data['events'][i]['timestamp']
+              admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
+              rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
+                  .map((rsvp) => rsvp.toString())),
+              name: data['events'][i]['name'],
+              description: data['events'][i]['description'],
+              downloadURL: data['events'][i]['downloadURL'],
+              latitude: data['events'][i]['latitude'],
+              longitude: data['events'][i]['longitude'],
+              rating: data['events'][i]['rating'].toDouble(),
+              comments: List<String>.from((data['events'][i]['comments'] ?? [])
+                  .map((comment) => comment.toString())),
+              id: data['events'][i]['id'],
+              time: data['events'][i]['timestamp']
           ),
         );
       }
@@ -236,45 +236,78 @@ class _SearchScreenState extends State<SearchScreen>
       ),
     ],
   );
-  Widget buildSearchResultList() {
-    List<Widget> clubPairs = [];
 
-    for (int i = 0; i < filteredItemsClubs.length; i += 2) {
-      // Create pairs of club cards
-      List<Widget> pair = [];
-      pair.add(ClubCardWidget(
-        club: filteredItemsClubs[i],
-        isOwner: user!.clubIds.contains(filteredItemsClubs[i].id),
-        currUser: user!,
-      ));
-      if (i + 1 < filteredItemsClubs.length) {
-        pair.add(SizedBox(width: 8.0)); // Add spacing between club cards
-        pair.add(ClubCardWidget(
-          club: filteredItemsClubs[i + 1],
-          isOwner: user!.clubIds.contains(filteredItemsClubs[i + 1].id),
+  Widget buildSearchResultList() {
+    List<Widget> clubWidgets = filteredItemsClubs.map((club) =>
+        ClubCardWidget(
+          club: club,
+          isOwner: user!.clubIds.contains(club.id),
           currUser: user!,
-        ));
-      }
-      clubPairs.add(SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(children: pair),
-      ));
-    }
+        )).toList();
 
     List<Widget> eventWidgets = filteredItemsEvents.map((event) =>
         EventCardWidget(event: event, isOwner: true)).toList();
 
+    ScrollController _scrollController = ScrollController();
+
     return Column(
       children: [
-        // Display pairs of club cards
-        ...clubPairs,
+        // Display a title for the clubs section
+        Container(
+          child: Text(
+            'Organizations',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _colorTab),
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 2.0, color: Colors.black),
+            ),
+          ),
+        ),
+        // Display club cards in a horizontal scroll view with a navigation arrow on the right
+        Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(children: clubWidgets),
+            ),
+            Positioned(
+              right: -10,
+              bottom: 40,
+              child: Padding(
+                padding: EdgeInsets.only(right: 0.0),  // Adjust this value to 0.0
+                child: IconButton(
+                  icon: Icon(Icons.arrow_forward),
+                  onPressed: () {
+                    _scrollController.animateTo(
+                      _scrollController.offset + 200,
+                      curve: Curves.linear,
+                      duration: Duration(milliseconds: 500),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: 16.0), // Add spacing between club cards and event cards
+        // Display a title for the events section
+        Container(
+          child: Text(
+            'Events',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _colorTab),
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 2.0, color: Colors.black),
+            ),
+          ),
+        ),
         // Display event cards
         ...eventWidgets,
       ],
     );
   }
-
-
 
 }

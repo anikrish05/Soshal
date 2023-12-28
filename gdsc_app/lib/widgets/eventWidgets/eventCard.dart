@@ -48,6 +48,9 @@ class _EventCardWidgetState extends State<EventCardWidget> {
     super.initState();
     getStreetName();
     displayClubNames();
+    setState(() {
+      locationText = "Loading...";
+    });
   }
 
   Future<void> displayClubNames() async{

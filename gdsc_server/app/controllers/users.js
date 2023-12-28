@@ -1,7 +1,13 @@
 const { db, auth, storage } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
+const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
+
 const { ref, uploadBytes } = require('firebase/storage');
+const { Buffer } = require('buffer');
+const multer = require('multer');
+const multerStorage = multer.memoryStorage();
+const multerUpload = multer({ storage: multerStorage });
 
 const signup = async (req, res) => {
   try {
@@ -234,6 +240,46 @@ const unfollowClub = async (req, res) => {
 }
 
 
+const updateProfileImage = async (req, res) => {
+  try {
+    const { uid } = req.body;
+     console.log(req.file);
+    // Check if 'image' is defined
+    if (!req.file || !uid) {
+      return res.status(400).send("Image data or UID not provided");
+    }
+
+    const storage = getStorage();
+    const storageRef = ref(storage, `users/${uid}/${Date.now()}.png`);
+
+    // Use multer's buffer instead of converting base64
+    const buffer = Buffer.from(req.file.buffer);
+
+    const uploadTask = uploadBytes(storageRef, buffer);
+
+    uploadTask.on('state_changed', null,
+      async (error) => {
+        console.error(error);
+        res.status(500).send("Error uploading image");
+      },
+      async () => {
+        try {
+          // Wait for the download URL
+          const URL = await getDownloadURL(uploadTask.snapshot.ref);
+          // Assuming you have a collection named 'users' in your Firestore
+          await setDoc(doc(db, "users", uid), { downloadURL: URL }, { merge: true });
+          res.status(200).send("Image uploaded successfully");
+        } catch (error) {
+          console.error(error);
+          res.status(500).send("Error getting download URL");
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 module.exports = {
   signup,
@@ -248,5 +294,6 @@ module.exports = {
   getUser,
   followPublicClub,
   followPrivateClub,
-  unfollowClub
+  unfollowClub,
+  updateProfileImage
 };
