@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+import 'package:date_time_picker/date_time_picker.dart';
+import 'package:intl/intl.dart';
+
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
 
@@ -12,12 +18,17 @@ class EventProfilePage extends StatefulWidget {
 
 class _EventProfilePageState extends State<EventProfilePage>
     with SingleTickerProviderStateMixin {
+  late DateTime selectedDateTime;
+
   bool isEditing = false;
   late TabController tabController;
   late TextEditingController eventNameController;
   late TextEditingController eventDescController;
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+
   User user = User();
-  Color _colorTab = Color(0xFFFF8050);
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   @override
   void initState() {
@@ -44,6 +55,25 @@ class _EventProfilePageState extends State<EventProfilePage>
 
 
   Color _orangeColor = Color(0xFFFF8050);
+  bool repeatable = false;
+
+  final ButtonStyle style2 =
+  ElevatedButton.styleFrom(
+      backgroundColor: Colors.orange,
+      shape: StadiumBorder(),
+      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 15, color: Colors.grey ));
+
+  @override
+  void onGetLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
+    );
+    print("-------------");
+    print(result);
+    latitude = result.latitude;
+    longitude = result.longitude;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,6 +278,132 @@ class _EventProfilePageState extends State<EventProfilePage>
                           ],
                         ),
                         SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              width: 160,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: _orangeColor,
+                                  textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                                onPressed: () {
+                                  onGetLocation();
+                                },
+                                child: const Text('Choose Location'),
+                              ),
+                            ),
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Repeat:',
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                        child: Container(
+                                          child: ToggleButtons(
+                                            borderColor: Colors.transparent,
+                                            selectedBorderColor: Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20.0),
+                                            borderWidth: 0.0,
+                                            onPressed: (int index) {
+                                              setState(() {
+                                                repeatable = index == 1;
+                                              });
+                                            },
+                                            isSelected: [!repeatable, repeatable],
+                                            children: [
+                                              ColorFiltered(
+                                                colorFilter: ColorFilter.mode(
+                                                  repeatable ? _orangeColor : Colors.grey,
+                                                  BlendMode.srcIn,
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text('Off'),
+                                                ),
+                                              ),
+                                              ColorFiltered(
+                                                colorFilter: ColorFilter.mode(
+                                                  repeatable ? Colors.grey : _orangeColor,
+                                                  BlendMode.srcIn,
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text('On'),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Choose Date and Time',
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6), fontFamily: 'Garret', fontSize: 15),
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 295.0,
+                                child: DateTimeField(
+                                  format: format,
+                                  onShowPicker: (context, currentValue) async {
+                                    final dateTime = await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(2000),
+                                      initialDate: currentValue ?? DateTime.now(),
+                                      lastDate: DateTime(2101),
+                                    );
+                                    if (dateTime != null) {
+                                      final timeOfDay = await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.fromDateTime(
+                                          currentValue ?? DateTime.now(),
+                                        ),
+                                      );
+                                      if (timeOfDay != null) {
+                                        setState(() {
+                                          selectedDateTime = DateTime(
+                                            dateTime.year,
+                                            dateTime.month,
+                                            dateTime.day,
+                                            timeOfDay.hour,
+                                            timeOfDay.minute,
+                                          );
+                                        });
+                                        return selectedDateTime;
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -286,6 +442,11 @@ class _EventProfilePageState extends State<EventProfilePage>
     );
   }
 
+
+
+
+
+
   Widget profilePicture() {
     if (widget.event.downloadURL != "") {
       return CircleAvatar(
@@ -303,11 +464,11 @@ class _EventProfilePageState extends State<EventProfilePage>
 
   Widget buildTabBar() {
     return TabBar(
-      unselectedLabelColor: _colorTab,
+      unselectedLabelColor: _orangeColor,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
-        color: _colorTab,
+        color: _orangeColor,
       ),
       controller: tabController,
       tabs: [

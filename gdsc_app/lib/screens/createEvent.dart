@@ -162,7 +162,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 28.1),  // Adjust this value as needed
                   child: Column(
                     children: [
-                      Divider(),
                       Container(
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -170,17 +169,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                               children: [
                                 Container(
                                   width: 150,
+                                  height: 100,
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       primary: _orangeColor,  // Change the button color to _orangeColor
                                       shape: StadiumBorder(),
-                                      textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.grey),
+                                      textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.black),
                                     ),
                                     onPressed: () {onGetLocation();},
                                     child: const Text('Choose Location'),
                                   ),
                                 ),
-                                VerticalDivider(),
                                 Expanded(  // Wrap the ToggleSwitch in an Expanded widget
                                   child: ToggleSwitch(
                                     minWidth: 70.0,  // Reduce the minWidth property
