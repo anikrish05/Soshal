@@ -7,6 +7,8 @@ import 'package:gdsc_app/screens/viewYourOwnScreen/eventInfo.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
+import '../../screens/viewOtherScreens/othereventinfo.dart';
+
 class EventCardWidget extends StatefulWidget {
   final EventCardData event;
   final bool isOwner;
@@ -80,6 +82,14 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EventProfilePage(event: widget.event),
+                ),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OtherEventProfilePage(event: widget.event),
                 ),
               );
             }

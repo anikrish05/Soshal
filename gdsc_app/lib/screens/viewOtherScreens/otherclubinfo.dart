@@ -238,7 +238,8 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
-  }Widget buildTabContent() {
+  }
+  Widget buildTabContent() {
     if (widget.club.type == "Private" &&
         widget.currUser.following.containsKey(widget.club.id) &&
         widget.currUser.following[widget.club.id] == "Accepted") {

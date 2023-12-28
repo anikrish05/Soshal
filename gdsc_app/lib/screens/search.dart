@@ -262,7 +262,7 @@ class _SearchScreenState extends State<SearchScreen>
     }
 
     List<Widget> eventWidgets = filteredItemsEvents.map((event) =>
-        EventCardWidget(event: event, isOwner: false)).toList();
+        EventCardWidget(event: event, isOwner: true)).toList();
 
     return Column(
       children: [
