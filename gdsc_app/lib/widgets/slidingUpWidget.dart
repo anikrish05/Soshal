@@ -107,7 +107,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     getStreetName();
 
     // Reset the state callback
-    widget.resetStateCallback();
   }
 
 
