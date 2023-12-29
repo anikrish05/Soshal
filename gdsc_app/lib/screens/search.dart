@@ -246,7 +246,7 @@ class _SearchScreenState extends State<SearchScreen>
         )).toList();
 
     List<Widget> eventWidgets = filteredItemsEvents.map((event) =>
-        EventCardWidget(event: event, isOwner: true)).toList();
+        EventCardWidget(event: event, isOwner: false)).toList();
 
     ScrollController _scrollController = ScrollController();
 

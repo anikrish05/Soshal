@@ -6,6 +6,11 @@ import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:intl/intl.dart';
+import '../../screens/viewOtherScreens/othereventinfo.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -20,6 +25,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     with SingleTickerProviderStateMixin {
   late DateTime selectedDateTime;
 
+  String locationText = "Loading...";
   bool isEditing = false;
   late TabController tabController;
   late TextEditingController eventNameController;
@@ -30,13 +36,73 @@ class _EventProfilePageState extends State<EventProfilePage>
   double latitude = 0.0;
   double longitude = 0.0;
 
+  Future<void> getStreetName() async{
+    print("in get street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
+    });
+  }
+
+  Future<void> postRequest() async {
+    print("post requ");
+    String timeStamp = format.format(DateTime.now());
+    await http.post(
+      Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "name": eventName.text,
+        "description": eventDesc.text,
+        "downloadURL": "",
+        "latitude": latitude,
+        "longitude": longitude,
+        "timestamp": timeStamp,
+        "repeat": repeatable,
+      }),
+    );
+    Navigator.pop(context);
+  }
+
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime dateTime = format.parse(dateTimeString);
+    String formattedDateTime =
+    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    return formattedDateTime;
+  }
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     isUserSignedIn();
     eventNameController = TextEditingController(text: widget.event.name);
-    eventDescController = TextEditingController(text: widget.event.description);// Initialize the controller
+    eventDescController = TextEditingController(text: widget.event.description);
+    getStreetName();
+    setState(() {
+      locationText = "Loading...";
+    });
+  }
+
+  @override
+  void onGetLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
+    );
+    print("-------------");
+    print(result);
+    latitude = result.latitude;
+    longitude = result.longitude;
+    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
+    });
   }
 
   @override
@@ -53,27 +119,8 @@ class _EventProfilePageState extends State<EventProfilePage>
     });
   }
 
-
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
-
-  final ButtonStyle style2 =
-  ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: StadiumBorder(),
-      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 15, color: Colors.grey ));
-
-  @override
-  void onGetLocation() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
-    );
-    print("-------------");
-    print(result);
-    latitude = result.latitude;
-    longitude = result.longitude;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +186,32 @@ class _EventProfilePageState extends State<EventProfilePage>
                             ),
                           ),
                           SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on),
+                              Text(
+                                (locationText),
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.access_time),
+                              Text(
+                                ' ${getFormattedDateTime(widget.event.time)}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 12),
                           GestureDetector(
                             onTap: () {
                               setState(() {
@@ -148,7 +221,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                             },
                             child: Row(
                               children: [
-                                // Edit icon
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -166,7 +238,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                                   ),
                                 ),
                                 SizedBox(width: 16),
-                                // Create Event button
                               ],
                             ),
                           ),
@@ -184,7 +255,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                 endIndent: 24,
               ),
               SizedBox(height: 16),
-              // Add your TabBar here
               buildTabBar(),
             ],
           ),
@@ -214,7 +284,7 @@ class _EventProfilePageState extends State<EventProfilePage>
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  isEditing = false; // Reset isEditing state
+                  isEditing = false;
                 });
               },
               color: _orangeColor,
@@ -274,7 +344,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                               decoration: InputDecoration(labelText: 'Event Description'),
                               maxLines: null,
                             ),
-                            // Add more text fields as needed
                           ],
                         ),
                         SizedBox(height: 16),
@@ -287,7 +356,8 @@ class _EventProfilePageState extends State<EventProfilePage>
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: _orangeColor,
-                                  textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                  shape: StadiumBorder(),
+                                  textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.black),
                                 ),
                                 onPressed: () {
                                   onGetLocation();
@@ -356,10 +426,13 @@ class _EventProfilePageState extends State<EventProfilePage>
                             ),
                           ],
                         ),
-                        RichText(
-                          text: TextSpan(
-                            text: 'Choose Date and Time',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6), fontFamily: 'Garret', fontSize: 15),
+                        SizedBox(height: 16),
+                        Center(
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Choose Date and Time',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Garret', fontSize: 15),
+                            ),
                           ),
                         ),
                         Container(
@@ -413,7 +486,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Implement the logic for saving edits
                     setState(() {
                       isEditing = false;
                       widget.event.name = eventNameController.text;
@@ -443,10 +515,6 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
 
-
-
-
-
   Widget profilePicture() {
     if (widget.event.downloadURL != "") {
       return CircleAvatar(
@@ -474,13 +542,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       tabs: [
         Tab(
           child: Text(
-            'Upcoming',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Tab(
-          child: Text(
-            'Previous',
+            'RSVP List',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
