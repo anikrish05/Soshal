@@ -14,6 +14,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http_parser;
+
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -70,20 +72,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      String filePath = pickedFile.path;
-
       // Read the image file as bytes
-      List<int> imageBytes = await File(filePath).readAsBytes();
+      List<int> imageBytes = await pickedFile.readAsBytes();
 
-      // Convert the bytes to a base64-encoded string
-      String base64Image = base64Encode(imageBytes);
-
-      // Send the base64-encoded image to the server
-      await sendImageToServer(base64Image);
+      // Send the bytes to the server
+      await sendImageToServer(imageBytes);
     }
   }
 
-  Future<void> sendImageToServer(String base64Image) async {
+  Future<void> sendImageToServer(List<int> imageBytes) async {
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3000/api/users/updateProfileImage'),
@@ -91,16 +88,14 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "image": base64Image,
-          "uid": "your_user_id", // Replace with the actual user ID
+          "image": imageBytes,
+          "uid": user!.uid, // Replace with the actual user ID
         }),
       );
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully');
-        setState(() {
-
-        });
+        setState(() {});
       } else {
         print('Failed to upload image. Status code: ${response.statusCode}');
       }
@@ -108,6 +103,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       print('Error uploading image: $error');
     }
   }
+
+
 
 
 

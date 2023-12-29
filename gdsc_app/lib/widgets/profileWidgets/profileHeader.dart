@@ -38,23 +38,30 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       children: [
         Stack(
           children: [
-            ClipOval(
+            Container(
+              width: 128,
+              height: 128,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  fit: widget.image is String && widget.image.startsWith('assets')
+                      ? BoxFit.contain // Use BoxFit.contain for asset images
+                      : BoxFit.cover,   // Use BoxFit.cover for other images
+                  image: _image,
+                ),
+              ),
               child: Material(
                 color: Colors.transparent,
-                child: Ink.image(
-                  image: _image,
-                  fit: BoxFit.cover,
-                  width: 128,
-                  height: 128,
-                  child: InkWell(onTap: widget.onClicked),
+                child: InkWell(
+                  onTap: widget.onClicked,
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: buildEditIcon(_orangeColor),
+                  ),
                 ),
               ),
             ),
-            Positioned(
-              bottom: 8,
-              right: 8,
-              child: buildEditIcon(_orangeColor), // Use the global variable here
-            ),
+
           ],
         ),
         SizedBox(width: 16),
@@ -114,13 +121,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
         ),
       ],
     );
-  }
-
-  // Add this method to update the image dynamically
-  void updateImage(dynamic newImage) {
-    setState(() {
-      _image = _getImageProvider(newImage);
-    });
   }
 
   // Helper method to get the appropriate ImageProvider based on the image type

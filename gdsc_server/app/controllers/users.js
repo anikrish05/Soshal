@@ -239,47 +239,42 @@ const unfollowClub = async (req, res) => {
   }
 }
 
-
 const updateProfileImage = async (req, res) => {
   try {
-    const { uid } = req.body;
-     console.log(req.file);
+    const { uid, image } = req.body;
+    
     // Check if 'image' is defined
-    if (!req.file || !uid) {
+    if (!image || !uid) {
       return res.status(400).send("Image data or UID not provided");
     }
 
     const storage = getStorage();
     const storageRef = ref(storage, `users/${uid}/${Date.now()}.png`);
 
-    // Use multer's buffer instead of converting base64
-    const buffer = Buffer.from(req.file.buffer);
+    // Convert the base64 string to a buffer
+    const buffer = Buffer.from(image, 'base64');
 
-    const uploadTask = uploadBytes(storageRef, buffer);
+    // Use uploadBytes directly
+    await uploadBytes(storageRef, buffer);
 
-    uploadTask.on('state_changed', null,
-      async (error) => {
-        console.error(error);
-        res.status(500).send("Error uploading image");
-      },
-      async () => {
-        try {
-          // Wait for the download URL
-          const URL = await getDownloadURL(uploadTask.snapshot.ref);
-          // Assuming you have a collection named 'users' in your Firestore
-          await setDoc(doc(db, "users", uid), { downloadURL: URL }, { merge: true });
-          res.status(200).send("Image uploaded successfully");
-        } catch (error) {
-          console.error(error);
-          res.status(500).send("Error getting download URL");
-        }
-      }
-    );
+    try {
+      // Wait for the download URL
+      const URL = await getDownloadURL(storageRef);
+      // Assuming you have a collection named 'users' in your Firestore
+      await setDoc(doc(db, "users", uid), { downloadURL: URL }, { merge: true });
+      res.status(200).send("Image uploaded successfully");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error getting download URL");
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+
+
 
 module.exports = {
   signup,
