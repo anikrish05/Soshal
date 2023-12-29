@@ -23,6 +23,7 @@ class UserData {
   });
 
   Future<void> getClubData() async {
+    clubData = [];
     if (this.clubIds != null) {
       for (var i = 0; i < this.clubIds.length; i++) {
         print("loop" + i.toString());
@@ -66,6 +67,7 @@ class UserData {
 
   Future<void> getEventData() async {
     print(this.myEvents);
+    eventData = [];
     if (this.myEvents != null) {
       for (var i = 0; i < this.myEvents.length; i++) {
         print("loop" + i.toString());

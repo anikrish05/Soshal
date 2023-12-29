@@ -20,11 +20,11 @@ class EventCardWidget extends StatefulWidget {
 
 class _EventCardWidgetState extends State<EventCardWidget> {
   Color _cardColor = Color(0xffc8c9ca);
-  String locationText = "Loading...";
+  String locationText = "";
   double rating = 3.5;
   final format = DateFormat("yyyy-MM-dd HH:mm");
 
-  String clubs = "...";
+  String clubs = "";
 
   Future<void> getStreetName() async{
     print("in get street name");
@@ -46,11 +46,14 @@ class _EventCardWidgetState extends State<EventCardWidget> {
   @override
   void initState() {
     super.initState();
-    getStreetName();
-    displayClubNames();
     setState(() {
       locationText = "Loading...";
     });
+    setState(() {
+      clubs = "...";
+    });
+    getStreetName();
+    displayClubNames();
   }
 
   Future<void> displayClubNames() async{

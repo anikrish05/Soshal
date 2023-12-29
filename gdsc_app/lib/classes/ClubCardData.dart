@@ -31,6 +31,7 @@ class ClubCardData {
     required this.rating
   });
   Future<void> getALlEventsForClub() async {
+    eventData = [];
     if (this.events != null) {
       for (var i = 0; i < this.events.length; i++) {
         print("loop" + i.toString());

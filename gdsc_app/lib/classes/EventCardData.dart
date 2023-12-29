@@ -33,6 +33,7 @@ class EventCardData {
     required this.time
   });
   Future<void> getAllClubsForEvent() async {
+    clubInfo = [];
     if (this.admin != null) {
       for (var i = 0; i < this.admin.length; i++) {
         print("loop" + i.toString());
@@ -74,6 +75,7 @@ class EventCardData {
     }
   }
   Future<void> getRSVPData() async {
+    rsvpUserData = [];
     if (this.rsvpList != null) {
       for (var i = 0; i < this.rsvpList.length; i++) {
         print("loop" + i.toString());
