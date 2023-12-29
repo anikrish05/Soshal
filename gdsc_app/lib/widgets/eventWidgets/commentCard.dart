@@ -14,22 +14,29 @@ class _CommentCardState extends State<CommentCard> {
   bool isLiked = false;
 
   Widget _buildProfileImage() {
+    Widget profileImage;
+
     if (widget.comment.user.downloadURL.isEmpty) {
-      return Image.asset(
+      profileImage = Image.asset(
         'assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
         width: 40,
         height: 40,
         fit: BoxFit.cover,
       );
     } else {
-      return Image.network(
+      profileImage = Image.network(
         widget.comment.user.downloadURL,
         width: 40,
         height: 40,
         fit: BoxFit.cover,
       );
     }
+
+    return ClipOval(
+      child: profileImage,
+    );
   }
+
 
   @override
   void initState() {

@@ -101,7 +101,9 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   @override
   void initState() {
     super.initState();
-    isRSVP = false;
+    print("IN INIT STATE");
+    print(widget.markerData.isRSVP);
+    isRSVP = widget.markerData.isRSVP;
     comments = [];
     commentsFuture = getComments();
     getStreetName();
@@ -109,7 +111,17 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     // Reset the state callback
   }
 
-
+  @override
+  void didUpdateWidget(covariant SlidingUpWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.markerData.eventID != oldWidget.markerData.eventID) {
+      // Marker data has changed, update the state
+      isRSVP = widget.markerData.isRSVP;
+      comments = [];
+      commentsFuture = getComments();
+      getStreetName();
+    }
+  }
   @override
   void dispose() {
     commentController.dispose();
@@ -383,6 +395,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
 
         // Update the commentID and add to the UI
         setState(() {
+          widget.markerData.comments.add(commentID);
           newComment.commentID = commentID;
           comments.add(newComment);
           commentController.clear();
