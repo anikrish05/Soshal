@@ -47,6 +47,8 @@ const createEvent = async (req, res) => {
 
 const getFeedPosts = async (req, res) => {
   try {
+    //const uid = req.params.uid
+    //console.log(uid);
     const colRef = collection(db, "events");
     const docsSnap = await getDocs(colRef);
 
@@ -72,9 +74,6 @@ const getEvent = async (req, res) => {
 
     if (docRef.exists()) {
       const data = docRef.data();
-      console.log(data);
-      console.log(data.admin);
-      console.log(data['admin']);
 
       // Assuming getAssociatedClubForEvent is an asynchronous function
       data.clubInfo = await getAssociatedClubForEvent(data.admin);

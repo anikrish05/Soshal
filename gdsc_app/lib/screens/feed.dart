@@ -57,6 +57,8 @@ class _MyAppState extends State<MyApp> {
   // Added method to load data on demand
   Future<List<dynamic>> getEventData() async {
     try {
+      print("HEJKEHWF");
+      print(user.uid);
       var response =
       await get(Uri.parse('http://10.0.2.2:3000/api/events/getFeedPosts'));
 

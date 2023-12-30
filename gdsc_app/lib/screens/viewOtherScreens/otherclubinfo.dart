@@ -240,9 +240,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
     );
   }
   Widget buildTabContent() {
-    if (widget.club.type == "Private" &&
-        widget.currUser.following.containsKey(widget.club.id) &&
-        widget.currUser.following[widget.club.id] == "Accepted") {
+    if (widget.currUser.following[widget.club.id] == "Accepted" || widget.club.type == "Public") {
       // User is following the club with "Accepted" status
       // Proceed with displaying content or perform actions accordingly
       return FutureBuilder<void>(
