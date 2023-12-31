@@ -6,8 +6,9 @@ import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'dart:convert';
+
+import '../../widgets/loader.dart';
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -21,6 +22,7 @@ class EventProfilePage extends StatefulWidget {
 class _EventProfilePageState extends State<EventProfilePage>
     with SingleTickerProviderStateMixin {
   late DateTime selectedDateTime;
+  Color _colorTab = Color(0xFFFF8050);
 
   String locationText = "Loading...";
   bool isEditing = false;
@@ -29,13 +31,13 @@ class _EventProfilePageState extends State<EventProfilePage>
   late TextEditingController eventDescController;
   final format = DateFormat("yyyy-MM-dd HH:mm");
 
-  User user = User();
   double latitude = 0.0;
   double longitude = 0.0;
 
-  Future<void> getStreetName() async{
+  Future<void> getStreetName() async {
     print("in get street name");
-    List<Placemark> placemarks = await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
+    List<Placemark> placemarks =
+    await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
@@ -64,15 +66,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     Navigator.pop(context);
   }
 
-  Future<List<String>> fetchAttendees() async {
-    // Replace this with your logic to fetch the list of attendees
-    // For example, you might have an API endpoint to retrieve the attendees
-    // and parse the response into a list of strings.
-    // This is a placeholder and you need to replace it with your actual implementation.
-    await Future.delayed(Duration(seconds: 2));
-    return ['User1', 'User2', 'User3']; // Replace this with the actual list of attendees
-  }
-
   String getFormattedDateTime(String dateTimeString) {
     DateTime dateTime = format.parse(dateTimeString);
     String formattedDateTime =
@@ -83,8 +76,9 @@ class _EventProfilePageState extends State<EventProfilePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 1, vsync: this);
-    isUserSignedIn();
+    print("event info.dart, initstate");
+    print(widget.event.rsvpUserData);
+    tabController = TabController(length: 2, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
     getStreetName();
@@ -114,14 +108,6 @@ class _EventProfilePageState extends State<EventProfilePage>
   void dispose() {
     super.dispose();
     tabController.dispose();
-  }
-
-  dynamic isUserSignedIn() async {
-    user.isUserSignedIn().then((check) async {
-      if (!check) {
-        Navigator.pushNamed(context, '/login');
-      }
-    });
   }
 
   Color _orangeColor = Color(0xFFFF8050);
@@ -261,6 +247,8 @@ class _EventProfilePageState extends State<EventProfilePage>
               ),
               SizedBox(height: 16),
               buildTabBar(),
+              SizedBox(height: 16),
+              buildTabContent(),
             ],
           ),
           if (isEditing)
@@ -520,7 +508,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     );
   }
 
-
   Widget profilePicture() {
     if (widget.event.downloadURL != "") {
       return CircleAvatar(
@@ -537,56 +524,70 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
   Widget buildTabBar() {
-    return Column(
-      children: [
-        TabBar(
-          unselectedLabelColor: _orangeColor,
-          indicatorSize: TabBarIndicatorSize.tab,
-          indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            color: _orangeColor,
+    return TabBar(
+      unselectedLabelColor: _colorTab,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: _colorTab,
+      ),
+      controller: tabController,
+      tabs: [
+        Tab(
+          child: Text(
+            'RSVP List',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          controller: tabController,
-          tabs: [
-            Tab(
-              child: Text(
-                'RSVP List',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-          indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
         ),
-        Expanded(
-          child: TabBarView(
-            controller: tabController,
-            children: [
-              // FutureBuilder for 'RSVP List' tab
-              FutureBuilder<List<String>>(
-                future: fetchAttendees(),
-                builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else {
-                    // Replace ListTile with your desired UI for each RSVP user
-                    return ListView.builder(
-                      itemCount: snapshot.data?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(snapshot.data![index]),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ],
+        Tab(
+          child: Text(
+            'Actions',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ],
+      indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+
+
+  Widget buildTabContent() {
+    return FutureBuilder<void>(
+      future: widget.event.getRSVPData(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoaderWidget(); // or any loading indicator
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: TabBarView(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.event.rsvpUserData.length,
+                    itemBuilder: (context, index) {
+                      return Text(widget.event.rsvpUserData[index].displayName);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Text(index.toString());
+                    },
+                  ),
+                ),
+              ],
+              controller: tabController,
+            ),
+          );
+        }
+      },
     );
   }
 }
-
