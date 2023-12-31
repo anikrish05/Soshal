@@ -34,6 +34,11 @@ class _EventProfilePageState extends State<EventProfilePage>
   double latitude = 0.0;
   double longitude = 0.0;
 
+  @override
+  void dispose() {
+    tabController.dispose(); // Dispose of the tabController at the end
+    super.dispose();
+  }
   Future<void> getStreetName() async {
     print("in get street name");
     List<Placemark> placemarks =
@@ -73,12 +78,18 @@ class _EventProfilePageState extends State<EventProfilePage>
     return formattedDateTime;
   }
 
+  Future<void> getRSVPData() async{
+    await widget.event.getRSVPData();
+    print("HELLOOOOOOO");
+    print(widget.event.rsvpUserData);
+  }
+
   @override
   void initState() {
     super.initState();
     print("event info.dart, initstate");
     print(widget.event.rsvpUserData);
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
     getStreetName();
@@ -104,11 +115,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    tabController.dispose();
-  }
+
 
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
@@ -539,21 +546,13 @@ class _EventProfilePageState extends State<EventProfilePage>
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        Tab(
-          child: Text(
-            'Actions',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
   }
-
-
   Widget buildTabContent() {
     return FutureBuilder<void>(
-      future: widget.event.getRSVPData(),
+      future: getRSVPData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoaderWidget(); // or any loading indicator
@@ -562,25 +561,15 @@ class _EventProfilePageState extends State<EventProfilePage>
             child: Text('Error: ${snapshot.error}'),
           );
         } else {
-          return SizedBox(
+          return SizedBox( // Wrapped with Container and specified height
             height: MediaQuery.of(context).size.height,
             child: TabBarView(
               children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: widget.event.rsvpUserData.length,
-                    itemBuilder: (context, index) {
-                      return Text(widget.event.rsvpUserData[index].displayName);
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Text(index.toString());
-                    },
-                  ),
+                ListView.builder(
+                  itemCount: widget.event.rsvpUserData.length,
+                  itemBuilder: (context, index) {
+                    return Center(child: Text(widget.event.rsvpUserData[index].displayName));
+                  },
                 ),
               ],
               controller: tabController,
@@ -590,4 +579,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       },
     );
   }
+
+
+
 }
