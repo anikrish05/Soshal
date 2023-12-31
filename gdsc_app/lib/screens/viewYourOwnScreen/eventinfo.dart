@@ -3,10 +3,7 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-import 'package:date_time_picker/date_time_picker.dart';
 import 'package:intl/intl.dart';
-import '../../screens/viewOtherScreens/othereventinfo.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -86,7 +83,7 @@ class _EventProfilePageState extends State<EventProfilePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 1, vsync: this);
     isUserSignedIn();
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
@@ -96,7 +93,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     });
   }
 
-  @override
   void onGetLocation() async {
     final result = await Navigator.push(
       context,
@@ -364,7 +360,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                               width: 160,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: _orangeColor,
+                                  backgroundColor: _orangeColor,
                                   shape: StadiumBorder(),
                                   textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.black),
                                 ),
@@ -480,6 +476,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                                         return selectedDateTime;
                                       }
                                     }
+                                    return null;
                                   },
                                 ),
                               ),
@@ -503,7 +500,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: _orangeColor,
+                    backgroundColor: _orangeColor,
                     textStyle: TextStyle(
                       fontFamily: 'Borel',
                       fontSize: 18,
@@ -540,24 +537,56 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
   Widget buildTabBar() {
-    return TabBar(
-      unselectedLabelColor: _orangeColor,
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: _orangeColor,
-      ),
-      controller: tabController,
-      tabs: [
-        Tab(
-          child: Text(
-            'RSVP List',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Column(
+      children: [
+        TabBar(
+          unselectedLabelColor: _orangeColor,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: _orangeColor,
+          ),
+          controller: tabController,
+          tabs: [
+            Tab(
+              child: Text(
+                'RSVP List',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+          indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              // FutureBuilder for 'RSVP List' tab
+              FutureBuilder<List<String>>(
+                future: fetchAttendees(),
+                builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    // Replace ListTile with your desired UI for each RSVP user
+                    return ListView.builder(
+                      itemCount: snapshot.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(snapshot.data![index]),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ],
-      indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
-
     );
   }
 }
+
