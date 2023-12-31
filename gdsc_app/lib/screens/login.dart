@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void isUserSignedIn() async {
-    print("in");
+    print("login.dart, in isUserSignedIn");
     user.isUserSignedIn().then((check) {
       print(check);
       if (check) {
@@ -35,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    print("in SignIn");
     final response = await post(
       Uri.parse('$serverUrl/api/users/login'),
       headers: <String, String>{

@@ -34,11 +34,11 @@ class _MyAppState extends State<MyApp> {
   Map<MarkerId, dynamic> _markerEventMap = {};
 
   dynamic isUserSignedIn() async {
-    user.isUserSignedIn().then((check) async {
-      if (!check) {
-        Navigator.pushNamed(context, '/login');
-      }
-    });
+    bool check = await user.isUserSignedIn();
+    print("feed.dart isusersignedin check");
+    if(!check){
+      Navigator.pushNamed(context, '/login');
+    }
   }
 
   Future<bool> getData() async {
@@ -60,8 +60,6 @@ class _MyAppState extends State<MyApp> {
   // Added method to load data on demand
   Future<List<dynamic>> getEventData() async {
     try {
-      print("HEJKEHWF");
-      print(user.uid);
       var response =
       await get(Uri.parse('$serverUrl/api/events/getFeedPosts'));
 
@@ -75,7 +73,6 @@ class _MyAppState extends State<MyApp> {
       throw e;
     }
   }
-
   Future<void> loadData() async {
     try {
       eventData = await getEventData();
@@ -106,7 +103,6 @@ class _MyAppState extends State<MyApp> {
 
   void handleMarkerTap(MarkerId markerId) {
     Map<String, dynamic> event = Map.from(_markerEventMap[markerId]);
-    print("LSKJAKJQEJKFHEQ");
     if (event != null) {
       print("Marker Tapped: ${event['eventID'].toString()}");
       selectedMarkerData = getMarkerData(event);
@@ -185,12 +181,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   MarkerData getMarkerData(dynamic event) {
-    print("HELLLOO");
-    print(event);
 
     // Create a copy of the event data to avoid potential modifications
     Map<String, dynamic> eventDataCopy = Map.from(event);
-    print(eventDataCopy['comments']);
     List<ClubCardData> clubs = [];
     eventDataCopy['clubInfo'].forEach((club) {
       clubs.add(
