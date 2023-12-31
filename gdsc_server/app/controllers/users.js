@@ -18,9 +18,9 @@ const signup = async (req, res) => {
     const data = {
       uid: user.uid,
       downloadURL: "",
-      following: [],
+      following: {},
       displayName: name,
-      role: false,
+      role: "user",
       email: email,
       myEvents: [],
       clubsOwned: [],
