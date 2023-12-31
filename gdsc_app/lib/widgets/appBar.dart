@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/widgets/notificationWidgets/mainNotifcations.dart';
+
+
+
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -7,25 +11,34 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return(AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(
+      backgroundColor: Colors.white,
+      elevation: 1,
+      title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset(
                 'assets/image.png',
                 fit: BoxFit.fitWidth,
                 height: 150,
                 width: 150
-              ),
-            ]),
+            ),
+          ]),
       automaticallyImplyLeading:false,
       actions: [
-          Icon(Icons.notifications,
-            size: 50,
-            color: Colors.grey[500]
-          )
-        ],
+        IconButton(
+          icon: Icon(Icons.notifications,
+              size: 50,
+              color: Colors.grey[500]
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationsPage()),
+            );
+          },
+        )
+      ],
     ));
   }
 }
+
