@@ -34,7 +34,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ClubInvite(),
               UserRequest(),
               ClubEvent(),
-              UserFollowing(),
               UserReject(),
             ],
           ),

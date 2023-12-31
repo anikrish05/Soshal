@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../classes/userData.dart';
 Color _colorTab = Color(0xFFFF8050);
 
 class UserRequest extends StatelessWidget {
@@ -55,7 +57,10 @@ class UserRequest extends StatelessWidget {
 }
 
 class UserFollowing extends StatelessWidget {
+  final UserData user;
+  UserFollowing({required this.user});
   @override
+
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -69,7 +74,7 @@ class UserFollowing extends StatelessWidget {
             text: TextSpan(
               style: DefaultTextStyle.of(context).style,
               children: <TextSpan>[
-                TextSpan(text: 'Aditi Kamble', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: '${user.displayName}', style: TextStyle(fontWeight: FontWeight.bold)),
                 TextSpan(text: ' started following you'),
               ],
             ),

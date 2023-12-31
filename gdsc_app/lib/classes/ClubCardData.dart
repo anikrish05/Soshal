@@ -75,4 +75,69 @@ class ClubCardData {
     }
   }
 
+  Future<void> getFollowerData() async {
+    followerData = [];
+    followerDeclinedData = [];
+    followerActionRequired = [];
+    followers.forEach((uid, type) async {
+      try {
+        final response = await get(
+          Uri.parse('$serverUrl/api/users/getUser/$uid'),
+        );
+        if (response.statusCode == 200) {
+          // If the server returns a 200 OK response, parse the response body
+          var userData = json.decode(response.body)['message'];
+          if(type == "Accepted"){
+            followerData.add(UserData(
+                uid: uid,
+                displayName: userData['displayName'],
+                email: userData['email'],
+                following: userData['following'],
+                role: userData['role'],
+                myEvents: List<String>.from((userData['myEvents'] ?? []).map((event) => event.toString())),
+                clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
+                downloadURL: userData['downloadURL'],
+                classOf: userData['classOf'])
+            );
+          }
+          else if(type == "Denied"){
+            followerDeclinedData.add(UserData(
+                uid: uid,
+                displayName: userData['displayName'],
+                email: userData['email'],
+                following: userData['following'],
+                role: userData['role'],
+                myEvents: List<String>.from((userData['myEvents'] ?? []).map((event) => event.toString())),
+                clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
+                downloadURL: userData['downloadURL'],
+                classOf: userData['classOf'])
+            );
+          }
+          else if(type == "Requested"){
+            followerActionRequired.add(UserData(
+                uid: uid,
+                displayName: userData['displayName'],
+                email: userData['email'],
+                following: userData['following'],
+                role: userData['role'],
+                myEvents: List<String>.from((userData['myEvents'] ?? []).map((event) => event.toString())),
+                clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
+                downloadURL: userData['downloadURL'],
+                classOf: userData['classOf'])
+            );
+          }
+          // Process the userData as needed
+          print('User data for ID $uid: $userData');
+        } else {
+          // If the server did not return a 200 OK response,
+          // throw an exception or handle the error accordingly
+          throw Exception('Failed to load user data for ID $uid');
+        }
+      } catch (error) {
+        // Handle the error, you can log it or perform other actions
+        print('Error fetching user data for ID $uid: $error');
+      }
+    });
+  }
+
 }

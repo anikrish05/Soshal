@@ -8,6 +8,7 @@ import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
+import '../../widgets/notificationWidgets/userNotifcations/notifcationsForUsers.dart';
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -24,6 +25,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     with SingleTickerProviderStateMixin {
   late ClubCardData club;
   final format = DateFormat("yyyy-MM-dd HH:mm");
+  bool isFollowerDataLoaded = false;
 
   bool isEditing = false;
   late TabController tabController;
@@ -474,7 +476,20 @@ class _ClubProfilePageState extends State<ClubProfilePage>
         }
       },
     );
-  }void _showNotificationModal(BuildContext context) {
+  }
+  Future<void> getFollowerData() async {
+    if (!isFollowerDataLoaded) {
+      try {
+        await widget.club.getFollowerData();
+        setState(() {
+          isFollowerDataLoaded = true;
+        });
+      } catch (error) {
+        print("Error fetching follower data: $error");
+      }
+    }
+  }
+  void _showNotificationModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -497,18 +512,44 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                     ? Center(
                   child: Text('You need to be a private club to get requests.'),
                 )
-                    : ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    // Build your list item here based on your data
-                    return ListTile(
-                      title: Text(index.toString()),
-                    );
+                    : FutureBuilder<void>(
+                  future: getFollowerData(),
+                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return ListView.builder(
+                        itemCount: 5, // Replace with your actual item count
+                        itemBuilder: (context, index) {
+                          // Build your list item here based on your data
+                          return ListTile(
+                            title: Text(index.toString()),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
                 // Content for the 'Accepted' tab
-                Center(
-                  child: Text('Accepted Notifications'),
+                FutureBuilder<void>(
+                  future: getFollowerData(),
+                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return ListView.builder(
+                        itemCount: widget.club.followerData.length, // Replace with your actual item count
+                        itemBuilder: (context, index) {
+                          // Build your list item here based on your data
+                          return UserFollowing(user: widget.club.followerData[index]);
+                        },
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -517,6 +558,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       },
     );
   }
+
+
 
 
 }
