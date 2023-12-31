@@ -11,6 +11,9 @@ import 'package:http/http.dart' as http;
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class CreateEventScreen extends StatefulWidget {
   final ClubCardData club;
@@ -60,7 +63,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     print("post requ");
     String timeStamp = format.format(DateTime.now());
     await http.post(
-      Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
+      Uri.parse('$serverUrl/api/events/createEvent'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

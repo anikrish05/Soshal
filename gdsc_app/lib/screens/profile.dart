@@ -15,6 +15,9 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -31,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   int newGradYr = 0;
 
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/signedIn'));
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
@@ -40,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/userData'));
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
       var data = jsonDecode(response.body)['message'];
       UserData tempUser = UserData(
         classOf: data['classOf'],
@@ -83,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Future<void> sendImageToServer(List<int> imageBytes) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/users/updateProfileImage'),
+        Uri.parse('$serverUrl/api/users/updateProfileImage'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

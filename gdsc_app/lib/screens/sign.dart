@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:http/http.dart';
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 int currYear = DateTime.now().year;
 
@@ -57,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     // Perform the account creation logic
     final response = await post(
-      Uri.parse('http://10.0.2.2:3000/api/users/signup'),
+      Uri.parse('$serverUrl/api/users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

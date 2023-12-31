@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-const hostName = "10.0.2.2:3000";
+import '../app_config.dart';
+final serverUrl = AppConfig.serverUrl;
 
 class Club{
   late bool verified;
@@ -16,7 +17,7 @@ class Club{
   late List<dynamic> admin;
   Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {
     print("in SignIn");
-    final response = await post(Uri.parse('http://$hostName/api/clubs/createClub'),
+    final response = await post(Uri.parse('$serverUrl/api/clubs/createClub'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -38,7 +39,7 @@ class Club{
 
   }
   Future<bool> getClub(id) async {
-    final response = await post(Uri.parse('http://$hostName/api/clubs/getClub'),
+    final response = await post(Uri.parse('$serverUrl/api/clubs/getClub'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

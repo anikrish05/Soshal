@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
+import '../app_config.dart';
 
+final serverUrl = AppConfig.serverUrl;
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     print("in SignIn");
     final response = await post(
-      Uri.parse('http://10.0.2.2:3000/api/users/login'),
+      Uri.parse('$serverUrl/api/users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

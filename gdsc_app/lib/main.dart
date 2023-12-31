@@ -2,36 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/feed.dart';
 import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/sign.dart';
-import 'package:gdsc_app/screens/createUser.dart';
-import 'package:gdsc_app/screens/createClub.dart';
 import 'package:gdsc_app/screens/search.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
-import 'package:gdsc_app/screens/createEventMap.dart';
-import 'package:gdsc_app/screens/createEvent.dart';
 
-import 'package:http/http.dart';
-import 'dart:async';
-import 'dart:convert';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'app_config.dart';
 
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:gdsc_app/widgets/appBar.dart';
 
 // Define the color as a global variable
 Color _orangeColor = Color(0xFFFF8050);
 
-void main() => runApp(MaterialApp(
-  initialRoute: '/login',
-  routes: {
-    '/login': (context) => LoginScreen(),
-    '/feed': (context) => MyApp(),
-    '/sign': (context) => SignUpScreen(),
-    '/profile': (context) => ProfileScreen(),
-    '/home': (context) => Home(),
-    '/search': (context) => SearchScreen(),
-  },
-));
+void main() async {
+  await dotenv.load(fileName: ".env");
+  await AppConfig.loadEnvironment();
+  runApp(MaterialApp(
+    initialRoute: '/login',
+    routes: {
+      '/login': (context) => LoginScreen(),
+      '/feed': (context) => MyApp(),
+      '/sign': (context) => SignUpScreen(),
+      '/profile': (context) => ProfileScreen(),
+      '/home': (context) => Home(),
+      '/search': (context) => SearchScreen(),
+    },
+  ));
+}
 
 class Home extends StatefulWidget {
   @override

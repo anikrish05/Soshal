@@ -4,7 +4,9 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-const hostName = "10.0.2.2:3000";
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 class MarkerData {
   final String title;
   final String description;
@@ -27,7 +29,7 @@ class MarkerData {
     print("rsvp");
     isRSVP = !isRSVP;
     await post(
-      Uri.parse('http://$hostName/api/users/RSVP'),
+      Uri.parse('$serverUrl/api/users/RSVP'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -41,7 +43,7 @@ class MarkerData {
     print("unRSVP");
     isRSVP = !isRSVP;
     await post(
-      Uri.parse('http://$hostName/api/users/deRSVP'),
+      Uri.parse('$serverUrl/api/users/deRSVP'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

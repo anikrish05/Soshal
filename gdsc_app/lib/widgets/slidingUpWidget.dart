@@ -11,6 +11,9 @@ import 'package:gdsc_app/widgets/eventWidgets/commentCard.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 typedef ResetStateCallback = void Function();
 
 class SlidingUpWidget extends StatefulWidget {
@@ -44,7 +47,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://10.0.2.2:3000/api/comments/getCommentDataForEvent'),
+            '$serverUrl/api/comments/getCommentDataForEvent'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -2,7 +2,9 @@ import 'package:gdsc_app/classes/userData.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-const hostName = "10.0.2.2:3000";
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class Comment {
   final String comment;
@@ -23,7 +25,7 @@ class Comment {
 
   Future<String> add() async{
     final response = await post(
-      Uri.parse('http://$hostName/api/comments/addComment'),
+      Uri.parse('$serverUrl/api/comments/addComment'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -42,7 +44,7 @@ class Comment {
     isLiked = true;
 
     await post(
-      Uri.parse('http://$hostName/api/comments/likeComment'),
+      Uri.parse('$serverUrl/api/comments/likeComment'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -57,7 +59,7 @@ class Comment {
   Future<void> disLike() async{
     isLiked = false;
     await post(
-      Uri.parse('http://$hostName/api/comments/disLikeComment'),
+      Uri.parse('$serverUrl/api/comments/disLikeComment'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

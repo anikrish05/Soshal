@@ -2,7 +2,9 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
-const hostName = "10.0.2.2:3000";
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 class ClubCardData {
   List<String> admin;
   String category;
@@ -37,7 +39,7 @@ class ClubCardData {
         print("loop" + i.toString());
         try {
           final eventIteration = await get(
-            Uri.parse('http://$hostName/api/events/getEvent/${this.events[i]}'),
+            Uri.parse('$serverUrl/api/events/getEvent/${this.events[i]}'),
           );
 
           if (eventIteration.statusCode == 200) {

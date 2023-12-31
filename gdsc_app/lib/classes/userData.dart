@@ -3,7 +3,9 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart';
-const hostName = "10.0.2.2:3000";
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class UserData {
   final String uid;
@@ -29,7 +31,7 @@ class UserData {
         print("loop" + i.toString());
         try {
           final clubIteration = await get(
-            Uri.parse('http://$hostName/api/clubs/getClub/${this.clubIds[i]}'),
+            Uri.parse('$serverUrl/api/clubs/getClub/${this.clubIds[i]}'),
           );
 
           if (clubIteration.statusCode == 200) {
@@ -73,7 +75,7 @@ class UserData {
         print("loop" + i.toString());
         try {
           final eventIteration = await get(
-            Uri.parse('http://$hostName/api/events/getEvent/${this.myEvents[i]}'),
+            Uri.parse('$serverUrl/api/events/getEvent/${this.myEvents[i]}'),
           );
 
           if (eventIteration.statusCode == 200) {
@@ -115,7 +117,7 @@ class UserData {
   Future<void> followPublicClub(String clubId) async {
     try {
       final response = await post(
-        Uri.parse('http://$hostName/api/users/followPublicClub'),
+        Uri.parse('$serverUrl/api/users/followPublicClub'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -142,7 +144,7 @@ class UserData {
   Future<void> followPrivateClub(String clubId) async {
     try {
       final response = await post(
-        Uri.parse('http://$hostName/api/users/followPrivateClub'),
+        Uri.parse('$serverUrl/api/users/followPrivateClub'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -169,7 +171,7 @@ class UserData {
   Future<void> unfollowClub(String clubId) async {
     try {
       final response = await post(
-        Uri.parse('http://$hostName/api/users/unfollowClub'),
+        Uri.parse('$serverUrl/api/users/unfollowClub'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

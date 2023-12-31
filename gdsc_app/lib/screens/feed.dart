@@ -10,6 +10,9 @@ import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../widgets/loader.dart';
+import '../app_config.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 // Define the color as a global variable
 Color _orangeColor = Color(0xFFFF8050);
@@ -60,7 +63,7 @@ class _MyAppState extends State<MyApp> {
       print("HEJKEHWF");
       print(user.uid);
       var response =
-      await get(Uri.parse('http://10.0.2.2:3000/api/events/getFeedPosts'));
+      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body)['message'];
