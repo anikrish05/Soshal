@@ -99,14 +99,22 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${widget.club.name}',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              widget.club.name,
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          if (widget.club.verified)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4.0),
+                              child: Icon(Icons.verified, color: Colors.orange, size: 20.0),
+                            ),
+                        ],
                       ),
-                      SizedBox(height: 5),
+                      SizedBox(height: 3),
                       Row(
                         children: [
                           Row(

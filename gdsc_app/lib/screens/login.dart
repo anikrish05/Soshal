@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               child: Center(
                 child: Text(
-                  "create a new account",
+                  "Create a New Account",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: "borel",

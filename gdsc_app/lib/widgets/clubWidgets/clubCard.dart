@@ -21,6 +21,9 @@ class ClubCardWidget extends StatelessWidget {
     final double imageWidth = screenWidth * 0.2;
     final double imageHeight = screenWidth * 0.22;
 
+    Color _orangeColor = Color(0xFFFF8050);
+
+
     return SingleChildScrollView(
       child: Align(
         alignment: Alignment.centerLeft,
@@ -82,7 +85,7 @@ class ClubCardWidget extends StatelessWidget {
                                     if (club.verified)
                                       Padding(
                                         padding: const EdgeInsets.only(left: 4.0),
-                                        child: Icon(Icons.verified, color: Colors.blue, size: 20.0), // Reduced the size to 20.0
+                                        child: Icon(Icons.verified, color: _orangeColor, size: 20.0), // Reduced the size to 20.0
                                       ),
                                   ],
                                 ),
