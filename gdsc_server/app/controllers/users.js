@@ -148,6 +148,7 @@ const getUser = async (req, res) => {
 const followPublicClub = async (req, res) => {
   try {
     const { clubId, uid } = req.body;
+    const date = Date.now()
 
     // Update user's following field
     const userDocRef = doc(db, "users", uid);
@@ -155,7 +156,7 @@ const followPublicClub = async (req, res) => {
     const userData = userDoc.data();
     
     // Assuming userData.following is a map
-    userData.following[clubId] = "Accepted";
+    userData.following[clubId] = ["Accepted", date];
 
     await setDoc(userDocRef, { following: userData.following }, { merge: true });
 
@@ -165,7 +166,7 @@ const followPublicClub = async (req, res) => {
     const clubData = clubDoc.data();
     
     // Assuming clubData.followers is a map
-    clubData.followers[uid] = "Accepted";
+    clubData.followers[uid] = ["Accepted", date];
 
     await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
 
@@ -179,6 +180,7 @@ const followPublicClub = async (req, res) => {
 const followPrivateClub = async (req, res) => {
   try {
     const { clubId, uid } = req.body;
+    const date = Date.now()
 
     // Update user's following field
     const userDocRef = doc(db, "users", uid);
@@ -186,7 +188,7 @@ const followPrivateClub = async (req, res) => {
     const userData = userDoc.data();
     
     // Assuming userData.following is a map
-    userData.following[clubId] = "Requested";
+    userData.following[clubId] = ["Requested", date];
 
     await setDoc(userDocRef, { following: userData.following }, { merge: true });
 
@@ -196,7 +198,7 @@ const followPrivateClub = async (req, res) => {
     const clubData = clubDoc.data();
     
     // Assuming clubData.followers is a map
-    clubData.followers[uid] = "Requested";
+    clubData.followers[uid] = ["Requested", date];
 
     await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
 

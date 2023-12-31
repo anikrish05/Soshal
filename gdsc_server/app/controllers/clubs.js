@@ -98,14 +98,14 @@ const getAllEventsForClub = async (req, res) => {
 const acceptUser = async (req, res) => {
   try {
     const { clubId, uid } = req.body;
-
+    const date = Date.now()
     // Update user's following field
     const userDocRef = doc(db, "users", uid);
     const userDoc = await getDoc(userDocRef);
     const userData = userDoc.data();
     
     // Assuming userData.following is a map
-    userData.following[clubId] = "Accepted";
+    userData.following[clubId] = ["Accepted", date];
 
     await setDoc(userDocRef, { following: userData.following }, { merge: true });
 
@@ -115,7 +115,7 @@ const acceptUser = async (req, res) => {
     const clubData = clubDoc.data();
     
     // Assuming clubData.followers is a map
-    clubData.followers[uid] = "Accepted";
+    clubData.followers[uid] = ["Accepted", date];
 
     await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
 
@@ -129,6 +129,7 @@ const acceptUser = async (req, res) => {
 const denyUser = async (req, res) => {
   try {
     const { clubId, uid } = req.body;
+    const date = Date.now()
 
     // Update user's following field
     const userDocRef = doc(db, "users", uid);
@@ -136,7 +137,7 @@ const denyUser = async (req, res) => {
     const userData = userDoc.data();
     
     // Assuming userData.following is a map
-    userData.following[clubId] = "Denied";
+    userData.following[clubId] = ["Denied", date];
 
     await setDoc(userDocRef, { following: userData.following }, { merge: true });
 
@@ -146,7 +147,7 @@ const denyUser = async (req, res) => {
     const clubData = clubDoc.data();
     
     // Assuming clubData.followers is a map
-    clubData.followers[uid] = "Denied";
+    clubData.followers[uid] = ["Denied", date];
 
     await setDoc(clubDocRef, { followers: clubData.followers }, { merge: true });
 

@@ -8,7 +8,7 @@ import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
-import '../../widgets/notificationWidgets/userNotifcations/notifcationsForUsers.dart';
+import '../../widgets/notificationWidgets/clubNotifcations/userFollowedYouWidget.dart';
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -541,11 +541,12 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
+                      print("BROTHAA");
                       return ListView.builder(
                         itemCount: widget.club.followerData.length, // Replace with your actual item count
                         itemBuilder: (context, index) {
                           // Build your list item here based on your data
-                          return UserFollowing(user: widget.club.followerData[index]);
+                          return UserFollowing(user: widget.club.followerData[index][0], timestamp: widget.club.followerData[index][1]);
                         },
                       );
                     }

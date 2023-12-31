@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../classes/userData.dart';
 Color _colorTab = Color(0xFFFF8050);
@@ -56,35 +57,6 @@ class UserRequest extends StatelessWidget {
   }
 }
 
-class UserFollowing extends StatelessWidget {
-  final UserData user;
-  UserFollowing({required this.user});
-  @override
-
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: ListTile(
-          leading: Image.asset('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png', width: 70.0, height: 70.0),
-          title: RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(context).style,
-              children: <TextSpan>[
-                TextSpan(text: '${user.displayName}', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' started following you'),
-              ],
-            ),
-          ),
-          subtitle: Text('4h ago'),
-        ),
-      ),
-    );
-  }
-}
 
 class UserReject extends StatelessWidget {
   @override

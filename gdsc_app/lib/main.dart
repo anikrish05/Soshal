@@ -18,6 +18,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await AppConfig.loadEnvironment();
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     initialRoute: '/login',
     routes: {
       '/login': (context) => LoginScreen(),
