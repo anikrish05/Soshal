@@ -19,6 +19,8 @@ class ClubCardData {
   double rating;
   List<EventCardData> eventData = [];
   List<UserData> followerData = [];
+  List<UserData> followerDeclinedData = [];
+  List<UserData> followerActionRequired = [];
   ClubCardData({
     required this.admin,
     required this.category,

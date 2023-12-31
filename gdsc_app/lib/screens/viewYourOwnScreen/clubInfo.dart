@@ -86,9 +86,40 @@ class _ClubProfilePageState extends State<ClubProfilePage>
           onPressed: () => Navigator.of(context).pop(),
           color: _orangeColor,
         ),
+        actions: [
+          IconButton(
+            icon: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Icon(Icons.notifications),
+                Positioned(
+                  right: 0,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red, // You can customize the color
+                    ),
+                    child: Text(
+                      "3", // Replace this with the actual count of notifications
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () {
+              // Show the notification modal
+              _showNotificationModal(context);
+            },
+          ),
+        ],
         backgroundColor: Colors.white,
       ),
-      body: Stack(
+        body: Stack(
         children: [
           ListView(
             children: [
@@ -443,5 +474,49 @@ class _ClubProfilePageState extends State<ClubProfilePage>
         }
       },
     );
+  }void _showNotificationModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Notifications'),
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: 'Requested'),
+                  Tab(text: 'Accepted'),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                // Content for the 'Requested' tab
+                widget.club.type == "Public"
+                    ? Center(
+                  child: Text('You need to be a private club to get requests.'),
+                )
+                    : ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    // Build your list item here based on your data
+                    return ListTile(
+                      title: Text(index.toString()),
+                    );
+                  },
+                ),
+                // Content for the 'Accepted' tab
+                Center(
+                  child: Text('Accepted Notifications'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
+
+
 }
