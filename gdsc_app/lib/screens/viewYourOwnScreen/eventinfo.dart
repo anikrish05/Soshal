@@ -55,8 +55,8 @@ class _EventProfilePageState extends State<EventProfilePage>
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        "name": eventName.text,
-        "description": eventDesc.text,
+        "name": widget.event.name,
+        "description": widget.event.description,
         "downloadURL": "",
         "latitude": latitude,
         "longitude": longitude,
@@ -65,6 +65,15 @@ class _EventProfilePageState extends State<EventProfilePage>
       }),
     );
     Navigator.pop(context);
+  }
+
+  Future<List<String>> fetchAttendees() async {
+    // Replace this with your logic to fetch the list of attendees
+    // For example, you might have an API endpoint to retrieve the attendees
+    // and parse the response into a list of strings.
+    // This is a placeholder and you need to replace it with your actual implementation.
+    await Future.delayed(Duration(seconds: 2));
+    return ['User1', 'User2', 'User3']; // Replace this with the actual list of attendees
   }
 
   String getFormattedDateTime(String dateTimeString) {
@@ -548,6 +557,7 @@ class _EventProfilePageState extends State<EventProfilePage>
         ),
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
+
     );
   }
 }
