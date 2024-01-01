@@ -45,7 +45,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                 height: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
                 margin: widget.image is String && widget.image.startsWith('asset')
                     ? EdgeInsets.fromLTRB(0, 0, 10, 0)
-                    : EdgeInsets.fromLTRB(30, 20, 20, 20),
+                    : EdgeInsets.fromLTRB(35, 30, 20, 25),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -69,8 +69,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 190,
-                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
+                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 202,
+                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 62, // Adjust top position as needed
                 child: buildProfileInfo(),
               ),
             ],
@@ -158,3 +158,4 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     }
   }
 }
+
