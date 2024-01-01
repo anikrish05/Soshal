@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import '../app_config.dart';
 
+import '../utils.dart';
 import 'EventCardData.dart';
 
 final serverUrl = AppConfig.serverUrl;
@@ -23,7 +24,9 @@ class User {
   int classOf = 0;
 
   Future<bool> isUserSignedIn() async {
-    final response = await get(Uri.parse('$serverUrl/api/users/signedIn'));
+    final response = await get(Uri.parse('$serverUrl/api/users/signedIn'),
+      headers: await getHeaders(),
+    );
     print(jsonDecode(response.body));
     if ((jsonDecode(response.body))['message'] == false) {
       return false;
@@ -32,7 +35,9 @@ class User {
   }
 
   Future<bool> initUserData() async {
-    final response = await get(Uri.parse('$serverUrl/api/users/userData'));
+    final response = await get(Uri.parse('$serverUrl/api/users/userData'),
+      headers: await getHeaders(),
+    );
     var data = jsonDecode(response.body)['message'];
     this.uid = data['uid'];
     this.displayName = data['displayName'];
@@ -54,6 +59,7 @@ class User {
         try {
           final clubIteration = await get(
             Uri.parse('$serverUrl/api/clubs/getClub/${this.clubIds[i]}'),
+            headers: await getHeaders(),
           );
 
           if (clubIteration.statusCode == 200) {
@@ -96,6 +102,7 @@ class User {
         try {
           final eventIteration = await get(
             Uri.parse('$serverUrl/api/events/getEvent/${this.myEvents[i]}'),
+            headers: await getHeaders(),
           );
 
           if (eventIteration.statusCode == 200) {
@@ -160,9 +167,6 @@ class User {
     print("in SignIn");
     final response = await post(
       Uri.parse('$serverUrl/api/users/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
       body: jsonEncode(<String, String>{
         "email": email,
         "password": password

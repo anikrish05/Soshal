@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 class MarkerData {
@@ -30,9 +31,7 @@ class MarkerData {
     isRSVP = !isRSVP;
     await post(
       Uri.parse('$serverUrl/api/users/RSVP'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "uid": user.uid,
         "eventID": eventID
@@ -44,9 +43,7 @@ class MarkerData {
     isRSVP = !isRSVP;
     await post(
       Uri.parse('$serverUrl/api/users/deRSVP'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "uid": user.uid,
         "eventID": eventID

@@ -9,6 +9,7 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
+import '../utils.dart';
 import '../widgets/loader.dart';
 import '../app_config.dart';
 
@@ -34,11 +35,13 @@ class _MyAppState extends State<MyApp> {
   Map<MarkerId, dynamic> _markerEventMap = {};
 
   dynamic isUserSignedIn() async {
-    bool check = await user.isUserSignedIn();
-    print("feed.dart isusersignedin check");
-    if(!check){
-      Navigator.pushNamed(context, '/login');
-    }
+    String? headers = await userSignedIn();
+    if (headers != null) {
+    // Continue with your API request using the obtained headers
+  } else {
+    // Navigate to the login page
+    Navigator.pushNamed(context, '/login');
+  }
   }
 
   Future<bool> getData() async {
@@ -61,7 +64,9 @@ class _MyAppState extends State<MyApp> {
   Future<List<dynamic>> getEventData() async {
     try {
       var response =
-      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'));
+      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'),
+        headers: await getHeaders(),
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body)['message'];

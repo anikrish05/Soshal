@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 class LoginScreen extends StatefulWidget {
@@ -26,20 +27,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void isUserSignedIn() async {
     print("login.dart, in isUserSignedIn");
-    user.isUserSignedIn().then((check) {
-      print(check);
-      if (check) {
-        Navigator.pushNamed(context, '/home');
-      }
-    });
+    String? result = await userSignedIn();
+    if(result == null){
+      Navigator.pushNamed(context, '/feed');
+    }
   }
 
   Future<void> login() async {
     final response = await post(
       Uri.parse('$serverUrl/api/users/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
       body: jsonEncode(<String, String>{
         "email": emailController.text,
         "password": passWordController.text,

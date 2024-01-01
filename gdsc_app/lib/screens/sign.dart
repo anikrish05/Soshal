@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:http/http.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -61,9 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Perform the account creation logic
     final response = await post(
       Uri.parse('$serverUrl/api/users/signup'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "email": emailController.text,
         "password": passWordController.text,

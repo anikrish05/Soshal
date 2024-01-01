@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -26,9 +27,7 @@ class Comment {
   Future<String> add() async{
     final response = await post(
       Uri.parse('$serverUrl/api/comments/addComment'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "commentData": json.encode({
           "comment": comment,
@@ -45,9 +44,7 @@ class Comment {
 
     await post(
       Uri.parse('$serverUrl/api/comments/likeComment'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "uid": user.uid,
         "commentID": commentID

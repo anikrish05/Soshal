@@ -4,6 +4,7 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -32,6 +33,7 @@ class UserData {
         try {
           final clubIteration = await get(
             Uri.parse('$serverUrl/api/clubs/getClub/${this.clubIds[i]}'),
+            headers: await getHeaders(),
           );
 
           if (clubIteration.statusCode == 200) {
@@ -76,6 +78,7 @@ class UserData {
         try {
           final eventIteration = await get(
             Uri.parse('$serverUrl/api/events/getEvent/${this.myEvents[i]}'),
+            headers: await getHeaders(),
           );
 
           if (eventIteration.statusCode == 200) {
@@ -118,9 +121,7 @@ class UserData {
     try {
       final response = await post(
         Uri.parse('$serverUrl/api/users/followPublicClub'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, String>{
           "clubId": clubId,
           "uid": uid,
@@ -145,9 +146,7 @@ class UserData {
     try {
       final response = await post(
         Uri.parse('$serverUrl/api/users/followPrivateClub'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, String>{
           "clubId": clubId,
           "uid": uid,
@@ -172,9 +171,7 @@ class UserData {
     try {
       final response = await post(
         Uri.parse('$serverUrl/api/users/unfollowClub'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, String>{
           "clubId": clubId,
           "uid": uid,

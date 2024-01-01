@@ -11,6 +11,7 @@ import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
 
 import '../classes/userData.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -36,7 +37,9 @@ class _SearchScreenState extends State<SearchScreen>
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
+      headers: await getHeaders(),
+    );
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
@@ -45,7 +48,9 @@ class _SearchScreenState extends State<SearchScreen>
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+        headers: await getHeaders(),
+      );
       var data = jsonDecode(response.body)['message'];
       print(data);
       UserData tempUser = UserData(
@@ -116,7 +121,9 @@ class _SearchScreenState extends State<SearchScreen>
   Future<bool> fetchClubs() async {
     print("IN FETCH CLUBS");
     final response = await http.get(Uri.parse(
-        '$serverUrl/api/clubs/getDataForSearchPage'));
+        '$serverUrl/api/clubs/getDataForSearchPage'),
+      headers: await getHeaders(),
+    );
     print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data =
