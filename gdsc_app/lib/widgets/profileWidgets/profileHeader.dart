@@ -36,53 +36,68 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Stack(
-          children: [
-            Container(
-              width: 128,
-              height: 128,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: widget.image is String && widget.image.startsWith('assets')
-                      ? BoxFit.contain // Use BoxFit.contain for asset images
-                      : BoxFit.cover,   // Use BoxFit.cover for other images
-                  image: _image,
+        Expanded(
+          child: Stack(
+            children: [
+              // Profile Picture with Edit Icon
+              Container(
+                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
+                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
+                margin: widget.image is String && widget.image.startsWith('asset')
+                    ? EdgeInsets.fromLTRB(0, 0, 10, 0)
+                    : EdgeInsets.fromLTRB(30, 20, 20, 20),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    fit: widget.image is String && widget.image.startsWith('asset')
+                        ? BoxFit.contain // Use BoxFit.contain for asset images
+                        : BoxFit.cover, // Use BoxFit.cover for other images
+                    image: _image,
+                  ),
                 ),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: widget.onClicked,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: buildEditIcon(_orangeColor),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: widget.onClicked,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: buildEditIcon(_orangeColor),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-          ],
+              // Profile Info Positioned Relative to Profile Picture
+              Positioned(
+                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 190,
+                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
+                child: buildProfileInfo(),
+              ),
+            ],
+          ),
         ),
-        SizedBox(width: 16),
-        buildProfileInfo(),
       ],
     );
   }
 
-  Widget buildEditIcon(Color color) => buildCircle(
-    color: Colors.white,
-    all: 3,
+  Widget buildEditIcon(Color color) => Padding(
+
+    padding: widget.image is String && widget.image.startsWith('asset') ? EdgeInsets.fromLTRB(0, 0, 25, 25): EdgeInsets.all(0),
     child: buildCircle(
-      color: color, // Use the passed color here
-      all: 8,
-      child: Icon(
-        Icons.edit,
-        color: Colors.white,
-        size: 20,
+      color: Colors.white,
+      all: 3,
+      child: buildCircle(
+        color: color,
+        all: 8,
+        child: Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
     ),
   );
+
 
   Widget buildCircle({
     required Widget child,
@@ -98,28 +113,31 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       );
 
   Widget buildProfileInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          widget.name,
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.w800,
-            fontSize: 24,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0,0,0,0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            widget.name,
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w800,
+              fontSize: 30,
+            ),
           ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Class of ${widget.graduationYear}',
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
+          SizedBox(height: 4),
+          Text(
+            'Class of ${widget.graduationYear}',
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
