@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/notificationWidgets/clubNotifcations/userFollowedYouWidget.dart';
+import '../../widgets/notificationWidgets/clubNotifcations/userRequestFollowWidget.dart';
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -25,7 +26,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     with SingleTickerProviderStateMixin {
   late ClubCardData club;
   final format = DateFormat("yyyy-MM-dd HH:mm");
-  bool isFollowerDataLoaded = false;
+
 
   bool isEditing = false;
   late TabController tabController;
@@ -36,6 +37,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
   Color _colorTab = Color(0xFFFF8050);
   List<EventCardData> upcommingEvents = [];
   List<EventCardData> finishedEvents = [];
+  bool isFollowerDataLoaded = false;
 
   Future<void> getTabContent() async {
     await club.getALlEventsForClub();
@@ -55,6 +57,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     isUserSignedIn();
+    getFollowerData();
+
     clubNameController = TextEditingController(text: club.name);
     clubTypeController = TextEditingController(text: club.type);
     clubDescController = TextEditingController(text: club.description);
@@ -73,6 +77,20 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       }
     });
   }
+
+  Future<void> getFollowerData() async {
+    if (!isFollowerDataLoaded) {
+      try {
+        await widget.club.getFollowerData();
+        setState(() {
+          isFollowerDataLoaded = true;
+        });
+      } catch (error) {
+        print("Error fetching follower data: $error");
+      }
+    }
+  }
+
 
   _ClubProfilePageState(ClubCardData club) {
     this.club = club;
@@ -477,18 +495,6 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       },
     );
   }
-  Future<void> getFollowerData() async {
-    if (!isFollowerDataLoaded) {
-      try {
-        await widget.club.getFollowerData();
-        setState(() {
-          isFollowerDataLoaded = true;
-        });
-      } catch (error) {
-        print("Error fetching follower data: $error");
-      }
-    }
-  }
   void _showNotificationModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -505,55 +511,56 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                 ],
               ),
             ),
-            body: TabBarView(
-              children: [
-                // Content for the 'Requested' tab
-                widget.club.type == "Public"
-                    ? Center(
-                  child: Text('You need to be a private club to get requests.'),
-                )
-                    : FutureBuilder<void>(
-                  future: getFollowerData(),
-                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      return ListView.builder(
-                        itemCount: 5, // Replace with your actual item count
-                        itemBuilder: (context, index) {
-                          // Build your list item here based on your data
-                          return ListTile(
-                            title: Text(index.toString()),
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-                // Content for the 'Accepted' tab
-                FutureBuilder<void>(
-                  future: getFollowerData(),
-                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      print("BROTHAA");
-                      return ListView.builder(
-                        itemCount: widget.club.followerData.length, // Replace with your actual item count
-                        itemBuilder: (context, index) {
-                          // Build your list item here based on your data
-                          return UserFollowing(user: widget.club.followerData[index][0], timestamp: widget.club.followerData[index][1]);
-                        },
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
+            body: FutureBuilder<void>(
+              future: getFollowerData(), // Assuming getFollowerData returns a Future<void>
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Display a loading indicator while waiting for the data
+                  return LoaderWidget();
+                } else if (snapshot.hasError) {
+                  // Display an error message if there is an error
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  // Check if the data is available
+                  if (widget.club.followerActionRequired == null ||
+                      widget.club.followerData == null) {
+                    // If data is not available, display a loading indicator
+                    return LoaderWidget();
+                  } else {
+                    // If data is available, display the TabBarView with the content
+                    return TabBarView(
+                      children: [
+                        // Content for the 'Requested' tab
+                        widget.club.type == "Public"
+                            ? Center(
+                          child: Text('You need to be a private club to get requests.'),
+                        )
+                            : ListView.builder(
+                          itemCount: widget.club.followerActionRequired.length,
+                          itemBuilder: (context, index) {
+                            return UserRequest(
+                              user: widget.club.followerActionRequired[index][0],
+                              timestamp: widget.club.followerActionRequired[index][1],
+                            );
+                          },
+                        ),
+                        // Content for the 'Accepted' tab
+                        ListView.builder(
+                          itemCount: widget.club.followerData.length,
+                          itemBuilder: (context, index) {
+                            return UserFollowing(
+                              user: widget.club.followerData[index][0],
+                              timestamp: widget.club.followerData[index][1],
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                }
+              },
+            )
+
           ),
         );
       },

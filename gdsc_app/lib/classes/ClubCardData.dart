@@ -86,7 +86,8 @@ class ClubCardData {
         );
         if (response.statusCode == 200) {
           // If the server returns a 200 OK response, parse the response body
-          var userData = json.decode(response.body)['message'];if (dataArr[0] == "Accepted") {
+          var userData = json.decode(response.body)['message'];
+          if (dataArr[0] == "Accepted") {
             followerData.add([
               UserData(
                 uid: uid,
@@ -120,6 +121,7 @@ class ClubCardData {
             ]);
           }
           else if(dataArr[0] == "Requested"){
+            print("IN REQUESTEDDDD");
             followerActionRequired.add([
               UserData(
                 uid: uid,

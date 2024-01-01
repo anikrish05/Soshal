@@ -4,7 +4,12 @@ import 'package:intl/intl.dart';
 import '../../../classes/userData.dart';
 Color _colorTab = Color(0xFFFF8050);
 
-class UserRequest extends StatelessWidget {
+class ClubInvite extends StatefulWidget {
+  @override
+  State<ClubInvite> createState() => _ClubInviteState();
+}
+
+class _ClubInviteState extends State<ClubInvite> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,7 +25,7 @@ class UserRequest extends StatelessWidget {
               style: DefaultTextStyle.of(context).style,
               children: <TextSpan>[
                 TextSpan(text: 'Animesh Alang', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' has requested to follow you'),
+                TextSpan(text: ' invited you to be an admin of Gesher Group Consulting'),
               ],
             ),
           ),
@@ -51,34 +56,6 @@ class UserRequest extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class UserReject extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: ListTile(
-          leading: Image.asset('assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png', width: 70.0, height: 70.0),
-          title: RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(context).style,
-              children: <TextSpan>[
-                TextSpan(text: 'Anirudh Krishna', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' rejected your follow request'),
-              ],
-            ),
-          ),
-          subtitle: Text('4h ago'),
         ),
       ),
     );

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/widgets/notificationWidgets/clubNotifcations/notifcationsForClubs.dart';
-import 'package:gdsc_app/widgets/notificationWidgets/userNotifcations/notifcationsForUsers.dart';
 
 class NotificationsPage extends StatefulWidget {
   @override
@@ -25,16 +23,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTitle('New Activity'),
-              UserRequest(),
-              ClubReject(),
               SizedBox(height: 16.0),
-              _buildTitle('Old Activity'),
-              UserRequest(),
-              ClubInvite(),
-              UserRequest(),
-              ClubEvent(),
-              UserReject(),
+              _buildTitle('Old Activity')
             ],
           ),
         ),
