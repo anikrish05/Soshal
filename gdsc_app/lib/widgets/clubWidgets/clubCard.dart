@@ -97,7 +97,7 @@ class ClubCardWidget extends StatelessWidget {
                                         rating: club.rating, // Replace '3' with your dynamic rating variable from the 'club' object
                                         direction: Axis.horizontal,
                                         itemCount: 5,
-                                        itemSize: 15.0, // Adjust this value to change the size of the stars
+                                        itemSize: 14.0, // Adjust this value to change the size of the stars
                                         itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
                                         itemBuilder: (context, _) => Icon(
                                           Icons.star,
