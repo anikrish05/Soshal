@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../app_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 final serverUrl = AppConfig.serverUrl;
 class LoginScreen extends StatefulWidget {
@@ -47,6 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
+      final storage = FlutterSecureStorage();
+      await storage.write(key: 'access_token', value: (jsonDecode(response.body))['user']['stsTokenManager']['accessToken']);
+      await storage.write(key: 'refresh_token', value: (jsonDecode(response.body))['user']['stsTokenManager']['refreshToken']);
+      final accessToken = await storage.read(key: 'access_token');
+      print("ACCESS TOKENNN");
+      print(accessToken);
+      print("--------");
+
       Navigator.pushNamed(context, '/home');
     } else {
       setState(() {

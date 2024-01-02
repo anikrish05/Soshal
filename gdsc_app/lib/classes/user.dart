@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import '../app_config.dart';
 
+import '../utils.dart';
 import 'EventCardData.dart';
 
 final serverUrl = AppConfig.serverUrl;
@@ -23,6 +24,10 @@ class User {
   int classOf = 0;
 
   Future<bool> isUserSignedIn() async {
+    String? idToken = await getIDToken();
+    print("HELLOOOOOOOOOOOO THIS IS IS USERSIGNED IN");
+    print(idToken);
+    print("---------------------------- Done");
     final response = await get(Uri.parse('$serverUrl/api/users/signedIn'));
     print(jsonDecode(response.body));
     if ((jsonDecode(response.body))['message'] == false) {

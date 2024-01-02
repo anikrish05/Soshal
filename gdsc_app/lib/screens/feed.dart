@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import '../widgets/loader.dart';
 import '../app_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -60,8 +61,17 @@ class _MyAppState extends State<MyApp> {
   // Added method to load data on demand
   Future<List<dynamic>> getEventData() async {
     try {
+      final storage = FlutterSecureStorage();
+      String? accessToken = await storage.read(key: 'access_token');
+      print("FEEED ACCESS TOKEN");
+      print(accessToken);
       var response =
-      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'));
+      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': accessToken!
+        }
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body)['message'];

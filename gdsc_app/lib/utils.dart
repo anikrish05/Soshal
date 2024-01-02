@@ -1,13 +1,17 @@
-import 'dart:convert';
-import 'dart:core';
-import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-Future<Map<String, String>> getHeaders() async {
-  String idToken = await FirebaseAuth.instance.currentUser.getIdToken();
-  return {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'Authorization': idToken
-  };
+
+Future<String?> getIDToken() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String? idToken = await user.getIdToken();
+      return idToken;
+    } else {
+      // User is not signed in
+      return null;
+    }
+  } catch (e) {
+    print("Error getting ID token: $e");
+    return null;
+  }
 }
