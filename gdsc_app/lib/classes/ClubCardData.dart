@@ -151,4 +151,58 @@ class ClubCardData {
     });
   }
 
+  Future<void> acceptUser(String uid) async {
+    try {
+      final response = await post(
+        Uri.parse('$serverUrl/api/clubs/acceptUser'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "clubId": id,
+          "uid": uid,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        followers[uid] = "Accepted";
+        // Request was successful, you might want to handle the response here
+      } else {
+        // Request failed, handle the error or throw an exception
+        throw Exception('Failed to accept user: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions thrown during the asynchronous operation
+      print('Error in acceptUser: $error');
+      throw Exception('Failed to accept user: $error');
+    }
+  }
+
+  Future<void> denyUser(String uid) async {
+    try {
+      final response = await post(
+        Uri.parse('$serverUrl/api/clubs/denyUser'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "clubId": id,
+          "uid": uid,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        followers[uid] = "Denied";
+        // Request was successful, you might want to handle the response here
+      } else {
+        // Request failed, handle the error or throw an exception
+        throw Exception('Failed to deny user: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions thrown during the asynchronous operation
+      print('Error in denyUser: $error');
+      throw Exception('Failed to deny user: $error');
+    }
+  }
+
 }

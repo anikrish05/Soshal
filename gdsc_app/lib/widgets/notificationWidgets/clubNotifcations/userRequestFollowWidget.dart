@@ -8,7 +8,16 @@ Color _colorTab = Color(0xFFFF8050);
 class UserRequest extends StatefulWidget {
   final UserData user;
   final String timestamp;
-  UserRequest({required this.user, required this.timestamp});
+  final Function(String uid) onAccept; // Modify the function signature
+  final Function(String uid) onDeny; // Modify the function signature
+
+  UserRequest({
+    required this.user,
+    required this.timestamp,
+    required this.onAccept,
+    required this.onDeny,
+  });
+
   @override
   State<UserRequest> createState() => _UserRequestState();
 }
@@ -94,7 +103,7 @@ class _UserRequestState extends State<UserRequest> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () {/* Accept action */},
+                onPressed: () => widget.onAccept(widget.user.uid), // Pass additionalData to onAccept
               ),
               SizedBox(width: 10),
               TextButton(
@@ -105,7 +114,7 @@ class _UserRequestState extends State<UserRequest> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () {/* Reject action */},
+                onPressed: () => widget.onDeny(widget.user.uid), // Pass additionalData to onDeny
               ),
             ],
           ),

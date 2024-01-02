@@ -541,6 +541,14 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                             return UserRequest(
                               user: widget.club.followerActionRequired[index][0],
                               timestamp: widget.club.followerActionRequired[index][1],
+                              onAccept: (uid) {
+                                // Handle accept action with additionalData
+                                widget.club.acceptUser(uid);
+                              },
+                              onDeny: (uid) {
+                                // Handle deny action with additionalData
+                                widget.club.denyUser(uid);
+                              },
                             );
                           },
                         ),

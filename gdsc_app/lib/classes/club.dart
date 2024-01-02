@@ -64,5 +64,4 @@ class Club{
       return false;
     }
   }
-
 }
