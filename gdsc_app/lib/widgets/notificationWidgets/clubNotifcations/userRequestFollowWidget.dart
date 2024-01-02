@@ -7,7 +7,7 @@ Color _colorTab = Color(0xFFFF8050);
 
 class UserRequest extends StatefulWidget {
   final UserData user;
-  final String timestamp;
+  final int timestamp;
   final Function(String uid) onAccept; // Modify the function signature
   final Function(String uid) onDeny; // Modify the function signature
 
@@ -27,7 +27,7 @@ class _UserRequestState extends State<UserRequest> {
 
   @override
   void initState() {
-    int timestampInMilliseconds = int.parse(widget.timestamp);
+    int timestampInMilliseconds = widget.timestamp;
     DateTime nodeDateTime = DateTime.fromMillisecondsSinceEpoch(timestampInMilliseconds);
     DateTime currentDateTime = DateTime.now();
     Duration difference = currentDateTime.difference(nodeDateTime);
