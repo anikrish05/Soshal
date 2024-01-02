@@ -45,7 +45,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                 height: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
                 margin: widget.image is String && widget.image.startsWith('asset')
                     ? EdgeInsets.fromLTRB(0, 0, 10, 0)
-                    : EdgeInsets.fromLTRB(35, 30, 20, 25),
+                    : EdgeInsets.fromLTRB(30, 20, 20, 20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -69,8 +69,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 202,
-                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 62, // Adjust top position as needed
+                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 190,
+                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
                 child: buildProfileInfo(),
               ),
             ],
@@ -113,32 +113,50 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       );
 
   Widget buildProfileInfo() {
+    final truncatedName = _truncateText(widget.name + "giwin vicn", 10);
+    final isTruncated = truncatedName != widget.name + "giwin vicn";
+
     return Padding(
-      padding: EdgeInsets.fromLTRB(0,0,0,0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.name,
-            style: TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.w800,
-              fontSize: 30,
+      padding: EdgeInsets.fromLTRB(0, isTruncated ? 5 : 0, 0, 0),
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: 225, // Adjust this maxWidth as needed
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              truncatedName,
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w800,
+                fontSize: 35,
+              ),
             ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            'Class of ${widget.graduationYear}',
-            style: TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
+            SizedBox(height: 4),
+            Text(
+              'Class of ${widget.graduationYear}',
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+
+  //helper method to truncate text if the names are too long
+  String _truncateText(String text, int maxLength) {
+    if (text.length <= maxLength) {
+      return text;
+    } else {
+      return text.substring(0, maxLength) + '...';
+    }
   }
 
   // Helper method to get the appropriate ImageProvider based on the image type
@@ -158,4 +176,3 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     }
   }
 }
-
