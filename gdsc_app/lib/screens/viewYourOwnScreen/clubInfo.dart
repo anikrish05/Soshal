@@ -503,8 +503,10 @@ class _ClubProfilePageState extends State<ClubProfilePage>
           length: 2,
           child: Scaffold(
             appBar: AppBar(
+              backgroundColor: _colorTab,
               title: Text('Notifications'),
               bottom: TabBar(
+                labelStyle: TextStyle(fontFamily: 'Borel'), // Add this line
                 tabs: [
                   Tab(text: 'Requested'),
                   Tab(text: 'Accepted'),
@@ -541,6 +543,14 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                             return UserRequest(
                               user: widget.club.followerActionRequired[index][0],
                               timestamp: widget.club.followerActionRequired[index][1],
+                              onAccept: (uid) {
+                                // Handle accept action with additionalData
+                                widget.club.acceptUser(uid);
+                              },
+                              onDeny: (uid) {
+                                // Handle deny action with additionalData
+                                widget.club.denyUser(uid);
+                              },
                             );
                           },
                         ),

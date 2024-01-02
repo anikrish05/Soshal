@@ -20,7 +20,7 @@ const createClub = async (req, res) => {
 		downloadURL: downloadURL,
 		type: type,
 		category: category,
-		followers: [],
+		followers: {},
 		events: [],
 		admin: admin,
 		avgRating: 0
