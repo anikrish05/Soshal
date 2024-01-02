@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../widgets/loader.dart';
+import '../../widgets/profileWidgets/otherProfileWidget.dart';
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -51,7 +52,7 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
   Future<void> postRequest() async {
-    print("post requ");
+    print("post request");
     String timeStamp = format.format(DateTime.now());
     await http.post(
       Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
@@ -183,7 +184,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                               fontWeight: FontWeight.normal,
                             ),
                           ),
-                          SizedBox(height: 12),
+                          SizedBox(height: 5),
                           Row(
                             children: [
                               Icon(Icons.location_on),
@@ -550,6 +551,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
   }
+
   Widget buildTabContent() {
     return FutureBuilder<void>(
       future: getRSVPData(),
@@ -561,14 +563,16 @@ class _EventProfilePageState extends State<EventProfilePage>
             child: Text('Error: ${snapshot.error}'),
           );
         } else {
-          return SizedBox( // Wrapped with Container and specified height
+          print("hello");
+          print(widget.event.rsvpUserData);
+          return SizedBox(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(
               children: [
                 ListView.builder(
                   itemCount: widget.event.rsvpUserData.length,
                   itemBuilder: (context, index) {
-                    return Center(child: Text(widget.event.rsvpUserData[index].displayName));
+                    return OtherProfileWidget(user: widget.event.rsvpUserData[index]);
                   },
                 ),
               ],

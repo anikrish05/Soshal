@@ -4,6 +4,8 @@ import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:intl/intl.dart';
+
 
 class OtherEventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -20,6 +22,9 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   late TextEditingController eventNameController;
   late TextEditingController eventDescController;
   User user = User();
+  String locationText = "Loading...";
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+
 
   @override
   void initState() {
@@ -28,6 +33,9 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     isUserSignedIn();
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);// Initialize the controller
+    setState(() {
+      locationText = "Loading...";
+    });
   }
 
   @override
@@ -42,6 +50,13 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
         Navigator.pushNamed(context, '/login');
       }
     });
+  }
+
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime dateTime = format.parse(dateTimeString);
+    String formattedDateTime =
+    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    return formattedDateTime;
   }
 
 
@@ -126,6 +141,32 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
                             ),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on),
+                              Text(
+                                (locationText),
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.access_time),
+                              Text(
+                                ' ${getFormattedDateTime(widget.event.time)}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
