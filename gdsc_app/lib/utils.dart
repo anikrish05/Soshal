@@ -1,17 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-Future<String?> getIDToken() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      String? idToken = await user.getIdToken();
-      return idToken;
-    } else {
-      // User is not signed in
-      return null;
-    }
-  } catch (e) {
-    print("Error getting ID token: $e");
-    return null;
-  }
+Future<Map<String, String>> getHeaders() async {
+  final storage = FlutterSecureStorage();
+  String? accessToken = await storage.read(key: 'access_token');
+  print("IN UTILOTY");
+  print(accessToken);
+  return {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Authorization': accessToken!
+  };
 }

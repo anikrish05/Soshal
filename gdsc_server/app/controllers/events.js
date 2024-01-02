@@ -1,6 +1,7 @@
 const { db, auth } = require('../../db/config')
+
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc} = require('firebase/firestore');
-const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, verifyIdToken} = require("firebase/auth");
 async function associatedClubEventAdd(clubList, eventId) {
 	for (const clubID of clubList){
 		const clubDoc = doc(db, "clubs", clubID);
@@ -47,23 +48,28 @@ const createEvent = async (req, res) => {
 
 const getFeedPosts = async (req, res) => {
   try {
-    //const uid = req.params.uid
-    //console.log(uid);
+    const idToken = req.headers['authorization'];
+    userToken = await auth.currentUser.getIdToken();
+    if(userToken!=idToken){
+       res.status(401).send(JSON.stringify({ error: 'Unauthorized' }));
+    }
+
     const colRef = collection(db, "events");
     const docsSnap = await getDocs(colRef);
 
     const allDocs = [];
-    
+
     for (const doc of docsSnap.docs) {
       const data = doc.data();
       data.eventID = doc.id;
       data.clubInfo = await getAssociatedClubForEvent(data.admin);
       allDocs.push(data);
     }
+
     res.status(200).send(JSON.stringify({ message: allDocs }));
   } catch (error) {
     console.error('Error in getFeedPosts:', error);
-    res.status(500).send(JSON.stringify({ error: 'Internal Server Error' }));
+    // If verification fails, return an unauthorized status
   }
 };
 
