@@ -133,7 +133,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       userName = widget.user.displayName;
     }
 
-    Navigator.pop(context, [graduation, userName]);
+    Navigator.pop(context, [graduation, userName,widget.user.uid]);
 
   }
 }
