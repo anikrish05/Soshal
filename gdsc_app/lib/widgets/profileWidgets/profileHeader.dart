@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -112,52 +113,50 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
         ),
       );
 
-  Widget buildProfileInfo() {
-    final truncatedName = _truncateText(widget.name + "giwin vicn", 10);
-    final isTruncated = truncatedName != widget.name + "giwin vicn";
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, isTruncated ? 5 : 0, 0, 0),
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: 225, // Adjust this maxWidth as needed
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              truncatedName,
+  Widget buildProfileInfo() {
+    final int maxCharacters = 30; // Set the maximum number of characters before forcing wrap
+    final double increasedPadding = 10.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+          alignment: widget.name.length > maxCharacters ? Alignment.topCenter : Alignment.topLeft,
+          // Align text to the top left by default, or top center if it exceeds character limit
+          child: Container(
+            width: 200, // Set a specific width for the text container
+            child: Text(
+              widget.name.length > maxCharacters
+                  ? '${widget.name.substring(0, maxCharacters)}...' // Truncate text and add '...'
+                  : widget.name,
               style: TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.w800,
-                fontSize: 35,
+                fontSize: 28,
               ),
+              overflow: TextOverflow.ellipsis, // Prevent text overflow by fading
+              maxLines: 2, // Set the maximum number of lines
             ),
-            SizedBox(height: 4),
-            Text(
-              'Class of ${widget.graduationYear}',
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        SizedBox(height: 4),
+        Text(
+          'Class of ${widget.graduationYear}',
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
+        SizedBox(height: widget.name.length > maxCharacters ? increasedPadding : 0), // Adds more space if necessary
+      ],
     );
   }
 
 
-  //helper method to truncate text if the names are too long
-  String _truncateText(String text, int maxLength) {
-    if (text.length <= maxLength) {
-      return text;
-    } else {
-      return text.substring(0, maxLength) + '...';
-    }
-  }
+
 
   // Helper method to get the appropriate ImageProvider based on the image type
   ImageProvider<Object> _getImageProvider(dynamic image) {
