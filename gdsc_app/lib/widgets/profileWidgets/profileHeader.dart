@@ -42,8 +42,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             children: [
               // Profile Picture with Edit Icon
               Container(
-                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
-                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
+                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
+                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
                 margin: widget.image is String && widget.image.startsWith('asset')
                     ? EdgeInsets.fromLTRB(0, 0, 10, 0)
                     : EdgeInsets.fromLTRB(30, 20, 20, 20),
@@ -70,7 +70,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 190,
+                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 183,
                 top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
                 child: buildProfileInfo(),
               ),
