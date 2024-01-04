@@ -10,30 +10,62 @@ class OtherProfileWidget extends StatefulWidget {
   State<OtherProfileWidget> createState() => _OtherProfileWidgetState();
 }
 
+
+
 class _OtherProfileWidgetState extends State<OtherProfileWidget> {
+
+  Widget _buildProfileImage() {
+    Widget profileImage;
+
+    if (widget.user.downloadURL.isEmpty) {
+      profileImage = Image.asset(
+        'assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
+    } else {
+      profileImage = Image.network(
+        widget.user.downloadURL,
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
+    }
+
+    return ClipOval(
+      child: profileImage,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            for (User user in widget.user.users)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Row(
+        children: [
+          _buildProfileImage(),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(user.downloadURL),
+                    Text(
+                      '${widget.user.displayName}:',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(height: 8),
-                    Text(user.displayName),
                   ],
                 ),
-              ),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
