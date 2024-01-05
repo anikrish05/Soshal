@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../utils.dart';
 import '../../widgets/loader.dart';
 
 class EventProfilePage extends StatefulWidget {
@@ -55,9 +56,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     String timeStamp = format.format(DateTime.now());
     await http.post(
       Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "name": widget.event.name,
         "description": widget.event.description,

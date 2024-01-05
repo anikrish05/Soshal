@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 typedef ResetStateCallback = void Function();
@@ -48,9 +49,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       final response = await http.post(
         Uri.parse(
             '$serverUrl/api/comments/getCommentDataForEvent'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, dynamic>{
           "comments": widget.markerData.comments ?? [], // Ensure comments is not null
         }),

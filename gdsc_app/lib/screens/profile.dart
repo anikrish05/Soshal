@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
 import 'package:image_picker/image_picker.dart';
+import '../utils.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
@@ -34,7 +35,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   int newGradYr = 0;
 
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
+      headers: await getHeaders(),
+    );
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
@@ -43,7 +46,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+        headers: await getHeaders(),
+      );
       var data = jsonDecode(response.body)['message'];
       UserData tempUser = UserData(
         classOf: data['classOf'],
@@ -87,9 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/api/users/updateProfileImage'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, dynamic>{
           "image": imageBytes,
           "uid": user!.uid, // Replace with the actual user ID

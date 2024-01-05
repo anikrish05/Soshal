@@ -50,12 +50,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.statusCode == 200) {
       final storage = FlutterSecureStorage();
-      await storage.write(key: 'access_token', value: (jsonDecode(response.body))['user']['stsTokenManager']['accessToken']);
-      await storage.write(key: 'refresh_token', value: (jsonDecode(response.body))['user']['stsTokenManager']['refreshToken']);
-      final accessToken = await storage.read(key: 'access_token');
-      print("ACCESS TOKENNN");
-      print(accessToken);
-      print("--------");
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+
+      // Calculate and store the approximate expiration time
+      final int oneHourFromNow = DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch;
+
+      await storage.write(key: 'access_token', value: responseData['user']['stsTokenManager']['accessToken']);
+      await storage.write(key: 'refresh_token', value: responseData['user']['stsTokenManager']['refreshToken']);
+      await storage.write(key: 'email', value: emailController.text);
+      await storage.write(key: 'password', value: passWordController.text);
+      await storage.write(key: 'access_token_expiry', value: oneHourFromNow.toString());
 
       Navigator.pushNamed(context, '/home');
     } else {
@@ -64,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
 
   void signUpRoute() {
     Navigator.pushNamed(context, '/sign');
