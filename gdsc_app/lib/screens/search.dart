@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'dart:convert';
@@ -44,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
+          builder: (context) => LoginScreen(),
         ),
       );
     } else {

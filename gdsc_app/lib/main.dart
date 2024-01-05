@@ -41,7 +41,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   User user = User();
-  int selectedIndex = 0;
+  int selectedIndex = 2;
   List screens = [
     MyApp(),
     SearchScreen(),
@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    isUserSignedIn();
+    //isUserSignedIn();
   }
   void isUserSignedIn() async {
     user.isUserSignedIn().then((check){
