@@ -239,7 +239,38 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
     newName = result[1];
     newGradYr = result[0];
+    String userID = result[2];
     print("New Name: $newName");
     print("New Grad Year: $newGradYr");
+    final updateProfileData = {
+      'displayName': newName,
+      'classOf': newGradYr,
+      'uid': userID,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/users/updateProfile'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(updateProfileData),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData['message']); // Assuming the server responds with a JSON object containing a 'message' property
+      } else {
+        print('Error: ${response.statusCode}');
+        print(response.body);
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+
+    getUser();
+    setState(() {
+
+    });
   }
 }

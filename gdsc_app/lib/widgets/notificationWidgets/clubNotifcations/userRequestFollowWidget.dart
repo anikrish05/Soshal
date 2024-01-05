@@ -7,7 +7,7 @@ Color _colorTab = Color(0xFFFF8050);
 
 class UserRequest extends StatefulWidget {
   final UserData user;
-  final String timestamp;
+  final int timestamp;
   final Function(String uid) onAccept; // Modify the function signature
   final Function(String uid) onDeny; // Modify the function signature
 
@@ -24,10 +24,13 @@ class UserRequest extends StatefulWidget {
 
 class _UserRequestState extends State<UserRequest> {
   String time = "";
+  double opacity = 1.0;
+  String acceptButtonText = 'Accept';
+  String rejectButtonText = 'Reject';
 
   @override
   void initState() {
-    int timestampInMilliseconds = int.parse(widget.timestamp);
+    int timestampInMilliseconds = widget.timestamp;
     DateTime nodeDateTime = DateTime.fromMillisecondsSinceEpoch(timestampInMilliseconds);
     DateTime currentDateTime = DateTime.now();
     Duration difference = currentDateTime.difference(nodeDateTime);
@@ -75,7 +78,7 @@ class _UserRequestState extends State<UserRequest> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(18.0),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -96,25 +99,37 @@ class _UserRequestState extends State<UserRequest> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextButton(
-                child: Text('Accept', style: TextStyle(color: Colors.white, fontFamily: 'Borel')),
+                child: Text(acceptButtonText, style: TextStyle(color: Colors.white, fontFamily: 'Borel')),
                 style: TextButton.styleFrom(
                   backgroundColor: _colorTab,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () => widget.onAccept(widget.user.uid), // Pass additionalData to onAccept
+                onPressed: () {
+                  widget.onAccept(widget.user.uid); // Pass additionalData to onAccept
+                  setState(() {
+                    acceptButtonText = 'Accepted';
+                    rejectButtonText = 'Reject'; // Reset the reject button text
+                  });
+                },
               ),
               SizedBox(width: 10),
               TextButton(
-                child: Text('Reject', style: TextStyle(color: Colors.white, fontFamily: 'Borel')),
+                child: Text(rejectButtonText, style: TextStyle(color: Colors.white, fontFamily: 'Borel')),
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.grey,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () => widget.onDeny(widget.user.uid), // Pass additionalData to onDeny
+                onPressed: () {
+                  widget.onDeny(widget.user.uid); // Pass additionalData to onDeny
+                  setState(() {
+                    rejectButtonText = 'Rejected';
+                    acceptButtonText = 'Accept'; // Reset the accept button text
+                  });
+                },
               ),
             ],
           ),

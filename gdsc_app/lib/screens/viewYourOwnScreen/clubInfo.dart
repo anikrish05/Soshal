@@ -503,8 +503,10 @@ class _ClubProfilePageState extends State<ClubProfilePage>
           length: 2,
           child: Scaffold(
             appBar: AppBar(
+              backgroundColor: _colorTab,
               title: Text('Notifications'),
               bottom: TabBar(
+                labelStyle: TextStyle(fontFamily: 'Borel'), // Add this line
                 tabs: [
                   Tab(text: 'Requested'),
                   Tab(text: 'Accepted'),

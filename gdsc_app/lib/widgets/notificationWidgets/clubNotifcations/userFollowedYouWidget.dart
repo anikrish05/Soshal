@@ -5,7 +5,7 @@ import '../../../classes/userData.dart';
 
 class UserFollowing extends StatefulWidget {
   final UserData user;
-  final String timestamp;
+  final int timestamp;
   UserFollowing({required this.user, required this.timestamp});
 
   @override
@@ -17,7 +17,7 @@ class _UserFollowingState extends State<UserFollowing> {
 
   @override
   void initState() {
-    int timestampInMilliseconds = int.parse(widget.timestamp);
+    int timestampInMilliseconds = widget.timestamp;
     DateTime nodeDateTime = DateTime.fromMillisecondsSinceEpoch(timestampInMilliseconds);
     DateTime currentDateTime = DateTime.now();
     Duration difference = currentDateTime.difference(nodeDateTime);
@@ -65,7 +65,7 @@ class _UserFollowingState extends State<UserFollowing> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(18.0),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
