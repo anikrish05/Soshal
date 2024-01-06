@@ -1,22 +1,16 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "./server.js", "use": "@now/node" },
-    { "src": "./cronJob.js", "use": "@now/node" }
-  ],
-  "functions": {
-    "api": {
-      "handler": "server.js"
-    },
-    "cronJob": {
-      "handler": "cronJob.js",
-      "schedule": "0 5 * * *"
-    }
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
-  ]
+	"version": 2,
+	"builds": [
+		{
+			"src":"./server.js",
+			"use":"@now/node"
+		}
+	],
+	"routes":[
+		{
+			"src":"/(.*)",
+			"dest":"server.js"
+		}
+	]
+
 }
