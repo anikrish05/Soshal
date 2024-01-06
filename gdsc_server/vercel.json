@@ -4,7 +4,12 @@
 		{
 			"src":"./server.js",
 			"use":"@now/node"
+		},
+		{ 
+			"src": "./cronJob.js", 
+			"use": "@now/node" 
 		}
+
 	],
 	"routes":[
 		{

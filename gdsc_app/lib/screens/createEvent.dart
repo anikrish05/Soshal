@@ -12,6 +12,7 @@ import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -64,9 +65,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     String timeStamp = format.format(DateTime.now());
     await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
         "admin": [widget.club.id],
         "name": eventName.text,

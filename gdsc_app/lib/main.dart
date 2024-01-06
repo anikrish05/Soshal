@@ -9,6 +9,7 @@ import 'package:gdsc_app/widgets/appBar.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app_config.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
 // Define the color as a global variable
@@ -17,6 +18,8 @@ Color _orangeColor = Color(0xFFFF8050);
 void main() async {
   await dotenv.load(fileName: ".env");
   await AppConfig.loadEnvironment();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/login',
@@ -38,7 +41,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   User user = User();
-  int selectedIndex = 0;
+  int selectedIndex = 2;
   List screens = [
     MyApp(),
     SearchScreen(),
@@ -53,7 +56,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    isUserSignedIn();
+    //isUserSignedIn();
   }
   void isUserSignedIn() async {
     user.isUserSignedIn().then((check){
