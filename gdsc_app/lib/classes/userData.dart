@@ -17,12 +17,15 @@ class UserData {
   String downloadURL;
   List<String> myEvents;
   List<String> clubIds;
+  List<String> likedEvents;
+  List<String> dislikedEvents;
   List<ClubCardData> clubData = [];
   int classOf;
   List<EventCardData> eventData = [];
 
   UserData({required this.uid, required this.displayName, required this.email, required this.following,
-    required this.role, required this.myEvents, required this.clubIds, required this.downloadURL, required this.classOf
+    required this.role, required this.myEvents, required this.clubIds, required this.downloadURL, required this.classOf,
+    required this.likedEvents, required this.dislikedEvents
   });
 
   Future<void> getClubData() async {

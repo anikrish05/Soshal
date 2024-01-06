@@ -22,6 +22,8 @@ class User {
   List<ClubCardData> clubData = [];
   List<String> clubIds = [];
   int classOf = 0;
+  List<String> likedEvents = [];
+  List<String> dislikedEvents = [];
 
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('$serverUrl/api/users/signedIn'),

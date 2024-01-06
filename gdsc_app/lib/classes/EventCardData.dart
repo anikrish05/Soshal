@@ -14,8 +14,9 @@ class EventCardData {
   String downloadURL;
   double latitude;
   double longitude;
-  double rating;
   List<String> comments;
+  List<String> likedBy;
+  List<String> disLikedBy;
   String id;
   List<String> admin;
   List<ClubCardData> clubInfo = [];
@@ -29,11 +30,12 @@ class EventCardData {
     required this.downloadURL,
     required this.latitude,
     required this.longitude,
-    required this.rating,
     required this.comments,
     required this.id,
     required this.admin,
-    required this.time
+    required this.time,
+    required this.likedBy,
+    required this.disLikedBy
   });
   Future<void> getAllClubsForEvent() async {
     clubInfo = [];
