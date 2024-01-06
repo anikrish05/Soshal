@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'dart:convert';
@@ -12,7 +11,6 @@ import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
 
 import '../classes/userData.dart';
 import '../app_config.dart';
-import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -38,20 +36,16 @@ class _SearchScreenState extends State<SearchScreen>
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
-      headers: await getHeaders(),
-    );
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => ProfileScreen(),
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
-        headers: await getHeaders(),
-      );
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
       var data = jsonDecode(response.body)['message'];
       print(data);
       UserData tempUser = UserData(
@@ -122,9 +116,7 @@ class _SearchScreenState extends State<SearchScreen>
   Future<bool> fetchClubs() async {
     print("IN FETCH CLUBS");
     final response = await http.get(Uri.parse(
-        '$serverUrl/api/clubs/getDataForSearchPage'),
-      headers: await getHeaders(),
-    );
+        '$serverUrl/api/clubs/getDataForSearchPage'));
     print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data =
