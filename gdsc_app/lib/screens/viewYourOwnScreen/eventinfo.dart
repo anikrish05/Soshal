@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
-import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:gdsc_app/screens/CreateScreens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../widgets/loader.dart';
-import '../../widgets/profileWidgets/otherProfileWidget.dart';
+import '../../widgets/profileWidgets/rsvpCard.dart';
+import '../../widgets/profileWidgets/rsvpCard.dart';
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -253,8 +254,6 @@ class _EventProfilePageState extends State<EventProfilePage>
                 indent: 24,
                 endIndent: 24,
               ),
-              SizedBox(height: 16),
-              buildTabBar(),
               SizedBox(height: 16),
               buildTabContent(),
             ],
@@ -531,26 +530,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     }
   }
 
-  Widget buildTabBar() {
-    return TabBar(
-      unselectedLabelColor: _colorTab,
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: _colorTab,
-      ),
-      controller: tabController,
-      tabs: [
-        Tab(
-          child: Text(
-            'RSVP List',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-      indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
-    );
-  }
 
   Widget buildTabContent() {
     return FutureBuilder<void>(
@@ -565,24 +544,38 @@ class _EventProfilePageState extends State<EventProfilePage>
         } else {
           print("hello");
           print(widget.event.rsvpUserData);
-          return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: TabBarView(
-              children: [
-                ListView.builder(
-                  itemCount: widget.event.rsvpUserData.length,
-                  itemBuilder: (context, index) {
-                    return OtherProfileWidget(user: widget.event.rsvpUserData[index]);
-                  },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'RSVP List',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ],
-              controller: tabController,
-            ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    itemCount: widget.event.rsvpUserData.length,
+                    itemBuilder: (context, index) {
+                      User user = widget.event.rsvpUserData[index] as User;
+                      return rsvpCard(user: user);
+                      // Assuming OtherProfileWidget is a widget that displays user information.
+                    },
+                  ),
+                ),
+              ),
+            ],
           );
         }
       },
     );
   }
+
 
 
 

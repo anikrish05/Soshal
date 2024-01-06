@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/screens/feed.dart';
-import 'package:gdsc_app/screens/login.dart';
+import 'package:gdsc_app/screens/MainScreens/feed.dart';
+import 'package:gdsc_app/screens/MainScreens/login.dart';
 import 'package:gdsc_app/screens/sign.dart';
-import 'package:gdsc_app/screens/search.dart';
-import 'package:gdsc_app/screens/profile.dart';
+import 'package:gdsc_app/screens/MainScreens/search.dart';
+import 'package:gdsc_app/screens/MainScreens/profile.dart';
 import 'package:gdsc_app/widgets/appBar.dart';
 
 import 'package:gdsc_app/classes/user.dart';

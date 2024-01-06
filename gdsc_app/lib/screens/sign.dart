@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/screens/profile.dart';
+import 'package:gdsc_app/screens/MainScreens/profile.dart';
 import 'package:http/http.dart';
 import '../app_config.dart';
 

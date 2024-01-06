@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
-import '../app_config.dart';
+import '../../app_config.dart';
 
 final serverUrl = AppConfig.serverUrl;
 class LoginScreen extends StatefulWidget {

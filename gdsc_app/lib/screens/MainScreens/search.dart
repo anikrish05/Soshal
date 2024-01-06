@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/screens/profile.dart';
+import 'package:gdsc_app/screens/MainScreens/profile.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -9,8 +9,8 @@ import 'package:gdsc_app/widgets/loader.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
 
-import '../classes/userData.dart';
-import '../app_config.dart';
+import '../../classes/userData.dart';
+import '../../app_config.dart';
 
 final serverUrl = AppConfig.serverUrl;
 

@@ -9,8 +9,8 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../widgets/loader.dart';
-import '../app_config.dart';
+import '../../widgets/loader.dart';
+import '../../app_config.dart';
 
 final serverUrl = AppConfig.serverUrl;
 

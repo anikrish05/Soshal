@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
-import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:gdsc_app/screens/CreateScreens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:intl/intl.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:gdsc_app/screens/CreateScreens/createEventMap.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
-import '../app_config.dart';
+import '../../app_config.dart';
 
 final serverUrl = AppConfig.serverUrl;
 

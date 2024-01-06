@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
-import 'package:gdsc_app/screens/createUser.dart';
+import 'package:gdsc_app/screens/CreateScreens/createUser.dart';
 import 'package:image_picker/image_picker.dart';
-import '../widgets/profileWidgets/profileHeader.dart';
-import '../widgets/profileWidgets/profileWidgetButtons.dart';
-import '../widgets/eventWidgets/eventCard.dart';
-import '../widgets/clubWidgets/clubCard.dart';
+import '../../widgets/profileWidgets/profileHeader.dart';
+import '../../widgets/profileWidgets/profileWidgetButtons.dart';
+import '../../widgets/eventWidgets/eventCard.dart';
+import '../../widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
-import '../widgets/loader.dart';
-import 'createClub.dart';
+import '../../widgets/loader.dart';
+import '../CreateScreens/createClub.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
-import '../app_config.dart';
+import '../../app_config.dart';
 
 final serverUrl = AppConfig.serverUrl;
 

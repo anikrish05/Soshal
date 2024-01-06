@@ -3,7 +3,7 @@ import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
-import 'package:gdsc_app/screens/createEvent.dart';
+import 'package:gdsc_app/screens/CreateScreens/createEvent.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
