@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
+import 'package:gdsc_app/screens/login.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utils.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
@@ -42,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
+          builder: (context) => LoginScreen(),
         ),
       );
     } else {

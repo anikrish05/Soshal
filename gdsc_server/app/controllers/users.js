@@ -60,7 +60,6 @@ const login = async (req, res) => {
 
 const signedIn = async (req, res) => {
   const idToken = req.headers['authorization'];
-  
   if (idToken != null) {
     try {
       const userToken = await auth.currentUser.getIdToken();
