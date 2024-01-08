@@ -2,7 +2,8 @@ const { initializeApp } = require('firebase/app');
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc } = require('firebase/firestore');
 const { getStorage } = require('firebase/storage');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = require("firebase/auth");
-const admin = require('firebase-admin');
+import { initializeApp as initializeAdminApp } from 'firebase-admin/app';
+import { credential } from 'firebase-admin';
 
 const port = 3000;
 const config = {
@@ -22,10 +23,10 @@ const auth = getAuth(FirebaseApp);
 const storage = getStorage(FirebaseApp);
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require('./serviceAccountKey.json'); // Assuming it's in the same directory
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: config.databaseURL, // Use your database URL
+const serviceAccount = require('./serviceAccountKey.json');
+const admin = initializeAdminApp({
+  credential: credential.cert(serviceAccount),
+  databaseURL: config.databaseURL,
 });
 
 module.exports = {

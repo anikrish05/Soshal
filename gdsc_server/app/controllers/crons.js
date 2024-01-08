@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs, setDoc } from 'firebase/firestore';
+const { getFirestore, collection, getDocs, setDoc } = require('firebase/firestore');
 const { admin } = require('../../db/config');
 
 function formatTimestampToDateTime(timestamp) {
