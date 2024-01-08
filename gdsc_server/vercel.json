@@ -15,7 +15,7 @@
 	"crons": [
 		{
 			"path": "/api/crons/cronsRepeatable",
-			"schedule": "46 17 * * *"
+			"schedule": "* * * * *"
 		}
 	]
 

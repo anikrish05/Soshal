@@ -18,6 +18,7 @@ function formatTimestampToDateTime(timestamp) {
 }
 
 const cronsRepeatable = async (req, res) => {
+  console.log("in repetable");
   const timestamp = Date.now();
   const eventRef = collection(admin.firestore(), 'events'); // Use admin.firestore() instead of db
   const eventData = await getDocs(eventRef);
