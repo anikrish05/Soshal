@@ -1,21 +1,25 @@
 {
-	"version": 2,
-	"builds": [
-		{
-			"src":"./server.js",
-			"use":"@now/node"
-		},
-		{ 
-			"src": "./cronJob.js", 
-			"use": "@now/node" 
-		}
-
-	],
-	"routes":[
-		{
-			"src":"/(.*)",
-			"dest":"server.js"
-		}
-	]
-
+  "version": 2,
+  "builds": [
+    {
+      "src": "./server.js",
+      "use": "@now/node"
+    },
+    {
+      "src": "./cronJob.js",
+      "use": "@now/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
+  "functions": {
+    "cronJob": {
+      "schedule": "30 17 * * *", // 30th minute, 17th hour (5:30 PM) in UTC, which is 10:30 AM PST
+      "maxDuration": 10
+    }
+  }
 }
