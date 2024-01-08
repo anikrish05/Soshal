@@ -25,7 +25,7 @@ const storage = getStorage(FirebaseApp);
 const serviceAccount = require('./serviceAccountKey.json'); // Assuming it's in the same directory
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://gdsc-7069b.firebaseio.com', // Use your database URL
+  databaseURL: config.databaseURL, // Use your database URL
 });
 
 module.exports = {

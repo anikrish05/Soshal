@@ -1,5 +1,5 @@
-const { collection, getDocs, setDoc } = require('firebase/firestore');
-const { getDatabase } = require('firebase-admin/database');
+import { collection, getDocs, setDoc } from 'firebase/firestore';
+import { admin } from '../../db/config';
 
 function formatTimestampToDateTime(timestamp) {
   const date = new Date(timestamp);
@@ -18,10 +18,8 @@ function formatTimestampToDateTime(timestamp) {
 }
 
 const cronsRepeatable = async (req, res) => {
-  console.log("in repetable");
   const timestamp = Date.now();
-  const db = getDatabase();
-  const eventRef = collection(db, 'events'); // Use admin.firestore() instead of db
+  const eventRef = collection(admin.firestore(), 'events');
   const eventData = await getDocs(eventRef);
 
   eventData.docs.map(async (doc) => {
