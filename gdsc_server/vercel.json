@@ -5,11 +5,6 @@
 			"src":"./server.js",
 			"use":"@now/node"
 		},
-		{ 
-			"src": "./cronJob.js", 
-			"use": "@now/node" 
-		}
-
 	],
 	"routes":[
 		{
@@ -17,10 +12,11 @@
 			"dest":"server.js"
 		}
 	],
-	"functions": {
-    	"cronJob": {
-      		"schedule": "33 17 * * *",
-      		"maxDuration": 10
-    	}
- 	 }
+	"crons": [
+		{
+			"path": "/api/crons/cronsRepeatable",
+			"schedule": "43 17 * * *"
+		}
+	]
+
 }
