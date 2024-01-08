@@ -1,5 +1,5 @@
-import { collection, getDocs, setDoc } from 'firebase/firestore';
-import { admin } from '../../db/config';
+import { getFirestore, collection, getDocs, setDoc } from 'firebase/firestore';
+const { admin } = require('../../db/config');
 
 function formatTimestampToDateTime(timestamp) {
   const date = new Date(timestamp);
@@ -19,7 +19,7 @@ function formatTimestampToDateTime(timestamp) {
 
 const cronsRepeatable = async (req, res) => {
   const timestamp = Date.now();
-  const eventRef = collection(admin.firestore(), 'events');
+  const eventRef = collection(getFirestore(admin), 'events');
   const eventData = await getDocs(eventRef);
 
   eventData.docs.map(async (doc) => {
