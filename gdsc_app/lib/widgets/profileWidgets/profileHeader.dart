@@ -34,6 +34,12 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the image size as a fraction of the screen width
+    double imageSize = screenWidth * 0.3; // Adjust the fraction as needed
+
     return Row(
       children: [
         Expanded(
@@ -41,17 +47,13 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             children: [
               // Profile Picture with Edit Icon
               Container(
-                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
-                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 135,
-                margin: widget.image is String && widget.image.startsWith('asset')
-                    ? EdgeInsets.fromLTRB(0, 0, 10, 0)
-                    : EdgeInsets.fromLTRB(30, 20, 20, 20),
+                width: imageSize,
+                height: imageSize,
+                margin: EdgeInsets.fromLTRB(10, 20, 20, 20), // Adjust left margin as needed
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    fit: widget.image is String && widget.image.startsWith('asset')
-                        ? BoxFit.contain // Use BoxFit.contain for asset images
-                        : BoxFit.cover, // Use BoxFit.cover for other images
+                    fit: BoxFit.cover, // Use BoxFit.cover for all images
                     image: _image,
                   ),
                 ),
@@ -69,8 +71,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 190,
-                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
+                left: imageSize + 20, // Position info relative to image size
+                top: 50, // Adjust top position as needed
                 child: buildProfileInfo(),
               ),
             ],
@@ -81,7 +83,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
   }
 
   Widget buildEditIcon(Color color) => Padding(
-
     padding: widget.image is String && widget.image.startsWith('asset') ? EdgeInsets.fromLTRB(0, 0, 25, 25): EdgeInsets.all(0),
     child: buildCircle(
       color: Colors.white,
@@ -98,7 +99,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
     ),
   );
 
-
   Widget buildCircle({
     required Widget child,
     required double all,
@@ -113,18 +113,25 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       );
 
   Widget buildProfileInfo() {
+    double maxWidth = MediaQuery.of(context).size.width - 50; // Adjust the value as needed
+
     return Padding(
       padding: EdgeInsets.fromLTRB(0,0,0,0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            widget.name,
-            style: TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.w800,
-              fontSize: 30,
+          Container(
+            width: maxWidth,
+            child: Text(
+              widget.name,
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w800,
+                fontSize: 30,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           SizedBox(height: 4),
