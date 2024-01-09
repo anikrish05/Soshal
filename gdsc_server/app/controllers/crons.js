@@ -18,25 +18,34 @@ function formatTimestampToDateTime(timestamp) {
 }
 
 const cronsRepeatable = async (req, res) => {
-  console.log(admin);
-  const timestamp = Date.now();
-  const eventRef = collection(getFirestore(admin), 'events');
-  const eventData = await getDocs(eventRef);
+  try {
+    const db = admin.firestore();
+    const eventsCollection = collection(db, 'events');
+    const eventData = await getDocs(eventsCollection);
 
-  eventData.docs.map(async (doc) => {
-    var eventData = doc.data();
-    const timestampMilliseconds = new Date(eventData.timestamp).getTime();
-    if (eventData.repeat == true) {
-      if (((timestamp - timestampMilliseconds) / (1000 * 60 * 60)) > 4) {
-        const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-        await setDoc(doc.ref, { timestamp: formatTimestampToDateTime(timestampMilliseconds + oneWeekInMilliseconds) }, { merge: true });
+    eventData.docs.map(async (doc) => {
+      const eventData = doc.data();
+      console.log('eventData:', eventData);
+
+      const timestampMilliseconds = new Date(eventData.timestamp).getTime();
+      console.log('timestampMilliseconds:', timestampMilliseconds);
+
+      if (eventData.repeat == true) {
+        if (((timestamp - timestampMilliseconds) / (1000 * 60 * 60)) > 4) {
+          // Use doc.ref to reference the document directly
+          const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+          await setDoc(doc.ref, { timestamp: formatTimestampToDateTime(timestampMilliseconds + oneWeekInMilliseconds) }, { merge: true });
+        }
       }
-    }
-  });
-}
+    });
+  } catch (error) {
+    console.error('Error fetching events:', error);
+  }
+};
+
 
 
 
 module.exports = {
-    cronsRepeatable
+  cronsRepeatable
 };
