@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'dart:convert';
@@ -11,6 +12,7 @@ import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
 
 import '../classes/userData.dart';
 import '../app_config.dart';
+import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -36,16 +38,20 @@ class _SearchScreenState extends State<SearchScreen>
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
+        headers: await getHeaders(),
+    );
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
+          builder: (context) => LoginScreen(),
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+        headers: await getHeaders(),
+      );
       var data = jsonDecode(response.body)['message'];
       print(data);
       UserData tempUser = UserData(
@@ -116,7 +122,9 @@ class _SearchScreenState extends State<SearchScreen>
   Future<bool> fetchClubs() async {
     print("IN FETCH CLUBS");
     final response = await http.get(Uri.parse(
-        '$serverUrl/api/clubs/getDataForSearchPage'));
+        '$serverUrl/api/clubs/getDataForSearchPage'),
+      headers: await getHeaders()
+    );
     print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data =
@@ -253,64 +261,85 @@ class _SearchScreenState extends State<SearchScreen>
 
     ScrollController _scrollController = ScrollController();
 
-    return Column(
-      children: [
-        // Display a title for the clubs section
-        Container(
-          child: Text(
-            'Organizations',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _colorTab),
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(width: 2.0, color: Colors.black),
-            ),
-          ),
-        ),
-        // Display club cards in a horizontal scroll view with a navigation arrow on the right
-        Stack(
-          children: <Widget>[
-            SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              child: Row(children: clubWidgets),
-            ),
-            Positioned(
-              right: -10,
-              bottom: 40,
-              child: Padding(
-                padding: EdgeInsets.only(right: 0.0),  // Adjust this value to 0.0
-                child: IconButton(
-                  icon: Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    _scrollController.animateTo(
-                      _scrollController.offset + 200,
-                      curve: Curves.linear,
-                      duration: Duration(milliseconds: 500),
-                    );
-                  },
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: MediaQuery.of(context).size.width * 0.002,
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
                 ),
               ),
+              child: Text(
+                'Organizations',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.withOpacity(0.8)),
+              ),
             ),
+            SizedBox(height: 16.0),
+            // Conditionally display club widgets or 'No organizations found' text
+            if (clubWidgets != null && clubWidgets.isNotEmpty)
+              SizedBox(height: 100, child: ListView(children: clubWidgets))
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'No organizations found',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
+            SizedBox(height: 16.0),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: MediaQuery.of(context).size.width * 0.002,
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                ),
+              ),
+              child: Text(
+                'Events',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.withOpacity(0.8)),
+              ),
+            ),
+            SizedBox(height: 15.0),
+            // Display event cards or 'No results found' text based on eventWidgets list
+            if (eventWidgets != null && eventWidgets.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3, // Adjust the height accordingly
+                  child: ListView.builder(
+                    itemCount: eventWidgets.length,
+                    itemBuilder: (context, index) {
+                      return eventWidgets[index]; // Your event widget item here
+                    },
+                  ),
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'No results found',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
           ],
         ),
-        SizedBox(height: 16.0), // Add spacing between club cards and event cards
-        // Display a title for the events section
-        Container(
-          child: Text(
-            'Events',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _colorTab),
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(width: 2.0, color: Colors.black),
-            ),
-          ),
-        ),
-        // Display event cards
-        ...eventWidgets,
-      ],
+      ),
     );
+
   }
 
 }

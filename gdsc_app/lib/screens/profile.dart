@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
+import 'package:gdsc_app/screens/login.dart';
 import 'package:image_picker/image_picker.dart';
+import '../utils.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
@@ -34,16 +36,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   int newGradYr = 0;
 
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'));
+    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
+      headers: await getHeaders(),
+    );
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
+          builder: (context) => LoginScreen(),
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'));
+      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+        headers: await getHeaders(),
+      );
       var data = jsonDecode(response.body)['message'];
       UserData tempUser = UserData(
         classOf: data['classOf'],
@@ -87,9 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/api/users/updateProfileImage'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(<String, dynamic>{
           "image": imageBytes,
           "uid": user!.uid, // Replace with the actual user ID
@@ -236,7 +240,38 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
     newName = result[1];
     newGradYr = result[0];
+    String userID = result[2];
     print("New Name: $newName");
     print("New Grad Year: $newGradYr");
+    final updateProfileData = {
+      'displayName': newName,
+      'classOf': newGradYr,
+      'uid': userID,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/users/updateProfile'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(updateProfileData),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData['message']); // Assuming the server responds with a JSON object containing a 'message' property
+      } else {
+        print('Error: ${response.statusCode}');
+        print(response.body);
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+
+    getUser();
+    setState(() {
+
+    });
   }
 }

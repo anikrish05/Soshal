@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../app_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 final serverUrl = AppConfig.serverUrl;
 class LoginScreen extends StatefulWidget {
@@ -47,6 +49,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
+      final storage = FlutterSecureStorage();
+      final responseData = jsonDecode(response.body);
+      print(responseData);
+
+      // Calculate and store the approximate expiration time
+      final int oneHourFromNow = DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch;
+
+      await storage.write(key: 'access_token', value: responseData['user']['stsTokenManager']['accessToken']);
+      await storage.write(key: 'refresh_token', value: responseData['user']['stsTokenManager']['refreshToken']);
+      await storage.write(key: 'email', value: emailController.text);
+      await storage.write(key: 'password', value: passWordController.text);
+      await storage.write(key: 'access_token_expiry', value: oneHourFromNow.toString());
+
       Navigator.pushNamed(context, '/home');
     } else {
       setState(() {
@@ -54,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
 
   void signUpRoute() {
     Navigator.pushNamed(context, '/sign');

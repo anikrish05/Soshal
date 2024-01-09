@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -47,9 +48,11 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             children: [
               // Profile Picture with Edit Icon
               Container(
-                width: imageSize,
-                height: imageSize,
-                margin: EdgeInsets.fromLTRB(10, 20, 20, 20), // Adjust left margin as needed
+                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
+                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
+                margin: widget.image is String && widget.image.startsWith('asset')
+                    ? EdgeInsets.fromLTRB(0, 0, 10, 0)
+                    : EdgeInsets.fromLTRB(30, 20, 20, 20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -71,8 +74,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: imageSize + 20, // Position info relative to image size
-                top: 50, // Adjust top position as needed
+                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 183,
+                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
                 child: buildProfileInfo(),
               ),
             ],
@@ -112,41 +115,50 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
         ),
       );
 
-  Widget buildProfileInfo() {
-    double maxWidth = MediaQuery.of(context).size.width - 50; // Adjust the value as needed
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0,0,0,0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: maxWidth,
+  Widget buildProfileInfo() {
+    final int maxCharacters = 30; // Set the maximum number of characters before forcing wrap
+    final double increasedPadding = 10.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+          alignment: widget.name.length > maxCharacters ? Alignment.topCenter : Alignment.topLeft,
+          // Align text to the top left by default, or top center if it exceeds character limit
+          child: Container(
+            width: 200, // Set a specific width for the text container
             child: Text(
-              widget.name,
+              widget.name.length > maxCharacters
+                  ? '${widget.name.substring(0, maxCharacters)}...' // Truncate text and add '...'
+                  : widget.name,
               style: TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.w800,
-                fontSize: 30,
+                fontSize: 28,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.ellipsis, // Prevent text overflow by fading
+              maxLines: 2, // Set the maximum number of lines
             ),
           ),
-          SizedBox(height: 4),
-          Text(
-            'Class of ${widget.graduationYear}',
-            style: TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-            ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Class of ${widget.graduationYear}',
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
           ),
-        ],
-      ),
+        ),
+        SizedBox(height: widget.name.length > maxCharacters ? increasedPadding : 0), // Adds more space if necessary
+      ],
     );
   }
+
+
+
 
   // Helper method to get the appropriate ImageProvider based on the image type
   ImageProvider<Object> _getImageProvider(dynamic image) {

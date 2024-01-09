@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/screens/login.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:gdsc_app/widgets/slidingUpWidget.dart';
@@ -9,8 +10,10 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
+import '../utils.dart';
 import '../widgets/loader.dart';
 import '../app_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -33,17 +36,6 @@ class _MyAppState extends State<MyApp> {
 
   Map<MarkerId, dynamic> _markerEventMap = {};
 
-  dynamic isUserSignedIn() async {
-    bool check = await user.isUserSignedIn();
-    print("feed.dart isusersignedin check");
-    if(!check){
-      Navigator.pushNamed(context, '/login');
-    }
-  }
-
-  Future<bool> getData() async {
-    return user.initUserData();
-  }
 
   @override
   void initState() {
@@ -52,8 +44,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initializeData() async {
-    await isUserSignedIn(); // Wait for isUserSignedIn to complete
-    await getData(); // Wait for getData to complete
     await loadData(); // Wait for loadData to complete
   }
 
@@ -61,11 +51,15 @@ class _MyAppState extends State<MyApp> {
   Future<List<dynamic>> getEventData() async {
     try {
       var response =
-      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'));
+      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'),
+        headers: await getHeaders()
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body)['message'];
-      } else {
+      }
+      else {
+        print("Anirudh return status code = " + response.statusCode.toString() );
         throw Exception('Failed to load data');
       }
     } catch (e) {
@@ -73,29 +67,44 @@ class _MyAppState extends State<MyApp> {
       throw e;
     }
   }
+
   Future<void> loadData() async {
     try {
-      eventData = await getEventData();
-      _markers.clear(); // Clear existing markers
-      _markerEventMap.clear(); // Clear existing event mapping
-
-      eventData.asMap().forEach((index, event) {
-        MarkerId markerId = MarkerId(index.toString());
-
-        _markers.add(
-          Marker(
-            markerId: markerId,
-            position: LatLng(event['latitude'], event['longitude']),
-            onTap: () {
-              handleMarkerTap(markerId);
-            },
+      final response = await get(
+        Uri.parse('$serverUrl/api/users/signedIn'),
+        headers: await getHeaders(),
+      );
+      if ((jsonDecode(response.body))['message'] == false) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
           ),
         );
+      } else {
+        await user.initUserData();
+        eventData = await getEventData();
+        _markers.clear(); // Clear existing markers
+        _markerEventMap.clear(); // Clear existing event mapping
 
-        _markerEventMap[markerId] = event;
-      });
+        eventData.asMap().forEach((index, event) {
+          MarkerId markerId = MarkerId(index.toString());
 
-      setState(() {}); // Trigger rebuild with updated markers
+          _markers.add(
+            Marker(
+              markerId: markerId,
+              position: LatLng(event['latitude'], event['longitude']),
+              onTap: () {
+                handleMarkerTap(markerId);
+              },
+            ),
+          );
+
+          _markerEventMap[markerId] = event;
+        });
+
+        setState(() {}); // Trigger rebuild with updated markers
+      }
     } catch (e) {
       print('Error loading data: $e');
     }

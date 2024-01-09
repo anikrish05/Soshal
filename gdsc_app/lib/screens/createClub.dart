@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:gdsc_app/classes/club.dart';
 
@@ -24,6 +24,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   var category = TextEditingController();
 
+  final searchAdmin = TextEditingController();
+  List<String> users = [];
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
 
@@ -172,7 +174,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           Text('Add Admins'),
           ElevatedButton(
             child: Text('Add Admin'),
-            onPressed: () {},
+            onPressed: () {
+              TestButton();
+            },
             style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
@@ -197,6 +201,28 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
     ),
     );
+  }
+
+  Future<void> getAdmin() async{
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/users/getAllUsers'));
+    if (response.statusCode == 200) {
+      // Parse and update the user list
+
+      final responseData = jsonDecode(response.body)['message'];
+
+      for (int i = 0; i < 10;i ++)
+        {
+          users.add(responseData[i]);
+        }
+    } else {
+      // Handle the error
+      print('Request failed with status: ${response.statusCode}');
+    }
+  }
+
+  void TestButton()
+  {
+    print([0]);
   }
 }
 

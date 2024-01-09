@@ -46,6 +46,9 @@ dependencies:
   datetime_picker_formfield_new: ^2.1.0
   flutter_map:
   firebase_messaging:
+  firebase_core:
+  firebase_auth:
+  flutter_secure_storage:
 
 dev_dependencies:
   flutter_test:
