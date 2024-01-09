@@ -45,7 +45,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final ButtonStyle style = ElevatedButton.styleFrom(
     backgroundColor: Colors.orange,
     shape: StadiumBorder(),
-    textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 30, color: Colors.grey),
+    textStyle: const TextStyle(
+      fontFamily: 'Garret',
+      fontSize: 30,
+      color: Colors.grey,
+    ),
   );
 
   @override
@@ -86,232 +90,275 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(leading: BackButton(
-            onPressed: () => Navigator.of(context).pop(),
-            color: _orangeColor),
-            centerTitle: true,
-            title: Text("Create an Event",
-              style: TextStyle(
-                color: Color(0xFF88898C),
-                fontFamily: 'Garret',
-              ),),
-            backgroundColor: Colors.white
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => Navigator.of(context).pop(),
+          color: _orangeColor,
         ),
-        body: Padding(
-          padding: EdgeInsets.all(16.6),
-          child: ListView(
-              children: [
-                Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child:
-                          Image.asset('assets/ex1.jpeg',
-                              height: 150,
-                              width: 150,
-                              fit: BoxFit.cover
-                          ),
-                        ),
-                        VerticalDivider(),
-                        Expanded(  // Wrap your Column in an Expanded widget
-                          child: Padding(  // Add padding to the left of the Column
-                            padding: EdgeInsets.only(left: 35.0),  // Adjust this value as needed
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children:[
-                                  SizedBox(
-                                    height: 40,
-                                    width: 170,
-                                    child: TextField(
-                                      style: TextStyle(fontFamily: 'Garret', color: Colors.black, fontSize: 15),  // Change input text color to black
-                                      controller: eventName,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                                        hintText: "Event Title",
-                                        hintStyle: TextStyle(color: Colors.black),
-                                        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(),
-                                  SizedBox(
-                                    height: 110,
-                                    width: 170,
-                                    child: TextField(
-                                      style: TextStyle(fontFamily: 'Garret', color: Colors.black, fontSize: 15),  // Change input text color to black
-                                      controller: eventDesc,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                                        hintText: "Event Description",
-                                        hintStyle: TextStyle(color: Colors.black),
-                                        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                      ),
-                                      maxLines: 3,
-                                    ),
-                                  ),
-                                ]
+        centerTitle: true,
+        title: Text(
+          "Create an Event",
+          style: TextStyle(
+            color: Color(0xFF88898C),
+            fontFamily: 'Garret',
+          ),
+        ),
+        backgroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.6),
+        child: ListView(
+          children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset(
+                      'assets/ex1.jpeg',
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  VerticalDivider(),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 35.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 40,
+                            width: 170,
+                            child: TextField(
+                              style: TextStyle(
+                                fontFamily: 'Garret',
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                              controller: eventName,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                hintText: "Event Title",
+                                hintStyle: TextStyle(color: Colors.black),
+                                contentPadding: EdgeInsets.fromLTRB(
+                                  20.0,
+                                  10.0,
+                                  20.0,
+                                  10.0,
+                                ),
+                              ),
                             ),
                           ),
-                        )
-                      ],
-                    )
-                ),
-                Padding(  // Add padding to center the elements
-                  padding: EdgeInsets.symmetric(horizontal: 28.1),  // Adjust this value as needed
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 150,
-                                  height: 100,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      primary: _orangeColor,  // Change the button color to _orangeColor
-                                      shape: StadiumBorder(),
-                                      textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.black),
-                                    ),
-                                    onPressed: () {onGetLocation();},
-                                    child: const Text('Choose Location'),
-                                  ),
+                          Divider(),
+                          SizedBox(
+                            height: 110,
+                            width: 170,
+                            child: TextField(
+                              style: TextStyle(
+                                fontFamily: 'Garret',
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                              controller: eventDesc,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                Expanded(  // Wrap the ToggleSwitch in an Expanded widget
-                                  child: ToggleSwitch(
-                                    minWidth: 70.0,  // Reduce the minWidth property
-                                    cornerRadius: 20.0,
-                                    activeBgColors: [[_orangeColor], [_orangeColor]],
-                                    activeFgColor: Colors.white,
-                                    inactiveBgColor: Colors.grey,
-                                    inactiveFgColor: Colors.white,
-                                    initialLabelIndex: 0,
-                                    totalSwitches: 2,
-                                    labels: ['Public', 'Private'],
-                                    radiusStyle: true,
-                                    onToggle: (index) {
-                                      if(index==1)
-                                      {
-                                        indexPubOrPriv = 0;
-
-                                      }
-                                      else if(index==0)
-                                      {
-                                        indexPubOrPriv = 1;
-
-                                      };
-                                    },
-                                  ),
-                                ),
-                              ]
-                          )
-                      ),
-                      Divider(),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Choose Date and Time',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Garret', fontSize: 15),
-                        ),
-                      ),
-                      Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 295.0,
-                                child: DateTimeField(
-                                  format: format,
-                                  onShowPicker: (context, currentValue) async {
-                                    final dateTime = await showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime(2000),
-                                      initialDate: currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2101),
-                                    );
-                                    if (dateTime != null) {
-                                      final timeOfDay = await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                          currentValue ?? DateTime.now(),
-                                        ),
-                                      );
-                                      if (timeOfDay != null) {
-                                        setState(() {
-                                          selectedDateTime = DateTime(
-                                            dateTime.year,
-                                            dateTime.month,
-                                            dateTime.day,
-                                            timeOfDay.hour,
-                                            timeOfDay.minute,
-                                          );
-                                        });
-                                        return selectedDateTime;
-                                      }
-                                    }
-                                  },
+                                hintText: "Event Description",
+                                hintStyle: TextStyle(color: Colors.black),
+                                contentPadding: EdgeInsets.fromLTRB(
+                                  20.0,
+                                  10.0,
+                                  20.0,
+                                  10.0,
                                 ),
                               ),
-                            ],
-                          )
+                              maxLines: 3,
+                            ),
+                          ),
+                        ],
                       ),
-                      Divider(),
-                      Container(
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Repeatable',
-                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Garret', fontSize: 30),
-                                ),
-                              ),
-                              Switch(
-                                // This bool value toggles the switch.
-                                value: repeatable,
-                                activeColor: Colors.orange,
-                                onChanged: (bool value) {
-                                  // This is called when the user toggles the switch.
-                                  setState(() {
-                                    repeatable = value;
-                                  });
-                                },
-                              )
-                            ]
-                        ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32.1),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: _orangeColor,
+                      shape: StadiumBorder(),
+                      textStyle: const TextStyle(
+                        fontFamily: 'Garret',
+                        fontSize: 15.0,
+                        color: Colors.black,
                       ),
-                      Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SizedBox(
-                              height: 50,
-                              width: 200,
-                              child:
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: _orangeColor,  // Change the button color to _orangeColor
-                                  shape: StadiumBorder(),
-                                  textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 30, color: Colors.grey),
-                                ),
-                                onPressed: () {postRequest();},
-                                child: const Text('post'),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                    ),
+                    onPressed: () {
+                      onGetLocation();
+                    },
+                    child: const Text('Choose Location'),
                   ),
+                  ToggleSwitch(
+                    minWidth: 70.0,
+                    cornerRadius: 50.0,
+                    activeBgColors: [[_orangeColor], [_orangeColor]],
+                    activeFgColor: Colors.white,
+                    inactiveBgColor: Colors.grey,
+                    inactiveFgColor: Colors.white,
+                    initialLabelIndex: 0,
+                    totalSwitches: 2,
+                    labels: ['Public', 'Private'],
+                    radiusStyle: true,
+                    onToggle: (index) {
+                      if (index == 1) {
+                        indexPubOrPriv = 0;
+                      } else if (index == 0) {
+                        indexPubOrPriv = 1;
+                      };
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Divider(),
+            RichText(
+              text: TextSpan(
+                text: 'Choose Date and Time',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black.withOpacity(0.6),
+                  fontFamily: 'Garret',
+                  fontSize: 15,
                 ),
-              ]),
-        ));
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 295.0,
+                    child: DateTimeField(
+                      format: format,
+                      onShowPicker: (context, currentValue) async {
+                        final dateTime = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime(2000),
+                          initialDate: currentValue ?? DateTime.now(),
+                          lastDate: DateTime(2101),
+                        );
+                        if (dateTime != null) {
+                          final timeOfDay = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(
+                              currentValue ?? DateTime.now(),
+                            ),
+                          );
+                          if (timeOfDay != null) {
+                            setState(() {
+                              selectedDateTime = DateTime(
+                                dateTime.year,
+                                dateTime.month,
+                                dateTime.day,
+                                timeOfDay.hour,
+                                timeOfDay.minute,
+                              );
+                            });
+                            return selectedDateTime;
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: 'Repeatable',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.6),
+                        fontFamily: 'Garret',
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: repeatable ? _orangeColor : Colors.grey,
+                      padding: EdgeInsets.all(10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      repeatable ? 'ON' : 'OFF',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        repeatable = !repeatable;
+                      });
+                    },
+                  )
+                ],
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(
+                    height: 50,
+                    width: 200,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: _orangeColor,
+                        shape: StadiumBorder(),
+                        textStyle: const TextStyle(
+                          fontFamily: 'Garret',
+                          fontSize: 30,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      onPressed: () {
+                        postRequest();
+                      },
+                      child: Text(
+                        'post',
+                        style: TextStyle(
+                          fontFamily: 'Borel',
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
-
