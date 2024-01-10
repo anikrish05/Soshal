@@ -30,7 +30,7 @@ class FirebaseApi {
   }
   Future<void> initLocalNotifications() async {
     const iOS = IOSInitializationSettings();
-    const android = AndroidInitializationSettings('@drawable/ic_launcher');
+    const android = AndroidInitializationSettings('@drawable/image');
     const settings = InitializationSettings(android: android, iOS: iOS);
     await _localNotifications.initialize(
       settings,
@@ -67,12 +67,11 @@ class FirebaseApi {
             _androidChannel.id,
             _androidChannel.name,
             _androidChannel.description,
-            icon: "@drawable/ic_launcher"
+            icon: "@drawable/image"
           )
         ),
         payload: jsonEncode(message.toMap()),
       );
     });
-
   }
 }
