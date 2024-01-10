@@ -25,9 +25,6 @@ void main() async {
   await Firebase.initializeApp();
   await FirebaseApi().initNotifications();
 
-  // Initialize Firebase Messaging
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -43,13 +40,6 @@ void main() async {
     ),
   );
 }
-
-// Firebase Messaging background handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.notification?.body}");
-  // Handle the notification message in the background
-}
-
 
 
 
