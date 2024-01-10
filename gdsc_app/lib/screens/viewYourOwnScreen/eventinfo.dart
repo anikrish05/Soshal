@@ -40,10 +40,11 @@ class _EventProfilePageState extends State<EventProfilePage>
     tabController.dispose(); // Dispose of the tabController at the end
     super.dispose();
   }
+
   Future<void> getStreetName() async {
     print("in get street name");
-    List<Placemark> placemarks =
-    await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        widget.event.latitude, widget.event.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
@@ -72,12 +73,11 @@ class _EventProfilePageState extends State<EventProfilePage>
 
   String getFormattedDateTime(String dateTimeString) {
     DateTime dateTime = format.parse(dateTimeString);
-    String formattedDateTime =
-    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    String formattedDateTime = DateFormat.MMMd().add_jm().format(dateTime);
     return formattedDateTime;
   }
 
-  Future<void> getRSVPData() async{
+  Future<void> getRSVPData() async {
     await widget.event.getRSVPData();
     print("HELLOOOOOOO");
     print(widget.event.rsvpUserData);
@@ -89,8 +89,10 @@ class _EventProfilePageState extends State<EventProfilePage>
     print("event info.dart, initstate");
     print(widget.event.rsvpUserData);
     tabController = TabController(length: 1, vsync: this);
-    eventNameController = TextEditingController(text: widget.event.name);
-    eventDescController = TextEditingController(text: widget.event.description);
+    eventNameController =
+        TextEditingController(text: widget.event.name);
+    eventDescController =
+        TextEditingController(text: widget.event.description);
     getStreetName();
     setState(() {
       locationText = "Loading...";
@@ -106,15 +108,14 @@ class _EventProfilePageState extends State<EventProfilePage>
     print(result);
     latitude = result.latitude;
     longitude = result.longitude;
-    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude, longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
       locationText = tempText;
     });
   }
-
-
 
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
@@ -364,62 +365,28 @@ class _EventProfilePageState extends State<EventProfilePage>
                                 child: const Text('Choose Location'),
                               ),
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 8),
                             Expanded(
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Repeat:',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Container(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: repeatable ? _orangeColor : Colors.grey,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                                        child: Container(
-                                          child: ToggleButtons(
-                                            borderColor: Colors.transparent,
-                                            selectedBorderColor: Colors.transparent,
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            borderWidth: 0.0,
-                                            onPressed: (int index) {
-                                              setState(() {
-                                                repeatable = index == 1;
-                                              });
-                                            },
-                                            isSelected: [!repeatable, repeatable],
-                                            children: [
-                                              ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  repeatable ? _orangeColor : Colors.grey,
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Text('Off'),
-                                                ),
-                                              ),
-                                              ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  repeatable ? Colors.grey : _orangeColor,
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Text('On'),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                    child: Text(
+                                      repeatable ? 'ON' : 'OFF',
+                                      style: TextStyle(color: Colors.white),
                                     ),
-                                  ],
+                                    onPressed: () {
+                                      setState(() {
+                                        repeatable = !repeatable;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -549,25 +516,28 @@ class _EventProfilePageState extends State<EventProfilePage>
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
   }
+
   Widget buildTabContent() {
     return FutureBuilder<void>(
       future: getRSVPData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoaderWidget(); // or any loading indicator
+          return LoaderWidget();
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Error: ${snapshot.error}'),
           );
         } else {
-          return SizedBox( // Wrapped with Container and specified height
+          return SizedBox(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(
               children: [
                 ListView.builder(
                   itemCount: widget.event.rsvpUserData.length,
                   itemBuilder: (context, index) {
-                    return Center(child: Text(widget.event.rsvpUserData[index].displayName));
+                    return Center(
+                        child:
+                        Text(widget.event.rsvpUserData[index].displayName));
                   },
                 ),
               ],
@@ -578,7 +548,4 @@ class _EventProfilePageState extends State<EventProfilePage>
       },
     );
   }
-
-
-
 }
