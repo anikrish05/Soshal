@@ -49,6 +49,7 @@ dependencies:
   firebase_core:
   firebase_auth:
   flutter_secure_storage:
+  flutter_local_notifications: ^8.2.0
 
 dev_dependencies:
   flutter_test:

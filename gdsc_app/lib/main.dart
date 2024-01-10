@@ -11,6 +11,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'firebase_api.dart';
 
 // Define the color as a global variable
 Color _orangeColor = Color(0xFFFF8050);
@@ -20,19 +23,35 @@ void main() async {
   await AppConfig.loadEnvironment();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    initialRoute: '/login',
-    routes: {
-      '/login': (context) => LoginScreen(),
-      '/feed': (context) => MyApp(),
-      '/sign': (context) => SignUpScreen(),
-      '/profile': (context) => ProfileScreen(),
-      '/home': (context) => Home(),
-      '/search': (context) => SearchScreen(),
-    },
-  ));
+  await FirebaseApi().initNotifications();
+
+  // Initialize Firebase Messaging
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/feed': (context) => MyApp(),
+        '/sign': (context) => SignUpScreen(),
+        '/profile': (context) => ProfileScreen(),
+        '/home': (context) => Home(),
+        '/search': (context) => SearchScreen(),
+      },
+    ),
+  );
 }
+
+// Firebase Messaging background handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.notification?.body}");
+  // Handle the notification message in the background
+}
+
+
+
 
 class Home extends StatefulWidget {
   @override
