@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:http/http.dart';
 import '../app_config.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -59,6 +60,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     // Perform the account creation logic
+    final _firebaseMessaging = FirebaseMessaging.instance;
+    await _firebaseMessaging.requestPermission();
+
     final response = await post(
       Uri.parse('$serverUrl/api/users/signup'),
       headers: <String, String>{
@@ -68,7 +72,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "email": emailController.text,
         "password": passWordController.text,
         "name": usernameController.text,
-        "classOf": gradYear
+        "classOf": gradYear,
+        "token": await _firebaseMessaging.getToken()
       }),
     );
 

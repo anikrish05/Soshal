@@ -13,7 +13,7 @@ const multerUpload = multer({ storage: multerStorage });
 
 const signup = async (req, res) => {
   try {
-    const { email, password, name, classOf } = req.body;
+    const { email, password, name, classOf, token } = req.body;
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -26,7 +26,8 @@ const signup = async (req, res) => {
       email: email,
       myEvents: [],
       clubsOwned: [],
-      classOf: classOf
+      classOf: classOf,
+      notifToken: token
     };
 
     await setDoc(doc(db, "users", data.uid), data);
@@ -41,9 +42,10 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, token } = req.body;
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    await setDoc(doc(db, "users", user.uid), {notifToken: token}, { merge: true });
 
     res.status(200).send(JSON.stringify({ message: 'Login successful', user }));
   } catch (error) {
