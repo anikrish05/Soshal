@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/CreateScreens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
@@ -80,11 +81,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     return formattedDateTime;
   }
 
-  Future<void> getRSVPData() async{
-    await widget.event.getRSVPData();
-    print("HELLOOOOOOO");
-    print(widget.event.rsvpUserData);
-  }
+
 
   @override
   void initState() {
@@ -125,395 +122,79 @@ class _EventProfilePageState extends State<EventProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () => Navigator.of(context).pop(),
-          color: _orangeColor,
+        appBar: AppBar(
+          leading: BackButton(
+            onPressed: () => Navigator.of(context).pop(),
+            color: _orangeColor,
+          ),
+          backgroundColor: Colors.white,
         ),
-        backgroundColor: Colors.white,
-      ),
       body: Stack(
         children: [
-          ListView(
+            ListView(
             children: [
-              SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(width: 16),
-                        profilePicture(),
-                      ],
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${widget.event.name}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  for (int i = 0; i < 5; i++)
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ),
-                                ],
-                              ),
-                              SizedBox(width: 7),
-                            ],
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            '${widget.event.description}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on),
-                              Text(
-                                (locationText),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(Icons.access_time),
-                              Text(
-                                ' ${getFormattedDateTime(widget.event.time)}',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 12),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isEditing = true;
-                              });
-                              _showEditSheet(context);
-                            },
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isEditing = true;
-                                    });
-                                    _showEditSheet(context);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _orangeColor,
-                                    ),
-                                    child: Icon(Icons.edit, color: Colors.white),
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'RSVP List',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              SizedBox(height: 16),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-                indent: 24,
-                endIndent: 24,
-              ),
-              SizedBox(height: 16),
               buildTabContent(),
             ],
           ),
-          if (isEditing)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isEditing = false;
-                  });
-                },
-              ),
-            ),
-        ],
-      ),
+        ),
     );
-  }
+}
 
-  void _showEditSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: BackButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  isEditing = false;
-                });
-              },
-              color: _orangeColor,
-            ),
-            backgroundColor: Colors.white,
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            profilePicture(),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: GestureDetector(
-                                onTap: () {
-                                  // Add your logic for editing the profile picture here
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _orangeColor,
-                                  ),
-                                  child: Icon(Icons.edit, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Column(
-                          children: [
-                            TextField(
-                              controller: eventNameController,
-                              decoration: InputDecoration(labelText: 'Event Name'),
-                              maxLines: null,
-                            ),
-                            TextField(
-                              controller: eventDescController,
-                              decoration: InputDecoration(labelText: 'Event Description'),
-                              maxLines: null,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              width: 160,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: _orangeColor,
-                                  shape: StadiumBorder(),
-                                  textStyle: const TextStyle(fontFamily: 'Garret', fontSize: 15.0, color: Colors.black),
-                                ),
-                                onPressed: () {
-                                  onGetLocation();
-                                },
-                                child: const Text('Choose Location'),
-                              ),
-                            ),
-                            SizedBox(width: 15),
-                            Expanded(
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Repeat:',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                                        child: Container(
-                                          child: ToggleButtons(
-                                            borderColor: Colors.transparent,
-                                            selectedBorderColor: Colors.transparent,
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            borderWidth: 0.0,
-                                            onPressed: (int index) {
-                                              setState(() {
-                                                repeatable = index == 1;
-                                              });
-                                            },
-                                            isSelected: [!repeatable, repeatable],
-                                            children: [
-                                              ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  repeatable ? _orangeColor : Colors.grey,
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Text('Off'),
-                                                ),
-                                              ),
-                                              ColorFiltered(
-                                                colorFilter: ColorFilter.mode(
-                                                  repeatable ? Colors.grey : _orangeColor,
-                                                  BlendMode.srcIn,
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Text('On'),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Center(
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Choose Date and Time',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Garret', fontSize: 15),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 295.0,
-                                child: DateTimeField(
-                                  format: format,
-                                  onShowPicker: (context, currentValue) async {
-                                    final dateTime = await showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime(2000),
-                                      initialDate: currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2101),
-                                    );
-                                    if (dateTime != null) {
-                                      final timeOfDay = await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                          currentValue ?? DateTime.now(),
-                                        ),
-                                      );
-                                      if (timeOfDay != null) {
-                                        setState(() {
-                                          selectedDateTime = DateTime(
-                                            dateTime.year,
-                                            dateTime.month,
-                                            dateTime.day,
-                                            timeOfDay.hour,
-                                            timeOfDay.minute,
-                                          );
-                                        });
-                                        return selectedDateTime;
-                                      }
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditing = false;
-                      widget.event.name = eventNameController.text;
-                      widget.event.description = eventDescController.text;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _orangeColor,
-                    textStyle: TextStyle(
-                      fontFamily: 'Borel',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text('save'),
-                ),
-              ),
-            ],
-          ),
-        );
+  Widget buildTabContent() {
+    return FutureBuilder<void>(
+      future: widget.event.getRSVPData(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        print("CALLING FUNC");
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoaderWidget(); // or any loading indicator
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          print("hello");
+          print(widget.event.rsvpUserData);
+
+          // Display RSVP data
+          if (widget.event.rsvpUserData.isNotEmpty) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: (
+              ListView.builder(
+                itemCount: widget.event.rsvpUserData.length,
+                itemBuilder: (context, index) {
+                  return RsvpCard(
+                    user: widget.event.rsvpUserData[index]
+                  );
+                },
+              )),
+            );
+          } else {
+            // Display a message when there is no RSVP data
+            return Center(
+              child: Text('No RSVPs yet.'),
+            );
+          }
+        }
       },
     );
   }
+
+
+
+
+
 
   Widget profilePicture() {
     if (widget.event.downloadURL != "") {
@@ -531,50 +212,7 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
 
-  Widget buildTabContent() {
-    return FutureBuilder<void>(
-      future: getRSVPData(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoaderWidget(); // or any loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          print("hello");
-          print(widget.event.rsvpUserData);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'RSVP List',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: ListView.builder(
-                    itemCount: widget.event.rsvpUserData.length,
-                    itemBuilder: (context, index) {
-                      User user = widget.event.rsvpUserData[index] as User;
-                      return rsvpCard(user: user);
-                      // Assuming OtherProfileWidget is a widget that displays user information.
-                    },
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-      },
-    );
-  }
+
 
 
 

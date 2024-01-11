@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 
-class rsvpCard extends StatelessWidget {
+class RsvpCard extends StatelessWidget {
   final UserData user;
 
-  rsvpCard({required this.user});
+  RsvpCard({required this.user});
 
   @override
   Widget build(BuildContext context) {
-    return _rsvpCard(user: user);
+    print("JEDHJHKEWQHFKJEhfKJHEWKJFHEWJKhfJKEWfhejkw");
+    return _RsvpCard(user: user);
   }
 }
 
-class _rsvpCard extends StatelessWidget {
+class _RsvpCard extends StatelessWidget {
   final UserData user;
 
-  _rsvpCard({required this.user});
+  _RsvpCard({required this.user});
 
   Widget _buildProfileImage() {
     Widget profileImage;

@@ -79,6 +79,7 @@ class EventCardData {
   Future<void> getRSVPData() async {
     rsvpUserData = [];
     if (this.rsvpList != null) {
+      print("IN RSVP DATA");
       for (var i = 0; i < this.rsvpList.length; i++) {
         print("loop" + i.toString());
         try {
