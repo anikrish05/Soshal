@@ -35,6 +35,12 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the image size as a fraction of the screen width
+    double imageSize = screenWidth * 0.3; // Adjust the fraction as needed
+
     return Row(
       children: [
         Expanded(
@@ -50,9 +56,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    fit: widget.image is String && widget.image.startsWith('asset')
-                        ? BoxFit.contain // Use BoxFit.contain for asset images
-                        : BoxFit.cover, // Use BoxFit.cover for other images
+                    fit: BoxFit.cover, // Use BoxFit.cover for all images
                     image: _image,
                   ),
                 ),
@@ -82,7 +86,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
   }
 
   Widget buildEditIcon(Color color) => Padding(
-
     padding: widget.image is String && widget.image.startsWith('asset') ? EdgeInsets.fromLTRB(0, 0, 25, 25): EdgeInsets.all(0),
     child: buildCircle(
       color: Colors.white,
@@ -98,7 +101,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       ),
     ),
   );
-
 
   Widget buildCircle({
     required Widget child,

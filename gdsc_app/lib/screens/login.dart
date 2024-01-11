@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:gdsc_app/classes/user.dart';
 import '../app_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 final serverUrl = AppConfig.serverUrl;
@@ -37,14 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
+    final _firebaseMessaging = FirebaseMessaging.instance;
+    await _firebaseMessaging.requestPermission();
     final response = await post(
       Uri.parse('$serverUrl/api/users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         "email": emailController.text,
         "password": passWordController.text,
+        "token": await _firebaseMessaging.getToken()
       }),
     );
 
