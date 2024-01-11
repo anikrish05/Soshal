@@ -6,4 +6,6 @@ router.post('/getAllEventsForClub', controllers.getAllEventsForClub)
 router.get('/getDataForSearchPage', controllers.getDataForSearchPage)
 router.post('/acceptUser', controllers.acceptUser)
 router.post('/denyUser', controllers.denyUser)
+router.get('/getAllClubs', controllers.getAllClubs)
+
 module.exports = router

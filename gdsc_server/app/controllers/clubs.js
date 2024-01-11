@@ -170,11 +170,30 @@ const denyUser = async (req, res) => {
   }
 }
 
+const getAllClubs = async (req, res) => {
+  if (await checkAuthorization(req, res)) {
+    try {
+      let clubs = [];
+      const clubsRef = collection(db, "clubs");
+      const clubData = await getDocs(clubsRef);
+
+      clubs = clubData.docs.map(doc => doc.data());
+
+      res.status(200).send(JSON.stringify({ "message": clubs }));
+    } catch (error) {
+      console.error("Error getting document:", error);
+      res.status(500).send(JSON.stringify({ message: "Failed", error: error.message }));
+    }
+  }
+};
+
+
 module.exports = {
   createClub,
   getClub,
   getDataForSearchPage,
   getAllEventsForClub,
   acceptUser,
-  denyUser
+  denyUser,
+  getAllClubs
 };
