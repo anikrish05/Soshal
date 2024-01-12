@@ -64,6 +64,9 @@ class _SearchScreenState extends State<SearchScreen>
         myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
         clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
         downloadURL: data['downloadURL'],
+        likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
+        dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
+
       );
       user = tempUser;
     }
@@ -160,11 +163,12 @@ class _SearchScreenState extends State<SearchScreen>
               downloadURL: data['events'][i]['downloadURL'],
               latitude: data['events'][i]['latitude'],
               longitude: data['events'][i]['longitude'],
-              rating: data['events'][i]['rating'].toDouble(),
               comments: List<String>.from((data['events'][i]['comments'] ?? [])
                   .map((comment) => comment.toString())),
               id: data['events'][i]['id'],
-              time: data['events'][i]['timestamp']
+              time: data['events'][i]['timestamp'],
+              likedBy: List<String>.from((data['events'][i]['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
+              disLikedBy: List<String>.from((data['events'][i]['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
           ),
         );
       }

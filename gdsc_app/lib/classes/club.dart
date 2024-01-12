@@ -16,6 +16,7 @@ class Club{
   late Map<String, dynamic> followers;
   late List<dynamic> events;
   late List<dynamic> admin;
+  late double avgRating;
   Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {
     print("in SignIn");
     final response = await post(Uri.parse('$serverUrl/api/clubs/createClub'),
@@ -54,6 +55,7 @@ class Club{
     this.followers = data['followers'];
     this.events = data['events'];
     this.admin = data['admin'];
+    this.avgRating = data['avgRating'];
     if(response.statusCode == 200){
       return true;
     }

@@ -58,9 +58,10 @@ class ClubCardData {
                 downloadURL: eventDataResponse['downloadURL'],
                 latitude: eventDataResponse['latitude'],
                 longitude: eventDataResponse['longitude'],
-                rating: eventDataResponse['rating'].toDouble(),
                 comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
                 id: this.events[i],
+                likedBy: List<String>.from((eventDataResponse['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
+                disLikedBy: List<String>.from((eventDataResponse['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
               ),
             );
 
@@ -102,6 +103,8 @@ class ClubCardData {
                 clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
                 downloadURL: userData['downloadURL'],
                 classOf: userData['classOf'],
+                likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
+                dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
               ),
               dataArr[1],
             ]);
@@ -119,6 +122,8 @@ class ClubCardData {
                 clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
                 downloadURL: userData['downloadURL'],
                 classOf: userData['classOf'],
+                likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
+                dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
               ),
               dataArr[1],
             ]);
@@ -136,6 +141,8 @@ class ClubCardData {
                 clubIds: List<String>.from((userData['clubIds'] ?? []).map((club) => club.toString())),
                 downloadURL: userData['downloadURL'],
                 classOf: userData['classOf'],
+                likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
+                dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
               ),
               dataArr[1],
             ]);

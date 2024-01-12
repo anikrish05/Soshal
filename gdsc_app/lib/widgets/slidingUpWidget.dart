@@ -82,6 +82,10 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 List<String>.from(data['userData']['myEvents']),
                 clubIds:
                 List<String>.from(data['userData']['clubsOwned']),
+                likedEvents:
+                List<String>.from(data['userData']['likedEvents']),
+                dislikedEvents:
+                List<String>.from(data['userData']['dislikedEvents']),
               ),
             );
           }).toList();
@@ -388,6 +392,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
           downloadURL: widget.currUser.downloadURL,
           myEvents: widget.currUser.myEvents,
           clubIds: widget.currUser.clubIds,
+          likedEvents: widget.currUser.likedEvents,
+          dislikedEvents: widget.currUser.dislikedEvents,
         ),
       );
 
