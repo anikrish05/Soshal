@@ -14,8 +14,9 @@ class EventCardData {
   String downloadURL;
   double latitude;
   double longitude;
-  double rating;
   List<String> comments;
+  List<String> likedBy;
+  List<String> disLikedBy;
   String id;
   List<String> admin;
   List<ClubCardData> clubInfo = [];
@@ -29,11 +30,12 @@ class EventCardData {
     required this.downloadURL,
     required this.latitude,
     required this.longitude,
-    required this.rating,
     required this.comments,
     required this.id,
     required this.admin,
-    required this.time
+    required this.time,
+    required this.likedBy,
+    required this.disLikedBy
   });
   Future<void> getAllClubsForEvent() async {
     clubInfo = [];
@@ -99,10 +101,12 @@ class EventCardData {
                   following: userDataResponse['following'],
                   role: userDataResponse['role'],
                   myEvents: List<String>.from((userDataResponse['myEvents'] ?? []).map((event) => event.toString())),
+                  likedEvents: List<String>.from((userDataResponse['likedEvents'] ?? []).map((event) => event.toString())),
+                  dislikedEvents: List<String>.from((userDataResponse['dislikedEvents'] ?? []).map((event) => event.toString())),
                   clubIds: List<String>.from((userDataResponse['clubIds'] ?? []).map((club) => club.toString())),
                   downloadURL: userDataResponse['downloadURL'],
-                  classOf: userDataResponse['classOf'])
-            );
+                  classOf: userDataResponse['classOf']),
+              );
 
             print("User data added for uid ${this.rsvpList[i]}");
           } else {

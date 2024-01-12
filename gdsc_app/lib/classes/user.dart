@@ -22,6 +22,8 @@ class User {
   List<ClubCardData> clubData = [];
   List<String> clubIds = [];
   int classOf = 0;
+  List<String> likedEvents = [];
+  List<String> dislikedEvents = [];
 
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('$serverUrl/api/users/signedIn'),
@@ -138,9 +140,10 @@ class User {
                 downloadURL: eventDataResponse['downloadURL'],
                 latitude: eventDataResponse['latitude'],
                 longitude: eventDataResponse['longitude'],
-                rating: eventDataResponse['rating'].toDouble(),
                 comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
                 id: this.myEvents[i],
+                likedBy: List<String>.from((eventDataResponse['likedBy'] ?? []).map((uid) => uid.toString())),
+                disLikedBy: List<String>.from((eventDataResponse['disLikedBy'] ?? []).map((uid) => uid.toString())),
               ),
             );
 
