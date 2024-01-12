@@ -96,7 +96,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       locationText = "Loading...";
     });
   }
-
+/*
   void onGetLocation() async {
     final result = await Navigator.push(
       context,
@@ -113,7 +113,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       locationText = tempText;
     });
   }
-
+*/
 
 
   Color _orangeColor = Color(0xFFFF8050);
@@ -133,6 +133,88 @@ class _EventProfilePageState extends State<EventProfilePage>
         children: [
             ListView(
             children: [
+              SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 16),
+                        profilePicture(),
+                      ],
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Text(
+                      '${widget.event.name}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Row(
+                            children: [
+                              for (int i = 0; i < 5; i++)
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.grey,
+                                  size: 16,
+                                )
+                            ]
+                          ),
+                          SizedBox(width: 7),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        '${widget.event.description}',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on),
+                              Text(
+                                (locationText),
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time),
+                          Text(
+                            ' ${getFormattedDateTime(widget.event.time)}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      ],
+                    ),
+                    )
+                  ],
+                )
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
@@ -146,6 +228,7 @@ class _EventProfilePageState extends State<EventProfilePage>
               buildTabContent(),
             ],
           ),
+        ],
         ),
     );
 }
