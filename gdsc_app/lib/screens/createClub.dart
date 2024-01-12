@@ -279,6 +279,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             role: responseData[i]["role"],
             myEvents: List<String>.from((responseData[i]['myEvents'] ?? [])
                 .map((event) => event.toString())),
+            likedEvents: List<String>.from((responseData[i]['likedEvents'] ?? [])
+                .map((event) => event.toString())),
+            dislikedEvents: List<String>.from((responseData[i]['dislikedEvents'] ?? [])
+                .map((event) => event.toString())),
             clubIds: List<String>.from((responseData[i]['clubIds'] ?? [])
                 .map((club) => club.toString())),
             downloadURL: responseData[i]["downloadURL"],
