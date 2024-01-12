@@ -60,6 +60,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
         clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
         downloadURL: data['downloadURL'],
+        likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
+        dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
       );
       user = tempUser;
     }

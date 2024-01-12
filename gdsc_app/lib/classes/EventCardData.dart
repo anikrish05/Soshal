@@ -101,10 +101,12 @@ class EventCardData {
                   following: userDataResponse['following'],
                   role: userDataResponse['role'],
                   myEvents: List<String>.from((userDataResponse['myEvents'] ?? []).map((event) => event.toString())),
+                  likedEvents: List<String>.from((userDataResponse['likedEvents'] ?? []).map((event) => event.toString())),
+                  dislikedEvents: List<String>.from((userDataResponse['dislikedEvents'] ?? []).map((event) => event.toString())),
                   clubIds: List<String>.from((userDataResponse['clubIds'] ?? []).map((club) => club.toString())),
                   downloadURL: userDataResponse['downloadURL'],
-                  classOf: userDataResponse['classOf'])
-            );
+                  classOf: userDataResponse['classOf']),
+              );
 
             print("User data added for uid ${this.rsvpList[i]}");
           } else {
