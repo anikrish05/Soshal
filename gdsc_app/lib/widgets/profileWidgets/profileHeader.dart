@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -11,12 +10,14 @@ class ProfileHeaderWidget extends StatefulWidget {
   final String name;
   final int graduationYear;
   final VoidCallback onClicked;
+  final double imageSize;
 
   ProfileHeaderWidget({
     required this.image,
     required this.onClicked,
     required this.name,
     required this.graduationYear,
+    required this.imageSize,
     Key? key,
   }) : super(key: key);
 
@@ -35,12 +36,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen width
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate the image size as a fraction of the screen width
-    double imageSize = screenWidth * 0.3; // Adjust the fraction as needed
-
     return Row(
       children: [
         Expanded(
@@ -48,8 +43,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             children: [
               // Profile Picture with Edit Icon
               Container(
-                width: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
-                height: widget.image is String && widget.image.startsWith('asset') ? 200 : 130,
+                width: widget.imageSize, // Use imageSize for width
+                height: widget.imageSize, // Use imageSize for height
                 margin: widget.image is String && widget.image.startsWith('asset')
                     ? EdgeInsets.fromLTRB(0, 0, 10, 0)
                     : EdgeInsets.fromLTRB(30, 20, 20, 20),
@@ -74,8 +69,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.image is String && widget.image.startsWith('asset') ? 200 : 183,
-                top: widget.image is String && widget.image.startsWith('asset') ? 65 : 50, // Adjust top position as needed
+                left: widget.imageSize + 40, // Adjust left position based on imageSize
+                top: widget.imageSize / 4, // Adjust top position based on imageSize
                 child: buildProfileInfo(),
               ),
             ],
@@ -117,7 +112,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
 
   Widget buildProfileInfo() {
-    final int maxCharacters = 30; // Set the maximum number of characters before forcing wrap
+    final int maxCharacters = ; // Set the maximum number of characters before forcing wrap
     final double increasedPadding = 10.0;
 
     return Column(
@@ -156,9 +151,6 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       ],
     );
   }
-
-
-
 
   // Helper method to get the appropriate ImageProvider based on the image type
   ImageProvider<Object> _getImageProvider(dynamic image) {
