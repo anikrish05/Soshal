@@ -19,7 +19,10 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import '../app_config.dart';
 
+
 final serverUrl = AppConfig.serverUrl;
+
+
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -136,13 +139,22 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   }
 
   Widget buildProfileUI() {
+    double imageSize = 150;
     return ListView(
       children: [
-        ProfileHeaderWidget(
-          image: user!.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user!.downloadURL,
-          onClicked: _pickImage,
-          name: user!.displayName,
-          graduationYear: user!.classOf,
+        GestureDetector(
+          onScaleUpdate: (details) {
+            setState(() {
+              imageSize = 100.0 * details.scale.clamp(.8, 10.0);
+            });
+          },
+          child: ProfileHeaderWidget(
+            image: user!.downloadURL == "" ? "assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png" : user!.downloadURL,
+            onClicked: _pickImage,
+            name: user!.displayName,
+            graduationYear: user!.classOf,
+            imageSize: user!.downloadURL == "" ? 150.0 : 110.0,
+          ),
         ),
         CreateButtonsWidget(
           onUpdateProfile,
