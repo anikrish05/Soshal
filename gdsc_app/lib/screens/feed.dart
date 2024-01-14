@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   Future<List<dynamic>> getEventData() async {
     try {
       var response =
-      await get(Uri.parse('$serverUrl/api/events/getFeedPosts'),
+      await get(Uri.parse('$serverUrl/api/events/getFeedPosts/${user.uid}'),
         headers: await getHeaders()
       );
 
