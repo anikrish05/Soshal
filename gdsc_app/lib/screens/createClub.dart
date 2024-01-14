@@ -28,8 +28,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   var category = TextEditingController();
 
-  TextEditingController chooseAdmin = TextEditingController();
-
   List<UserData> users = [];
   Set<UserData> selectedAdmins = {};
   Color _orangeColor = Color(0xFFFF8050);
@@ -42,9 +40,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void submit() {
-    final userToAdd = users
-        .where((user) => user.uid == currUserId)
-        .first;
+    final userToAdd = users.where((user) => user.uid == currUserId).first;
     selectedAdmins.add(userToAdd); // adds currUser to admin list
     Club club = Club();
     late String type;
@@ -54,12 +50,12 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       type = "Private";
     }
     List<String> adminsAsList = selectedAdmins.map((user) => user.uid).toList();
-    club.addClub(
-        clubName.text, clubBio.text, location.text, category.text, type,
-        adminsAsList).then((check) =>
-    {
-      if (check) {Navigator.of(context).pop()}
-    });
+    club
+        .addClub(clubName.text, clubBio.text, location.text, category.text,
+            type, adminsAsList)
+        .then((check) => {
+              if (check) {Navigator.of(context).pop()}
+            });
   }
 
   void toggleSelectedAdmin(UserData selection) {
@@ -88,14 +84,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           ),
           backgroundColor: Colors.white),
       body: FutureBuilder<void>(
-          future: getAdmin(),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return buildPage();
-            } else {
-              return LoaderWidget();
-            }
-          }),
+        future: getAdmin(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return buildPage();
+          } else {
+            return LoaderWidget();
+          }
+        },
+      ),
     );
   }
 
@@ -103,97 +100,96 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     return ListView(children: [
       Container(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset('assets/ex1.jpeg',
-                    height: 150, width: 150, fit: BoxFit.cover),
-              ),
-              VerticalDivider(),
-              Container(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 40,
-                          width: 150,
-                          child: TextField(
-                            controller: clubName,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: "Club Name",
-                              contentPadding:
-                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
-                        ),
-                        Divider(),
-                        SizedBox(
-                          height: 110,
-                          width: 150,
-                          child: TextField(
-                            controller: clubBio,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: "Add Club Bio",
-                              contentPadding:
-                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                            ),
-                            maxLines: 3,
-                          ),
-                        )
-                      ]))
-            ],
-          )),
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.asset('assets/ex1.jpeg',
+                height: 150, width: 150, fit: BoxFit.cover),
+          ),
+          VerticalDivider(),
+          Container(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                SizedBox(
+                  height: 40,
+                  width: 150,
+                  child: TextField(
+                    controller: clubName,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      hintText: "Club Name",
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    ),
+                  ),
+                ),
+                Divider(),
+                SizedBox(
+                  height: 110,
+                  width: 150,
+                  child: TextField(
+                    controller: clubBio,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      hintText: "Add Club Bio",
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    ),
+                    maxLines: 3,
+                  ),
+                )
+              ]))
+        ],
+      )),
       Divider(),
       Container(
           child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 40,
-                  width: 150,
-                  child: TextField(
-                    controller: category,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      hintText: "Category",
-                      contentPadding: EdgeInsets.fromLTRB(
-                          20.0, 10.0, 20.0, 10.0),
-                    ),
-                  ),
+            SizedBox(
+              height: 40,
+              width: 150,
+              child: TextField(
+                controller: category,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: "Category",
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 ),
-                VerticalDivider(),
-                ToggleSwitch(
-                  minWidth: 77.5,
-                  cornerRadius: 20.0,
-                  activeBgColors: [
-                    [_orangeColor],
-                    [_orangeColor]
-                  ],
-                  activeFgColor: Colors.white,
-                  inactiveBgColor: Colors.grey,
-                  inactiveFgColor: Colors.white,
-                  initialLabelIndex: 0,
-                  totalSwitches: 2,
-                  labels: ['Public', 'Private'],
-                  radiusStyle: true,
-                  onToggle: (index) {
-                    if (index == 1) {
-                      indexPubOrPriv = 0;
-                    } else if (index == 0) {
-                      indexPubOrPriv = 1;
-                    }
-                  },
-                ),
-              ])),
+              ),
+            ),
+            VerticalDivider(),
+            ToggleSwitch(
+              minWidth: 77.5,
+              cornerRadius: 20.0,
+              activeBgColors: [
+                [_orangeColor],
+                [_orangeColor]
+              ],
+              activeFgColor: Colors.white,
+              inactiveBgColor: Colors.grey,
+              inactiveFgColor: Colors.white,
+              initialLabelIndex: 0,
+              totalSwitches: 2,
+              labels: ['Public', 'Private'],
+              radiusStyle: true,
+              onToggle: (index) {
+                if (index == 1) {
+                  indexPubOrPriv = 0;
+                } else if (index == 0) {
+                  indexPubOrPriv = 1;
+                }
+              },
+            ),
+          ])),
       Divider(),
       TextField(
         decoration: InputDecoration(
@@ -209,8 +205,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
               hintText: "Search Admins",
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             ),
@@ -221,11 +217,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             title: Text(suggestion.displayName),
             trailing: Icon(selectedAdmins.contains(suggestion)
                 ? Icons.check_circle
-                : Icons.check_circle_outline
-            ),
+                : Icons.check_circle_outline),
           );
         },
-
         onSelected: (suggestion) {
           toggleSelectedAdmin(suggestion);
           controller.selection =
@@ -233,12 +227,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           controller.clear(); // Clear the field
         },
         suggestionsCallback: (String search) {
-          if (search == "") {
-
+          if (search == "" && !selectedAdmins.isEmpty) {
+            return selectedAdmins.toList();
           }
           return users
-              .where((admin) =>
-              admin.displayName
+              .where((admin) => admin.displayName
                   .toLowerCase()
                   .contains(search.toLowerCase()))
               .toList();
@@ -253,9 +246,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           style: ButtonStyle(
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide.none,
-                  )),
+                borderRadius: BorderRadius.circular(18.0),
+                side: BorderSide.none,
+              )),
               backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))),
     ]);
   }
@@ -279,10 +272,12 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             role: responseData[i]["role"],
             myEvents: List<String>.from((responseData[i]['myEvents'] ?? [])
                 .map((event) => event.toString())),
-            likedEvents: List<String>.from((responseData[i]['likedEvents'] ?? [])
-                .map((event) => event.toString())),
-            dislikedEvents: List<String>.from((responseData[i]['dislikedEvents'] ?? [])
-                .map((event) => event.toString())),
+            likedEvents: List<String>.from(
+                (responseData[i]['likedEvents'] ?? [])
+                    .map((event) => event.toString())),
+            dislikedEvents: List<String>.from(
+                (responseData[i]['dislikedEvents'] ?? [])
+                    .map((event) => event.toString())),
             clubIds: List<String>.from((responseData[i]['clubIds'] ?? [])
                 .map((club) => club.toString())),
             downloadURL: responseData[i]["downloadURL"],

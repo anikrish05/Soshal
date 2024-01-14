@@ -1,3 +1,5 @@
+import 'dart:ffi';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -7,12 +9,14 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import '../app_config.dart';
 import '../utils.dart';
+import '../widgets/loader.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -27,12 +31,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   late DateTime selectedDateTime;
 
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
-  late TextEditingController _controller1;
+  final TextEditingController _controller1 = TextEditingController();
   String _valueChanged1 = '';
   String _valueToValidate1 = '';
   String _valueSaved1 = '';
   double latitude = 0.0;
   double longitude = 0.0;
+  List<ClubCardData> clubs = [];
+  Set<ClubCardData> selectedAdmins = {};
 
   var eventName = TextEditingController();
   var eventDesc = TextEditingController();
@@ -64,14 +70,62 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     longitude = result.longitude;
   }
 
+  void toggleSelectedAdmin(ClubCardData selection) {
+    if (selectedAdmins.contains(selection)) {
+      selectedAdmins.remove(selection);
+      debugPrint("$selection removed from admin list.");
+    } else {
+      selectedAdmins.add(selection);
+      debugPrint("$selection added as admin.");
+    }
+  }
+
+  Future<void> getAdmin() async {
+    clubs = [];
+    final response = await http.get(
+        Uri.parse('http://10.0.2.2:3000/api/clubs/getAllClubs'),
+        headers: await getHeaders());
+    if (response.statusCode == 200) {
+      // Parse and update the user list
+      final responseData = jsonDecode(response.body)['message'];
+
+      for (int i = 0; i < responseData.length; i++) {
+        try {
+          ClubCardData newClub = ClubCardData(
+            admin: List<String>.from((responseData[i]['admin'] ?? [])
+                .map((event) => event.toString())),
+            category: responseData[i]["category"] ?? "",
+            description: responseData[i]["description"] ?? "",
+            downloadURL: responseData[i]["downloadURL"] ?? "",
+            events: List<String>.from((responseData[i]['events'] ?? [])
+                .map((event) => event.toString())),
+            followers: responseData[i]["followers"] ?? {},
+            name: responseData[i]["name"] ?? "",
+            type: responseData[i]["type"] ?? "",
+            verified: responseData[i]["verified"] ?? false,
+            id: responseData[i]["id"] ?? "",
+            rating: responseData[i]["rating"] ?? 0.0,
+          );
+          clubs.add(newClub);
+        } catch (identifier) {
+          print("$identifier : Failed to add club");
+        }
+      }
+    } else {
+      // Handle the error
+      print('Request failed with status: ${response.statusCode}');
+    }
+  }
+
   Future<void> postRequest() async {
     print("post requ");
     String timeStamp = format.format(DateTime.now());
+    List<String> adminsAsList = selectedAdmins.map((club) => club.id).toList();
     await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
       headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
-        "admin": [widget.club.id],
+        "admin": adminsAsList,
         "name": eventName.text,
         "description": eventDesc.text,
         "downloadURL": "",
@@ -85,7 +139,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   bool repeatable = false;
-
   int indexPubOrPriv = 0;
   @override
   Widget build(BuildContext context) {
@@ -105,259 +158,289 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         ),
         backgroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.6),
-        child: ListView(
-          children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      'assets/ex1.jpeg',
-                      height: 150,
-                      width: 150,
-                      fit: BoxFit.cover,
-                    ),
+      body: FutureBuilder<void>(
+        future: getAdmin(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return buildPage();
+          } else {
+            return LoaderWidget();
+          }
+        },
+      ),
+    );
+  }
+
+  Widget buildPage() {
+    return Padding(
+      padding: EdgeInsets.all(18),
+      child: ListView(
+        children: [
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    'assets/ex1.jpeg',
+                    height: 150,
+                    width: 150,
+                    fit: BoxFit.cover,
                   ),
-                  VerticalDivider(),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 35.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 40,
-                            width: 170,
-                            child: TextField(
-                              style: TextStyle(
-                                fontFamily: 'Garret',
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                              controller: eventName,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                hintText: "Event Title",
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.fromLTRB(
-                                  20.0,
-                                  10.0,
-                                  20.0,
-                                  10.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Divider(),
-                          SizedBox(
-                            height: 110,
-                            width: 170,
-                            child: TextField(
-                              style: TextStyle(
-                                fontFamily: 'Garret',
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                              controller: eventDesc,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                hintText: "Event Description",
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.fromLTRB(
-                                  20.0,
-                                  10.0,
-                                  20.0,
-                                  10.0,
-                                ),
-                              ),
-                              maxLines: 3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: _orangeColor,
-                      shape: StadiumBorder(),
-                      textStyle: const TextStyle(
-                        fontFamily: 'Garret',
-                        fontSize: 15.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                    onPressed: () {
-                      onGetLocation();
-                    },
-                    child: const Text('Choose Location'),
-                  ),
-                  ToggleSwitch(
-                    minWidth: 70.0,
-                    cornerRadius: 50.0,
-                    activeBgColors: [[_orangeColor], [_orangeColor]],
-                    activeFgColor: Colors.white,
-                    inactiveBgColor: Colors.grey,
-                    inactiveFgColor: Colors.white,
-                    initialLabelIndex: 0,
-                    totalSwitches: 2,
-                    labels: ['Public', 'Private'],
-                    radiusStyle: true,
-                    onToggle: (index) {
-                      if (index == 1) {
-                        indexPubOrPriv = 0;
-                      } else if (index == 0) {
-                        indexPubOrPriv = 1;
-                      };
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            RichText(
-              text: TextSpan(
-                text: 'Choose Date and Time',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black.withOpacity(0.6),
-                  fontFamily: 'Garret',
-                  fontSize: 15,
                 ),
-              ),
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 295.0,
-                    child: DateTimeField(
-                      format: format,
-                      onShowPicker: (context, currentValue) async {
-                        final dateTime = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(2000),
-                          initialDate: currentValue ?? DateTime.now(),
-                          lastDate: DateTime(2101),
-                        );
-                        if (dateTime != null) {
-                          final timeOfDay = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.fromDateTime(
-                              currentValue ?? DateTime.now(),
+                VerticalDivider(),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 35.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 40,
+                          width: 170,
+                          child: TextField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
                             ),
-                          );
-                          if (timeOfDay != null) {
-                            setState(() {
-                              selectedDateTime = DateTime(
-                                dateTime.year,
-                                dateTime.month,
-                                dateTime.day,
-                                timeOfDay.hour,
-                                timeOfDay.minute,
-                              );
-                            });
-                            return selectedDateTime;
-                          }
-                        }
-                      },
+                            controller: eventName,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              hintText: "Event Title",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        SizedBox(
+                          height: 110,
+                          width: 170,
+                          child: TextField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            controller: eventDesc,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              hintText: "Event Description",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
+                              ),
+                            ),
+                            maxLines: 3,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                )
+              ],
             ),
-            Divider(),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: 'Repeatable',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black.withOpacity(0.6),
-                        fontFamily: 'Garret',
-                        fontSize: 30,
+          ),
+          Container(
+            width: 295.0,
+            child: TypeAheadField<ClubCardData>(
+              builder: (context, controller, focusNode) {
+                return TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "Search Admins",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  ),
+                );
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  title: Text(suggestion.name),
+                  trailing: Icon(selectedAdmins.contains(suggestion)
+                      ? Icons.check_circle
+                      : Icons.check_circle_outline),
+                );
+              },
+              onSelected: (suggestion) {
+                toggleSelectedAdmin(suggestion);
+                _controller1.selection =
+                    TextSelection.collapsed(offset: 0); // Reset cursor
+                _controller1.clear(); // Clear the field
+              },
+              suggestionsCallback: (String search) {
+                if (search == "" && !selectedAdmins.isEmpty) {
+                  return selectedAdmins.toList();
+                } else {
+                  return clubs
+                      .where((admin) => admin.name
+                          .toLowerCase()
+                          .contains(search.toLowerCase()))
+                      .toList();
+                }
+              },
+            ),
+          ),
+          Divider(),
+          Container(
+            width: 295.0,
+            child: DateTimeField(
+              decoration: InputDecoration(
+                icon: Icon(Icons.calendar_month_outlined),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0)),
+                hintText: "Choose Date and Time",
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              ),
+              format: format,
+              onShowPicker: (context, currentValue) async {
+                final dateTime = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime(2000),
+                  initialDate: currentValue ?? DateTime.now(),
+                  lastDate: DateTime(2101),
+                );
+                if (dateTime != null) {
+                  final timeOfDay = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.fromDateTime(
+                      currentValue ?? DateTime.now(),
+                    ),
+                  );
+                  if (timeOfDay != null) {
+                    setState(() {
+                      selectedDateTime = DateTime(
+                        dateTime.year,
+                        dateTime.month,
+                        dateTime.day,
+                        timeOfDay.hour,
+                        timeOfDay.minute,
+                      );
+                    });
+                    return selectedDateTime;
+                  }
+                }
+              },
+            ),
+          ),
+          Divider(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32.1),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(_orangeColor),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        side: BorderSide.none,
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: repeatable ? _orangeColor : Colors.grey,
-                      padding: EdgeInsets.all(10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      repeatable ? 'ON' : 'OFF',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        repeatable = !repeatable;
-                      });
-                    },
-                  )
-                ],
-              ),
+                  onPressed: () {
+                    onGetLocation();
+                  },
+                  child: const Text('Choose Location'),
+                ),
+                AnimatedButton(
+                  transitionType: TransitionType.LEFT_TO_RIGHT,
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
+                  ),
+                  text: "Private",
+                  selectedText: "Public",
+                  onPress: () {
+                    if (indexPubOrPriv == 1) {
+                      indexPubOrPriv = 0;
+                    } else if (indexPubOrPriv == 0) {
+                      indexPubOrPriv = 1;
+                    }
+                  },
+                  selectedTextColor: Colors.white,
+                  selectedBackgroundColor: _orangeColor,
+                  backgroundColor: Colors.grey,
+                  width: 120,
+                  height: 40,
+                  borderRadius: 18.0,
+                  isReverse: true,
+                ),
+
+
+              ],
             ),
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  SizedBox(
-                    height: 50,
-                    width: 200,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: _orangeColor,
-                        shape: StadiumBorder(),
-                        textStyle: const TextStyle(
-                          fontFamily: 'Garret',
-                          fontSize: 30,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      onPressed: () {
-                        postRequest();
-                      },
-                      child: Text(
-                        'post',
-                        style: TextStyle(
-                          fontFamily: 'Borel',
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+          Divider(),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AnimatedButton(
+                  transitionType: TransitionType.LEFT_TO_RIGHT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
+                  ),
+                  text: "Repeatable",
+                  selectedText: "Not Repeatable",
+                  onPress: () {
+                    repeatable = !repeatable;
+                  },
+                  selectedTextColor: Colors.black,
+                  selectedBackgroundColor: Colors.grey,
+                  backgroundColor: _orangeColor,
+                  height: 45,
+                  width: 200,
+                  borderRadius: 18.0,
+                  isReverse: true,
+                ),
+                AnimatedButton(
+                  transitionType: TransitionType.CENTER_LR_OUT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
+                  ),
+                  text: "Post",
+                  onPress: () {
+                    postRequest();
+                  },
+                  selectedTextColor: Colors.white,
+                  selectedBackgroundColor: Colors.lightBlue,
+                  backgroundColor: Colors.green,
+                  borderRadius: 18.0,
+                  height: 45,
+                  width: 100,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

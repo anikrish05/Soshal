@@ -6,17 +6,17 @@ import '../utils.dart';
 final serverUrl = AppConfig.serverUrl;
 
 class Club{
-  late bool verified;
-  late String id;
-  late String name;
-  late String description;
-  late String downloadURL;
-  late String type;
-  late String category;
-  late Map<String, dynamic> followers;
-  late List<dynamic> events;
-  late List<dynamic> admin;
-  late double avgRating;
+  late bool? verified;
+  late String? id;
+  late String? name;
+  late String? description;
+  late String? downloadURL;
+  late String? type;
+  late String? category;
+  late Map<String, dynamic>? followers;
+  late List<dynamic>? events;
+  late List<dynamic>? admin;
+  late double? avgRating;
   Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {
     print("in SignIn");
     final response = await post(Uri.parse('$serverUrl/api/clubs/createClub'),
