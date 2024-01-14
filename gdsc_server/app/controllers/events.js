@@ -54,6 +54,7 @@ const createEvent = async (req, res) => {
 const getFeedPosts = async (req, res) => {
     if (await checkAuthorization(req, res)) {
         try {
+            const uid = req.params.uid
             const colRef = collection(db, "events");
             const docsSnap = await getDocs(colRef);
             const allDocs = [];
