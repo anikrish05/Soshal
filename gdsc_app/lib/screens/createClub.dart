@@ -40,8 +40,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void submit() {
-    final userToAdd = users.where((user) => user.uid == currUserId).first;
-    selectedAdmins.add(userToAdd); // adds currUser to admin list
     Club club = Club();
     late String type;
     if (indexPubOrPriv == 1) {
@@ -50,6 +48,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       type = "Private";
     }
     List<String> adminsAsList = selectedAdmins.map((user) => user.uid).toList();
+    adminsAsList.add(currUserId);
     club
         .addClub(clubName.text, clubBio.text, location.text, category.text,
             type, adminsAsList)

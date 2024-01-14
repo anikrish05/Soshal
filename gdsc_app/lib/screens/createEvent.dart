@@ -46,7 +46,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   LatLng? _selectedLatLng;
 
   Color _orangeColor = Color(0xFFFF8050);
-  late String currUserId;
 
   final ButtonStyle style = ElevatedButton.styleFrom(
     backgroundColor: Colors.orange,
@@ -121,6 +120,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     print("post requ");
     String timeStamp = format.format(DateTime.now());
     List<String> adminsAsList = selectedAdmins.map((club) => club.id).toList();
+    adminsAsList.add(widget.club.id);
     await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
       headers: await getHeaders(),
