@@ -112,7 +112,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
 
   Widget buildProfileInfo() {
-    final int maxCharacters = ; // Set the maximum number of characters before forcing wrap
+    final int maxCharacters = 50; // Set the maximum number of characters before forcing wrap
     final double increasedPadding = 10.0;
 
     return Column(
