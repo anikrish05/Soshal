@@ -318,8 +318,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: DateTimeField(
                   validator: (value) {
-                    if (dateTimeString.compareTo('Choose Date and Time') == true) {
+                    if (dateTimeString.compareTo('Choose Date and Time') == 0) {
                       return 'Please enter a date-time.';
+                    } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
+                      return "Please enter a future date-time.";
                     }
                     return null;
                   },
