@@ -1,6 +1,7 @@
 const { db, auth } = require('../../db/config');
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = require("firebase/auth");
+const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
 const { checkAuthorization } = require('./authorizationUtil');
 
 async function addUserToClub(userId, clubId) {
@@ -187,6 +188,52 @@ const getAllClubs = async (req, res) => {
   }
 };
 
+const updateClub = async(req, res) => {
+  const {name, description, type, category, id} = req.body;
+  await checkAuthorization(req, res);
+  const clubDoc = doc(db, "clubs", id);
+    const userData = (await getDoc(clubDoc)).data();
+    await setDoc(userDoc, { name: name, description: description, type: type, category: category }, { merge: true });
+   res.status(200).send(JSON.stringify({'message':"success"}))
+}
+
+const updateClubImage = async (req, res) => {
+  try {
+    if (await checkAuthorization(req, res)) {
+      const { id, image } = req.body;
+
+      // Check if 'image' is defined
+      if (!image || !uid) {
+        return res.status(400).send("Image data or ID not provided");
+      }
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `clubs/${id}/${Date.now()}.png`);
+
+      // Convert the base64 string to a buffer
+      const buffer = Buffer.from(image, 'base64');
+
+      // Use uploadBytes directly
+      await uploadBytes(storageRef, buffer);
+
+      try {
+        // Wait for the download URL
+        const URL = await getDownloadURL(storageRef);
+        // Assuming you have a collection named 'users' in your Firestore
+        await setDoc(doc(db, "clubs", id), { downloadURL: URL }, { merge: true });
+        res.status(200).send("Image uploaded successfully");
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Error getting download URL");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 
 module.exports = {
   createClub,
@@ -195,5 +242,7 @@ module.exports = {
   getAllEventsForClub,
   acceptUser,
   denyUser,
-  getAllClubs
+  getAllClubs,
+  updateClub,
+  updateClubImage
 };

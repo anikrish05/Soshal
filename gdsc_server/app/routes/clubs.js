@@ -7,5 +7,6 @@ router.get('/getDataForSearchPage', controllers.getDataForSearchPage)
 router.post('/acceptUser', controllers.acceptUser)
 router.post('/denyUser', controllers.denyUser)
 router.get('/getAllClubs', controllers.getAllClubs)
-
+router.post('/updateClub', controllers.updateClub)
+router.post('/updateClubImage', controllers.updateClubImage)
 module.exports = router
