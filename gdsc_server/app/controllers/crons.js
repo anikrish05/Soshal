@@ -1,5 +1,6 @@
 const { getFirestore, collection, getDocs, setDoc } = require('firebase/firestore');
-const { admin } = require('../../db/config');
+const { db, auth } = require('../../db/config');
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
 
 function formatTimestampToDateTime(timestamp) {
   const date = new Date(timestamp);
@@ -19,7 +20,7 @@ function formatTimestampToDateTime(timestamp) {
 
 const cronsRepeatable = async (req, res) => {
   try {
-    const db = admin.firestore();
+     const userCredential = await signInWithEmailAndPassword(auth, "adminsdkuser.soshal@soshal.com", "Soshal123!");
     const eventsCollection = collection(db, 'events');
     const eventData = await getDocs(eventsCollection);
 
@@ -31,13 +32,14 @@ const cronsRepeatable = async (req, res) => {
       console.log('timestampMilliseconds:', timestampMilliseconds);
 
       if (eventData.repeat == true) {
-        if (((timestamp - timestampMilliseconds) / (1000 * 60 * 60)) > 4) {
+        if (((eventData.timestamp - timestampMilliseconds) / (1000 * 60 * 60)) > 4) {
           // Use doc.ref to reference the document directly
           const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
           await setDoc(doc.ref, { timestamp: formatTimestampToDateTime(timestampMilliseconds + oneWeekInMilliseconds) }, { merge: true });
         }
       }
     });
+    res.status(200).send({"message": "success"})
   } catch (error) {
     console.error('Error fetching events:', error);
   }

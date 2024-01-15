@@ -44,14 +44,14 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     if (widget.currUser.following.containsKey(widget.club.id) &&
-        widget.currUser.following[widget.club.id] == "Accepted"){
+        widget.currUser.following[widget.club.id][0] == "Accepted"){
       setState(() {
         isFollowing = true;
         followButton = "Unfollow";
       });
     }
     else if(widget.currUser.following.containsKey(widget.club.id) &&
-        widget.currUser.following[widget.club.id] == "Requested"){
+        widget.currUser.following[widget.club.id][0] == "Requested"){
       setState(() {
         isFollowing = true;
         followButton = "Requested";
