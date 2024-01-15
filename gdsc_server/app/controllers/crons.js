@@ -59,7 +59,9 @@ const cronsNotification = async (req, res) => {
 
     for (const doc of userData.docs) {
       const userInfo = doc.data();
-      devices.push(userInfo.notifToken);
+      if(userInfo.notifToken!=null){
+        devices.push(userInfo.notifToken);
+      }
     }
 
     const notificationPayload = {
