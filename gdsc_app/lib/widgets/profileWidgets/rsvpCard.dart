@@ -24,15 +24,15 @@ class _RsvpCard extends StatelessWidget {
     if (user.downloadURL.isEmpty) {
       profileImage = Image.asset(
         'assets/emptyprofileimage-PhotoRoom.png-PhotoRoom.png',
-        width: 40,
-        height: 40,
+        width: 60, // Increased width
+        height: 60, // Increased height
         fit: BoxFit.cover,
       );
     } else {
       profileImage = Image.network(
         user.downloadURL,
-        width: 40,
-        height: 40,
+        width: 60, // Increased width
+        height: 60, // Increased height
         fit: BoxFit.cover,
       );
     }
@@ -46,30 +46,31 @@ class _RsvpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ListTile(
-          contentPadding: EdgeInsets.all(0), // Removes default padding
-          title: Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                child: _buildProfileImage(),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(0), // Removes default padding
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 25, // Increased radius
+              backgroundColor: Colors.grey, // Set background color to gray
+              child: _buildProfileImage(),
+            ),
+            SizedBox(width: 20), // Increased spacing between the image and text
+            Text(
+              '${user.displayName}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18, // Increased font size
+                color: Colors.black, // Set text color to gray
               ),
-              SizedBox(width: 8), // Add some spacing between the image and text
-              Text(
-                '${user.displayName}:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+
+
+

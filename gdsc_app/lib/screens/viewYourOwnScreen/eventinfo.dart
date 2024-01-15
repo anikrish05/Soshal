@@ -42,16 +42,6 @@ class _EventProfilePageState extends State<EventProfilePage>
     tabController.dispose(); // Dispose of the tabController at the end
     super.dispose();
   }
-  Future<void> getStreetName() async {
-    print("in get street name");
-    List<Placemark> placemarks =
-    await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
-    Placemark place = placemarks[0];
-    String tempText = "${place.street}";
-    setState(() {
-      locationText = tempText;
-    });
-  }
 
   Future<void> postRequest() async {
     print("post request");
@@ -87,34 +77,35 @@ class _EventProfilePageState extends State<EventProfilePage>
   void initState() {
     super.initState();
     print("event info.dart, initstate");
+    locationText = "Loading...";
     print(widget.event.rsvpUserData);
     tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
-    getStreetName();
-    setState(() {
-      locationText = "Loading...";
-    });
+
+    // Fetch location information asynchronously
+    loadStreetName();
   }
-/*
-  void onGetLocation() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
-    );
-    print("-------------");
-    print(result);
-    latitude = result.latitude;
-    longitude = result.longitude;
-    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+
+  Future<void> loadStreetName() async {
+    print("in load street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        widget.event.latitude, widget.event.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
       locationText = tempText;
     });
+    // Trigger a rebuild after setting the location text
+    rebuild();
   }
-*/
 
+  // Function to trigger a rebuild
+  void rebuild() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
@@ -182,19 +173,19 @@ class _EventProfilePageState extends State<EventProfilePage>
                           fontWeight: FontWeight.normal,
                         ),
                       ),
-                      SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on),
-                              Text(
-                                (locationText),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
+                      // SizedBox(height: 5),
+                      //     Row(
+                      //       children: [
+                      //         Icon(Icons.location_on),
+                      // Text(
+                      //   locationText,
+                      //   style: TextStyle(
+                      //     fontSize: 15,
+                      //     fontWeight: FontWeight.normal,
+                      //   ),
+                      // )
+                      //       ],
+                      //     ),
                       SizedBox(height: 8),
                       Row(
                         children: [
@@ -208,6 +199,36 @@ class _EventProfilePageState extends State<EventProfilePage>
                           ),
                         ],
                       ),
+                      SizedBox(height: 12),
+                      GestureDetector(
+                        onTap:(){
+                          setState(() {
+                            isEditing = true;
+                          });
+                          _showEditSheet(context);
+                        },
+                        child:Row(
+                          children: [
+                            GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  isEditing = true;
+                                });
+                                _showEditSheet(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _orangeColor,
+                                ),
+                                child: Icon(Icons.edit, color: Colors.white),
+                              )
+                            ),
+                            SizedBox(width: 16),
+                          ],
+                        )
+                      )
 
                       ],
                     ),
@@ -217,20 +238,211 @@ class _EventProfilePageState extends State<EventProfilePage>
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'RSVP List',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _orangeColor, // Orange box color
+                    borderRadius: BorderRadius.circular(20), // Curved edges
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '➤➤➤  RSVP List  ➤➤➤',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
               buildTabContent(),
             ],
           ),
+          if (isEditing)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isEditing = false;
+                  });
+                },
+              ),
+            ),
         ],
         ),
     );
+}
+
+void _showEditSheet(BuildContext context){
+  showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  isEditing = false;
+                });
+              },
+              color: _orangeColor
+            ),
+            backgroundColor: Colors.white,
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            profilePicture(),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Add your logic for editing the profile picture here
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _orangeColor,
+                                ),
+                                child: Icon(Icons.edit, color: Colors.white),
+                              ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Column(
+                          children: [
+                            TextField(
+                              controller: eventNameController,
+                              decoration: InputDecoration(labelText: "Event Name"),
+                              maxLines: null,
+                            ),
+                            TextField(
+                              controller: eventDescController,
+                              decoration: InputDecoration(labelText: "Event Description"),
+                              maxLines: null,
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // SizedBox(
+                            //   height: 40,
+                            //   width: 160,
+                            //   child: ElevatedButton(
+                            //     style: ElevatedButton.styleFrom(
+                            //       backgroundColor: _orangeColor,
+                            //       shape: StadiumBorder(),
+                            //       textStyle: const TextStyle(fontfamily: 'Garret', fontSize: 15.0, color: Colors.black),
+                            //     ),
+                            //     onPressed: () {
+                            //       onGetLocation();
+                            //     },
+                            //     child: const Text('Choose Location'),
+                            //   ),
+                            // ),
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        text: "Repeat: ",
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              repeatable = !repeatable;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: ToggleButtons(
+                                              borderColor: Colors.transparent,
+                                              selectedBorderColor: Colors.transparent,
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              borderWidth: 0.0,
+                                              onPressed: (int index) {},
+                                              isSelected: [!repeatable, repeatable],
+                                              children: [
+                                                ColorFiltered(
+                                                  colorFilter: ColorFilter.mode(
+                                                    repeatable ? _orangeColor : Colors.grey,
+                                                    BlendMode.srcIn,
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Text('Off'),
+                                                  ),
+                                                ),
+                                                ColorFiltered(
+                                                  colorFilter: ColorFilter.mode(
+                                                    repeatable ? Colors.grey : _orangeColor,
+                                                    BlendMode.srcIn,
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Text('On'),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                )
+              )
+            ],
+          )
+        );
+      }
+  );
 }
 
   Widget buildTabContent() {
@@ -251,6 +463,7 @@ class _EventProfilePageState extends State<EventProfilePage>
 
           // Display RSVP data
           if (widget.event.rsvpUserData.isNotEmpty) {
+            print("HII");
             return SizedBox(
               height: MediaQuery.of(context).size.height,
               child: (
