@@ -432,10 +432,87 @@ void _showEditSheet(BuildContext context){
                               ),
                             )
                           ],
+                        ),
+                        SizedBox(height: 16),
+                        Center(
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Choose Date and Time',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Garret', fontSize: 15),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 295.0,
+                                child: DateTimeField(
+                                  format: format,
+                                  onShowPicker: (context, currentValue) async {
+                                    final dateTime = await showDatePicker(
+                                        context: context,
+                                        initialDate: currentValue ?? DateTime.now(),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(2101),
+                                    );
+                                    if (dateTime != null) {
+                                      final timeOfDay = await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay.fromDateTime(
+                                            currentValue ?? DateTime.now(),
+                                          ),
+                                      );
+                                      if (timeOfDay != null) {
+                                        setState(() {
+                                          selectedDateTime = DateTime(
+                                            dateTime.year,
+                                            dateTime.month,
+                                            dateTime.day,
+                                            timeOfDay.hour,
+                                            timeOfDay.minute,
+                                          );
+                                        });
+                                        return selectedDateTime;
+                                      }
+                                    }
+                                    return null;
+                                  }
+                                )
+                              )
+                            ]
+                          )
                         )
                       ],
                     ),
                   )
+                )
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isEditing = false;
+                      widget.event.name = eventNameController.text;
+                      widget.event.description = eventDescController.text;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _orangeColor,
+                    textStyle: TextStyle(
+                      fontFamily: "Borel",
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text('save'),
                 )
               )
             ],
