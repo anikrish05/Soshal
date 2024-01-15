@@ -15,6 +15,7 @@ async function addUserToClub(userId, clubId) {
 }
 
 const createClub = async (req, res) => {
+  //hi
   if (await checkAuthorization(req, res)) {
     const { name, description, downloadURL, type, category, admin } = req.body;
 
