@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
+import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../../widgets/loader.dart';
+import '../../widgets/profileWidgets/rsvpCard.dart';
 
 class OtherEventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -16,53 +23,91 @@ class OtherEventProfilePage extends StatefulWidget {
 
 class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     with SingleTickerProviderStateMixin {
+  late DateTime selectedDateTime;
+  Color _colorTab = Color(0xFFFF8050);
+
+  String locationText = "Loading...";
+  bool isEditing = false;
   late TabController tabController;
   late TextEditingController eventNameController;
   late TextEditingController eventDescController;
-  User user = User();
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+
+  double latitude = 0.0;
+  double longitude = 0.0;
+
+  @override
+  void dispose() {
+    tabController.dispose(); // Dispose of the tabController at the end
+    super.dispose();
+  }
+
+  Future<void> postRequest() async {
+    print("post request");
+    String timeStamp = format.format(DateTime.now());
+    await http.post(
+      Uri.parse('http://10.0.2.2:3000/api/events/createEvent'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "name": widget.event.name,
+        "description": widget.event.description,
+        "downloadURL": "",
+        "latitude": latitude,
+        "longitude": longitude,
+        "timestamp": timeStamp,
+        "repeat": repeatable,
+      }),
+    );
+    Navigator.pop(context);
+  }
+
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime dateTime = format.parse(dateTimeString);
+    String formattedDateTime =
+    DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
+    return formattedDateTime;
+  }
+
+
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
-    isUserSignedIn();
+    print("event info.dart, initstate");
+    locationText = "Loading...";
+    print(widget.event.rsvpUserData);
+    tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
-    eventDescController = TextEditingController(text: widget.event.description);// Initialize the controller
+    eventDescController = TextEditingController(text: widget.event.description);
+
+    // Fetch location information asynchronously
+    loadStreetName();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    tabController.dispose();
-  }
-
-  dynamic isUserSignedIn() async {
-    user.isUserSignedIn().then((check) async {
-      if (!check) {
-        Navigator.pushNamed(context, '/login');
-      }
+  Future<void> loadStreetName() async {
+    print("in load street name");
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        widget.event.latitude, widget.event.longitude);
+    Placemark place = placemarks[0];
+    String tempText = "${place.street}";
+    setState(() {
+      locationText = tempText;
     });
+    // Trigger a rebuild after setting the location text
+    rebuild();
   }
 
+  // Function to trigger a rebuild
+  void rebuild() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
-
-  final ButtonStyle style2 =
-  ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: StadiumBorder(),
-      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 15, color: Colors.grey ));
-
-  @override
-  void onGetLocation() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateEventMapScreen()),
-    );
-    print("-------------");
-    print(result);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,73 +125,156 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
             children: [
               SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(width: 16),
-                        profilePicture(),
-                      ],
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${widget.event.name}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  for (int i = 0; i < 5; i++)
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ),
-                                ],
-                              ),
-                              SizedBox(width: 7),
-                            ],
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            '${widget.event.description}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
+                          SizedBox(width: 16),
+                          profilePicture(),
                         ],
                       ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${widget.event.name}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Row(
+                                    children: [
+                                      for (int i = 0; i < 5; i++)
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        )
+                                    ]
+                                ),
+                                SizedBox(width: 7),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              '${widget.event.description}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            // SizedBox(height: 5),
+                            //     Row(
+                            //       children: [
+                            //         Icon(Icons.location_on),
+                            // Text(
+                            //   locationText,
+                            //   style: TextStyle(
+                            //     fontSize: 15,
+                            //     fontWeight: FontWeight.normal,
+                            //   ),
+                            // )
+                            //       ],
+                            //     ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time),
+                                Text(
+                                  ' ${getFormattedDateTime(widget.event.time)}',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _orangeColor, // Orange box color
+                    borderRadius: BorderRadius.circular(20), // Curved edges
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '➤➤➤ RSVP List ➤➤➤',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Set text color to white
+                        ),
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-              SizedBox(height: 16),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-                indent: 24,
-                endIndent: 24,
-              ),
-              SizedBox(height: 16),
-              // Add your TabBar here
-              buildTabBar(),
+              buildTabContent(),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildTabContent() {
+    return FutureBuilder<void>(
+      future: widget.event.getRSVPData(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        print("CALLING FUNC");
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoaderWidget(); // or any loading indicator
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          print("hello");
+          print(widget.event.rsvpUserData);
+
+          // Display RSVP data
+          if (widget.event.rsvpUserData.isNotEmpty) {
+            print("HII");
+            return SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: (
+                  ListView.builder(
+                    itemCount: widget.event.rsvpUserData.length,
+                    itemBuilder: (context, index) {
+                      return RsvpCard(
+                          user: widget.event.rsvpUserData[index]
+                      );
+                    },
+                  )),
+            );
+          } else {
+            // Display a message when there is no RSVP data
+            return Center(
+              child: Text('No RSVPs yet.'),
+            );
+          }
+        }
+      },
     );
   }
 
@@ -170,24 +298,10 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     }
   }
 
-  Widget buildTabBar() {
-    return TabBar(
-      unselectedLabelColor: _orangeColor,
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: _orangeColor,
-      ),
-      controller: tabController,
-      tabs: [
-        Tab(
-          child: Text(
-            'RSVP List',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-      indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
-    );
-  }
+
+
+
+
+
+
 }
