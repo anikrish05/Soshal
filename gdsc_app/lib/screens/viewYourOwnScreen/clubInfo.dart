@@ -1,15 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/classes/club.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/screens/createEvent.dart';
-import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:http/http.dart' as http;
+import 'package:gdsc_app/screens/editClub.dart';
 import 'package:intl/intl.dart';
+import '../../utils.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/notificationWidgets/clubNotifcations/userFollowedYouWidget.dart';
 import '../../widgets/notificationWidgets/clubNotifcations/userRequestFollowWidget.dart';
+import '/../app_config.dart';
+
+
+final serverUrl = AppConfig.serverUrl;
 
 class ClubProfilePage extends StatefulWidget {
   late ClubCardData club;
@@ -139,7 +147,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
         ],
         backgroundColor: Colors.white,
       ),
-        body: Stack(
+      body: Stack(
         children: [
           ListView(
             children: [
@@ -213,7 +221,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                               setState(() {
                                 isEditing = true;
                               });
-                              _showEditSheet(context);
+                              onUpdateClub();
                             },
                             child: Row(
                               children: [
@@ -222,7 +230,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                                     setState(() {
                                       isEditing = true;
                                     });
-                                    _showEditSheet(context);
+                                    onUpdateClub();
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(8),
@@ -502,74 +510,74 @@ class _ClubProfilePageState extends State<ClubProfilePage>
         return DefaultTabController(
           length: 2,
           child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: _colorTab,
-              title: Text('Notifications'),
-              bottom: TabBar(
-                labelStyle: TextStyle(fontFamily: 'Borel'), // Add this line
-                tabs: [
-                  Tab(text: 'Requested'),
-                  Tab(text: 'Accepted'),
-                ],
+              appBar: AppBar(
+                backgroundColor: _colorTab,
+                title: Text('Notifications'),
+                bottom: TabBar(
+                  labelStyle: TextStyle(fontFamily: 'Borel'), // Add this line
+                  tabs: [
+                    Tab(text: 'Requested'),
+                    Tab(text: 'Accepted'),
+                  ],
+                ),
               ),
-            ),
-            body: FutureBuilder<void>(
-              future: getFollowerData(), // Assuming getFollowerData returns a Future<void>
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Display a loading indicator while waiting for the data
-                  return LoaderWidget();
-                } else if (snapshot.hasError) {
-                  // Display an error message if there is an error
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  // Check if the data is available
-                  if (widget.club.followerActionRequired == null ||
-                      widget.club.followerData == null) {
-                    // If data is not available, display a loading indicator
+              body: FutureBuilder<void>(
+                future: getFollowerData(), // Assuming getFollowerData returns a Future<void>
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Display a loading indicator while waiting for the data
                     return LoaderWidget();
+                  } else if (snapshot.hasError) {
+                    // Display an error message if there is an error
+                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
-                    // If data is available, display the TabBarView with the content
-                    return TabBarView(
-                      children: [
-                        // Content for the 'Requested' tab
-                        widget.club.type == "Public"
-                            ? Center(
-                          child: Text('You need to be a private club to get requests.'),
-                        )
-                            : ListView.builder(
-                          itemCount: widget.club.followerActionRequired.length,
-                          itemBuilder: (context, index) {
-                            return UserRequest(
-                              user: widget.club.followerActionRequired[index][0],
-                              timestamp: widget.club.followerActionRequired[index][1],
-                              onAccept: (uid) {
-                                // Handle accept action with additionalData
-                                widget.club.acceptUser(uid);
-                              },
-                              onDeny: (uid) {
-                                // Handle deny action with additionalData
-                                widget.club.denyUser(uid);
-                              },
-                            );
-                          },
-                        ),
-                        // Content for the 'Accepted' tab
-                        ListView.builder(
-                          itemCount: widget.club.followerData.length,
-                          itemBuilder: (context, index) {
-                            return UserFollowing(
-                              user: widget.club.followerData[index][0],
-                              timestamp: widget.club.followerData[index][1],
-                            );
-                          },
-                        ),
-                      ],
-                    );
+                    // Check if the data is available
+                    if (widget.club.followerActionRequired == null ||
+                        widget.club.followerData == null) {
+                      // If data is not available, display a loading indicator
+                      return LoaderWidget();
+                    } else {
+                      // If data is available, display the TabBarView with the content
+                      return TabBarView(
+                        children: [
+                          // Content for the 'Requested' tab
+                          widget.club.type == "Public"
+                              ? Center(
+                            child: Text('You need to be a private club to get requests.'),
+                          )
+                              : ListView.builder(
+                            itemCount: widget.club.followerActionRequired.length,
+                            itemBuilder: (context, index) {
+                              return UserRequest(
+                                user: widget.club.followerActionRequired[index][0],
+                                timestamp: widget.club.followerActionRequired[index][1],
+                                onAccept: (uid) {
+                                  // Handle accept action with additionalData
+                                  widget.club.acceptUser(uid);
+                                },
+                                onDeny: (uid) {
+                                  // Handle deny action with additionalData
+                                  widget.club.denyUser(uid);
+                                },
+                              );
+                            },
+                          ),
+                          // Content for the 'Accepted' tab
+                          ListView.builder(
+                            itemCount: widget.club.followerData.length,
+                            itemBuilder: (context, index) {
+                              return UserFollowing(
+                                user: widget.club.followerData[index][0],
+                                timestamp: widget.club.followerData[index][1],
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    }
                   }
-                }
-              },
-            )
+                },
+              )
 
           ),
         );
@@ -577,7 +585,47 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     );
   }
 
+  void onUpdateClub() async
+  {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UpdateClubScreen(club: club!)),
+    );
 
+    final updateClubData = {
+      "name": result[0],
+      "description": result[1],
+      "type": result[2],
+      "category": result[3],
+      "id": result[4]
+    };
+      setState(() {
+        club.name = result[0];
+        club.description = result[1];
+        club.type = result[2];
+        club.category = result[3];
+      });
+
+      print(club.name);
+    print("got back");
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/clubs/updateClub'),
+        headers: await getHeaders(),
+        body: jsonEncode(updateClubData),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData['message']); // Assuming the server responds with a JSON object containing a 'message' property
+      } else {
+        print('Error: ${response.statusCode}');
+        print(response.body);
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
 
 
 }
