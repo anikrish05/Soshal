@@ -3,7 +3,11 @@ const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, updateDo
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } = require("firebase/auth");
 const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
 const { checkAuthorization } = require('./authorizationUtil');
-
+const { ref, uploadBytes } = require('firebase/storage');
+const { Buffer } = require('buffer');
+const multer = require('multer');
+const multerStorage = multer.memoryStorage();
+const multerUpload = multer({ storage: multerStorage });
 async function addUserToClub(userId, clubId) {
   const docSnap = await getDoc(doc(db, "users", userId));
 
