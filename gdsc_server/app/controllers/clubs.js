@@ -207,7 +207,7 @@ const updateClubImage = async (req, res) => {
       const { id, image } = req.body;
 
       // Check if 'image' is defined
-      if (!image || !uid) {
+      if (!image || !id) {
         return res.status(400).send("Image data or ID not provided");
       }
 
