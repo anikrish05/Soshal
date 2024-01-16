@@ -179,7 +179,11 @@ const getAllClubs = async (req, res) => {
       const clubsRef = collection(db, "clubs");
       const clubData = await getDocs(clubsRef);
 
-      clubs = clubData.docs.map(doc => doc.data());
+      clubData.docs.map(doc => {
+        var docData = doc.data()
+        docData.id = doc.id
+        clubs.push(docData)
+      });
 
       res.status(200).send(JSON.stringify({ "message": clubs }));
     } catch (error) {
