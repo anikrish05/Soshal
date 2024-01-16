@@ -28,7 +28,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   var category = TextEditingController();
 
-  List<UserData> users = [];
+  Set<UserData> users = {};
   Set<UserData> selectedAdmins = {};
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
@@ -48,7 +48,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       type = "Private";
     }
     List<String> adminsAsList = selectedAdmins.map((user) => user.uid).toList();
-    adminsAsList.add(currUserId);
+    if (!adminsAsList.contains(currUserId)) {
+      adminsAsList.add(currUserId);
+    }
     club
         .addClub(clubName.text, clubBio.text, location.text, category.text,
             type, adminsAsList)
@@ -253,7 +255,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   Future<void> getAdmin() async {
-    users = [];
+    users = {};
     final response = await http.get(
         Uri.parse('http://10.0.2.2:3000/api/users/getAllUsers'),
         headers: await getHeaders());
@@ -281,20 +283,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 .map((club) => club.toString())),
             downloadURL: responseData[i]["downloadURL"],
             classOf: responseData[i]["classOf"]);
-        if (users.length == 0) {
-          users.add(newUser);
-        } else {
-          bool userFound = false;
-          for (int j = 0; j < users.length; j++) {
-            if (users[j].uid == newUser.uid) {
-              userFound = true;
-            }
-          }
-
-          if (userFound == false) {
-            users.add(newUser);
-          }
-        }
+        users.add(newUser);
       }
     } else {
       // Handle the error

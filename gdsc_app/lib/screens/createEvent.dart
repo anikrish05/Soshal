@@ -99,7 +99,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             type: responseData[i]["type"] ?? "",
             verified: responseData[i]["verified"] ?? false,
             id: responseData[i]["id"] ?? "",
-            rating: responseData[i]["rating"] ?? 0.toDouble(),
+            rating: responseData[i]["rating"] ?? 0.0,
           );
           clubs.add(newClub);
         } catch (identifier) {
@@ -113,10 +113,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   Future<void> postRequest() async {
-    print("post requ");
     String timeStamp = format.format(DateTime.now());
     List<String> adminsAsList = selectedAdmins.map((club) => club.id).toList();
-    adminsAsList.add(widget.club.id);
+    if (!adminsAsList.contains(widget.club.id)) {
+      adminsAsList.add(widget.club.id);
+    }
     await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
       headers: await getHeaders(),
@@ -430,6 +431,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     text: "Repeatable",
                     selectedText: "Not Repeatable",
                     onPress: () {
+                      for (ClubCardData admin in selectedAdmins) {
+                        print(admin.id);
+                        print(admin.name);
+                      }
                       repeatable = !repeatable;
                     },
                     selectedTextColor: Colors.black,
