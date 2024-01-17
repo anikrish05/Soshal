@@ -8,21 +8,16 @@ import '../widgets/profileWidgets/profileHeader.dart';
 import '../widgets/profileWidgets/profileWidgetButtons.dart';
 import '../widgets/eventWidgets/eventCard.dart';
 import '../widgets/clubWidgets/clubCard.dart';
-import 'package:gdsc_app/classes/ClubCardData.dart';
-import 'package:gdsc_app/classes/user.dart';
-import '../widgets/loader.dart';
 import 'createClub.dart';
 import 'dart:async';
+import '../widgets/loader.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import '../app_config.dart';
 
-
 final serverUrl = AppConfig.serverUrl;
-
-
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -32,6 +27,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   Color _buttonColor = Color(0xFF88898C);
   Color _slideColor = Colors.orange;
+  Color _orangeColor = Color(0xFFFF8050);
   Color _colorTab = Color(0xFFFF8050);
   UserData? user;
   late TabController tabController;
@@ -39,7 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   int newGradYr = 0;
 
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
+    final response = await http.get(
+      Uri.parse('$serverUrl/api/users/signedIn'),
       headers: await getHeaders(),
     );
     if ((jsonDecode(response.body))['message'] == false) {
@@ -50,7 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+      final response = await http.get(
+        Uri.parse('$serverUrl/api/users/userData'),
         headers: await getHeaders(),
       );
       var data = jsonDecode(response.body)['message'];
@@ -71,6 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
     await user!.getClubAndEventData();
   }
+
   @override
   void initState() {
     super.initState();
@@ -82,6 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     super.dispose();
     tabController.dispose();
   }
+
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -128,7 +128,26 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           future: getUser(),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return buildProfileUI();
+              return Stack(
+                children: [
+                  buildProfileUI(),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: Icon(
+                          Icons.settings,
+                          size: 30,
+                          color: Colors.grey
+                      ),
+                      onPressed: () {
+                        // Add your settings icon functionality here
+                        _showSettingsDialog(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
             } else {
               return LoaderWidget();
             }
@@ -137,6 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       ),
     );
   }
+
 
   Widget buildProfileUI() {
     double imageSize = 150;
@@ -190,13 +210,12 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             child: Text(
               'Events',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            )        ),
+            )),
         Tab(
             child: Text(
               'Clubs',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            )
-        ),
+            )),
       ],
       indicatorPadding: EdgeInsets.symmetric(horizontal: 16),
     );
@@ -208,11 +227,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       children: [
         ListView.builder(
             itemCount: user!.eventData.length,
-            itemBuilder: (context, index){
+            itemBuilder: (context, index) {
               //I currently put isOwner true as temporary, change it afterwards
               return EventCardWidget(event: user!.eventData[index], isOwner: false);
-            }
-        ),
+            }),
         ListView.builder(
           itemCount: user!.clubData.length ~/ 2 + (user!.clubData.length % 2),
           itemBuilder: (BuildContext context, int index) {
@@ -237,7 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     ),
   );
 
-
   @override
   void onCreateClub() {
     Navigator.push(
@@ -246,8 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     ).then(onGoBack);
   }
 
-
-  void onUpdateProfile() async{
+  void onUpdateProfile() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateUserScreen(user: user!)),
@@ -284,8 +300,84 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
 
     getUser();
-    setState(() {
-
-    });
+    setState(() {});
   }
+
+  void _showSettingsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: Text("Settings")),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  // Add your sign-out logic here
+                  // For example, you can navigate to the sign-in page
+                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInPage()));
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: _orangeColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Adjust the border radius as needed
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 18, // Adjust the font size as needed
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Borel'  // Make the font bold
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text("sign out"),
+                ),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  // Add your delete account logic here
+                  // ...
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: _orangeColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Adjust the border radius as needed
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 18, // Adjust the font size as needed
+                    fontWeight: FontWeight.bold, // Make the font bold
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text("Delete Account"),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Close",
+                style: TextStyle(color: _orangeColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
 }
