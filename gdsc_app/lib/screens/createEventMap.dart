@@ -18,7 +18,7 @@ class _CreateEventMapScreenState extends State<CreateEventMapScreen> {
           onPressed: () => Navigator.of(context).pop(),
           color: Colors.orange),
           centerTitle: true,
-          title: Text('Chose Event Location'),
+          title: Text('Choose Event Location'),
           backgroundColor: Colors.white
       ),
 
