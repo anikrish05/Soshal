@@ -86,6 +86,10 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 List<String>.from(data['userData']['likedEvents']),
                 dislikedEvents:
                 List<String>.from(data['userData']['dislikedEvents']),
+                friendGroups:
+                List<String>.from(data['userData']['friendGroups']),
+                interestedTags:
+                List<String>.from(data['userData']['interestedTags']),
               ),
             );
           }).toList();
@@ -394,6 +398,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
           clubIds: widget.currUser.clubIds,
           likedEvents: widget.currUser.likedEvents,
           dislikedEvents: widget.currUser.dislikedEvents,
+          friendGroups: widget.currUser.friendGroups,
+            interestedTags: widget.currUser.friendGroups
         ),
       );
 

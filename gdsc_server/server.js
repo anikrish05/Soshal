@@ -11,6 +11,7 @@ app.use('/api/clubs', require('./app/routes/clubs'));
 app.use('/api/events', require('./app/routes/events'));
 app.use('/api/comments', require('./app/routes/comments'));
 app.use('/api/crons', require('./app/routes/crons'));
+app.use('/api/friendGroup', require('./app/routes/friendGroup'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

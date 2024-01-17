@@ -26,7 +26,7 @@ async function getAssociatedClubForEvent(admin) {
 
 const createEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
-        const { admin, name, description, downloadURL, latitude, longitude, timestamp, repeat } = req.body;
+        const { admin, name, description, downloadURL, latitude, longitude, timestamp, repeat, tags } = req.body;
         const data = {
             name: name,
             admin: admin,
@@ -38,7 +38,8 @@ const createEvent = async (req, res) => {
             rating: 0,
             timestamp: timestamp,
             repeat: repeat,
-            rsvpList: []
+            rsvpList: [],
+            tags: tags
         };
         addDoc(collection(db, "events"), data)
             .then((docRef) => {

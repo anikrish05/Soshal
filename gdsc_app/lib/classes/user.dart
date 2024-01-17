@@ -24,6 +24,8 @@ class User {
   int classOf = 0;
   List<String> likedEvents = [];
   List<String> dislikedEvents = [];
+  List<String> friendGroups = [];
+  List<String> interestedTags = [];
 
   Future<bool> isUserSignedIn() async {
     final response = await get(Uri.parse('$serverUrl/api/users/signedIn'),
@@ -50,6 +52,8 @@ class User {
     this.myEvents = List<String>.from(data['myEvents'] ?? []);
     this.clubIds = List<String>.from(data['clubsOwned'] ?? []);
     this.classOf = data['classOf'];
+    this.friendGroups =  List<String>.from(data['friendGroups'] ?? []);
+    this.interestedTags = List<String>.from(data['interestedTags'] ?? []);
 
     return true;
   }
@@ -73,6 +77,7 @@ class User {
                 description: clubDataResponse['description'],
                 downloadURL: clubDataResponse['downloadURL'],
                 events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
+                tags: List<String>.from((clubDataResponse['tags'] ?? []).map((tag) => tag.toString())),
                 followers: clubDataResponse['followers'],
                 name: clubDataResponse['name'],
                 type: clubDataResponse['type'],
@@ -141,6 +146,7 @@ class User {
                 latitude: eventDataResponse['latitude'],
                 longitude: eventDataResponse['longitude'],
                 comments: List<String>.from((eventDataResponse['comments'] ?? []).map((comment) => comment.toString())),
+                tags: List<String>.from((eventDataResponse['tags'] ?? []).map((tag) => tag.toString())),
                 id: this.myEvents[i],
                 likedBy: List<String>.from((eventDataResponse['likedBy'] ?? []).map((uid) => uid.toString())),
                 disLikedBy: List<String>.from((eventDataResponse['disLikedBy'] ?? []).map((uid) => uid.toString())),

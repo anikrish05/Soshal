@@ -17,6 +17,7 @@ class EventCardData {
   List<String> comments;
   List<String> likedBy;
   List<String> disLikedBy;
+  List<String> tags;
   String id;
   List<String> admin;
   List<ClubCardData> clubInfo = [];
@@ -35,7 +36,8 @@ class EventCardData {
     required this.admin,
     required this.time,
     required this.likedBy,
-    required this.disLikedBy
+    required this.disLikedBy,
+    required this.tags
   });
   Future<void> getAllClubsForEvent() async {
     clubInfo = [];
@@ -58,6 +60,7 @@ class EventCardData {
                   description: clubDataResponse['description'],
                   downloadURL: clubDataResponse['downloadURL'],
                   events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
+                  tags: List<String>.from((clubDataResponse['tags'] ?? []).map((tag) => tag.toString())),
                   followers: clubDataResponse['followers'],
                   name: clubDataResponse['name'],
                   type: clubDataResponse['type'],
@@ -102,6 +105,8 @@ class EventCardData {
                   likedEvents: List<String>.from((userDataResponse['likedEvents'] ?? []).map((event) => event.toString())),
                   dislikedEvents: List<String>.from((userDataResponse['dislikedEvents'] ?? []).map((event) => event.toString())),
                   clubIds: List<String>.from((userDataResponse['clubIds'] ?? []).map((club) => club.toString())),
+                  friendGroups: List<String>.from((userDataResponse['friendGroups'] ?? []).map((friend) => friend.toString())),
+                  interestedTags: List<String>.from((userDataResponse['interestedTags'] ?? []).map((tag) => tag.toString())),
                   downloadURL: userDataResponse['downloadURL'],
                   classOf: userDataResponse['classOf']),
               );

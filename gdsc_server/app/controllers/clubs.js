@@ -21,7 +21,7 @@ async function addUserToClub(userId, clubId) {
 const createClub = async (req, res) => {
   //hi
   if (await checkAuthorization(req, res)) {
-    const { name, description, downloadURL, type, category, admin } = req.body;
+    const { name, description, downloadURL, type, category, admin, tags } = req.body;
 
     const data = {
       verified: false,
@@ -33,7 +33,8 @@ const createClub = async (req, res) => {
       followers: {},
       events: [],
       admin: admin,
-      avgRating: 0
+      avgRating: 0,
+      tags: tags
     }
     const clubCollection = collection(db, 'clubs');
     addDoc(clubCollection, data).then((docRef) => {

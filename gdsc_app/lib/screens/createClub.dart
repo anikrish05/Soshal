@@ -53,7 +53,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     }
     club
         .addClub(clubName.text, clubBio.text, location.text, category.text,
-            type, adminsAsList)
+            type, adminsAsList, []) //that last array is passing in empty tags list, populate please
         .then((check) => {
               if (check) {Navigator.of(context).pop()}
             });
@@ -281,6 +281,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                     .map((event) => event.toString())),
             clubIds: List<String>.from((responseData[i]['clubIds'] ?? [])
                 .map((club) => club.toString())),
+            friendGroups: List<String>.from((responseData[i]['friendGroups'] ?? [])
+                .map((friend) => friend.toString())),
+            interestedTags: List<String>.from((responseData[i]['interestedTags'] ?? [])
+                .map((tag) => tag.toString())),
             downloadURL: responseData[i]["downloadURL"],
             classOf: responseData[i]["classOf"]);
         users.add(newUser);
