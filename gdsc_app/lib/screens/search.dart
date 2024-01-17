@@ -271,7 +271,7 @@ class _SearchScreenState extends State<SearchScreen>
     List<Widget> clubWidgets = filteredItemsClubs
         .map((club) => ClubCardWidget(
               club: club,
-              isOwner: user?.clubIds.contains(club.id) ?? false,
+              isOwner: user!.clubIds.contains(club.id),
               currUser: user!,
             ))
         .toList();
@@ -282,104 +282,108 @@ class _SearchScreenState extends State<SearchScreen>
 
     ScrollController _scrollController = ScrollController();
 
-    return TabBarView(
-      children: [
-        Container(
-          width:
-              MediaQuery.of(context).size.width * 0.9, // 90% of screen width
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: TabBarView(
+        controller: tabController,
+        children: [
+          Container(
+            width:
+                MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Organizations',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                // Conditionally display club widgets or 'No organizations found' text
+                if (clubWidgets != null && clubWidgets.isNotEmpty)
+                  SizedBox(height: 100, child: ListView(children: clubWidgets))
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'No organizations found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                SizedBox(height: 16.0),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Events',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
+                  ),
+                ),
+                SizedBox(height: 15.0),
+                // Display event cards or 'No results found' text based on eventWidgets list
+                if (eventWidgets != null && eventWidgets.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.3, // Adjust the height accordingly
+                      child: ListView.builder(
+                        itemCount: eventWidgets.length,
+                        itemBuilder: (context, index) {
+                          return eventWidgets[
+                              index]; // Your event widget item here
+                        },
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Column(
             children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: MediaQuery.of(context).size.width * 0.002,
-                      color: Colors.grey.withOpacity(0.2),
-                    ),
-                  ),
-                ),
-                child: Text(
-                  'Organizations',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.withOpacity(0.8)),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              // Conditionally display club widgets or 'No organizations found' text
-              if (clubWidgets != null && clubWidgets.isNotEmpty)
-                SizedBox(height: 100, child: ListView(children: clubWidgets))
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'No organizations found',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ),
-              SizedBox(height: 16.0),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: MediaQuery.of(context).size.width * 0.002,
-                      color: Colors.grey.withOpacity(0.2),
-                    ),
-                  ),
-                ),
-                child: Text(
-                  'Events',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.withOpacity(0.8)),
-                ),
-              ),
-              SizedBox(height: 15.0),
-              // Display event cards or 'No results found' text based on eventWidgets list
-              if (eventWidgets != null && eventWidgets.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height *
-                        0.3, // Adjust the height accordingly
-                    child: ListView.builder(
-                      itemCount: eventWidgets.length,
-                      itemBuilder: (context, index) {
-                        return eventWidgets[
-                            index]; // Your event widget item here
-                      },
-                    ),
-                  ),
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'No results found',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ),
+              Text("Sample Following Page")
             ],
           ),
-        ),
-        Column(
-          children: [
-            Text("Sample Following Page")
-          ],
-        ),
-        Column(
-          children: [
-            Text("Sample Following Page")
-          ],
-        ), // second tab here
-      ],
+          Column(
+            children: [
+              Text("Sample Following Page")
+            ],
+          ), // second tab here
+        ],
+      ),
     );
   }
 }
