@@ -75,6 +75,7 @@ class _SearchScreenState extends State<SearchScreen>
       );
       user = tempUser;
     }
+    await user!.getFollowingData();
   }
 
   Future<void> fetchData() async {
@@ -351,7 +352,7 @@ class _SearchScreenState extends State<SearchScreen>
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.3, // Adjust the height accordingly
+                          0.6, // Adjust the height accordingly
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
                         itemBuilder: (context, index) {
@@ -372,10 +373,12 @@ class _SearchScreenState extends State<SearchScreen>
               ],
             ),
           ),
-          Column(
-            children: [
-              Text("Sample Following Page")
-            ],
+          ListView.builder(
+              itemCount: user!.followingClubData.length,
+              itemBuilder: (context, index){
+                //I currently put isOwner true as temporary, change it afterwards
+                return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
+              }
           ),
           Column(
             children: [

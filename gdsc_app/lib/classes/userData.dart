@@ -154,6 +154,7 @@ class UserData {
   Future<void> getClubAndEventData() async{
     await getClubData();
     await getEventData();
+    await getFollowingData();
   }
 
   Future<void> followPublicClub(String clubId) async {
