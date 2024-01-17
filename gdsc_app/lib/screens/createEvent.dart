@@ -99,7 +99,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             type: responseData[i]["type"] ?? "",
             verified: responseData[i]["verified"] ?? false,
             id: responseData[i]["id"] ?? "",
-            rating: responseData[i]["rating"] ?? 0.toDouble(),
+            rating: responseData[i]["rating"] ?? 0.0,
           );
           clubs.add(newClub);
         } catch (identifier) {
@@ -113,10 +113,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   Future<void> postRequest() async {
-    print("post requ");
     String timeStamp = format.format(DateTime.now());
     List<String> adminsAsList = selectedAdmins.map((club) => club.id).toList();
-    adminsAsList.add(widget.club.id);
+    if (!adminsAsList.contains(widget.club.id)) {
+      adminsAsList.add(widget.club.id);
+    }
     await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
       headers: await getHeaders(),
@@ -180,7 +181,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(20.0),
                     child: Image.asset(
                       'assets/ex1.jpeg',
                       height: 150,
@@ -196,77 +197,70 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 58,
-                            width: 170,
-                            child: TextFormField(
-                              style: TextStyle(
-                                fontFamily: 'Garret',
-                                color: Colors.black,
-                                fontSize: 15,
+                          TextFormField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            controller: eventName,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a title.';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
                               ),
-                              controller: eventName,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a title.';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                hintText: "Event Title",
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.fromLTRB(
-                                  20.0,
-                                  10.0,
-                                  20.0,
-                                  10.0,
-                                ),
+                              hintText: "Event Title",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
                               ),
                             ),
                           ),
-                          Divider(),
-                          SizedBox(
-                            height: 110,
-                            width: 170,
-                            child: TextFormField(
-                              style: TextStyle(
-                                fontFamily: 'Garret',
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                              controller: eventDesc,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter text.';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                hintText: "Event Description",
-                                hintStyle: TextStyle(color: Colors.black),
-                                contentPadding: EdgeInsets.fromLTRB(
-                                  20.0,
-                                  10.0,
-                                  20.0,
-                                  10.0,
-                                ),
-                              ),
-                              maxLines: 3,
+                          Divider(height: 25,),
+                          TextFormField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
                             ),
+                            controller: eventDesc,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter text.';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              hintText: "Event Description",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
+                              ),
+                            ),
+                            maxLines: 3,
                           ),
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
+            Divider(height: 25,),
             Container(
               width: 295.0,
               child: TypeAheadField<ClubCardData>(
@@ -274,6 +268,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   return TextFormField(
                     controller: controller,
                     focusNode: focusNode,
+                    validator: (value) {
+                      if (selectedAdmins.isEmpty) {
+                        return 'Please select at least one admin.';
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
                       icon: Icon(Icons.search),
                       border: OutlineInputBorder(
@@ -299,7 +299,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   _controller1.clear(); // Clear the field
                 },
                 suggestionsCallback: (String search) {
-                  if (search == "" && !selectedAdmins.isEmpty) {
+                  if (search == "" && selectedAdmins.isNotEmpty) {
                     return selectedAdmins.toList();
                   } else {
                     return clubs
@@ -311,81 +311,89 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-            Divider(),
+            Divider(height: 25.0,),
             Container(
               width: 295.0,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: DateTimeField(
-                  validator: (value) {
-                    if (dateTimeString.compareTo('Choose Date and Time') == 0) {
-                      return 'Please enter a date-time.';
-                    } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
-                      return "Please enter a future date-time.";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.calendar_month_outlined),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    hintText: dateTimeString,
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                  ),
-                  format: format,
-                  onShowPicker: (context, currentValue) async {
-                    final dateTime = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2000),
-                      initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime(2101),
-                    );
-                    if (dateTime != null) {
-                      final timeOfDay = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                          currentValue ?? DateTime.now(),
-                        ),
-                      );
-                      if (timeOfDay != null) {
-                        setState(() {
-                          selectedDateTime = DateTime(
-                            dateTime.year,
-                            dateTime.month,
-                            dateTime.day,
-                            timeOfDay.hour,
-                            timeOfDay.minute,
-                          );
-                          dateTimeString = selectedDateTime.toString();
-                        });
-                        return selectedDateTime;
-                      }
-                    }
-                  },
+              child: DateTimeField(
+                validator: (value) {
+                  if (dateTimeString.compareTo('Choose Date and Time') == 0) {
+                    return 'Please enter a date-time.';
+                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
+                    return "Please enter a future date-time.";
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.calendar_month_outlined),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: dateTimeString,
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 ),
+                format: format,
+                onShowPicker: (context, currentValue) async {
+                  final dateTime = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(2000),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime(2101),
+                  );
+                  if (dateTime != null) {
+                    final timeOfDay = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.fromDateTime(
+                        currentValue ?? DateTime.now(),
+                      ),
+                    );
+                    if (timeOfDay != null) {
+                      setState(() {
+                        selectedDateTime = DateTime(
+                          dateTime.year,
+                          dateTime.month,
+                          dateTime.day,
+                          timeOfDay.hour,
+                          timeOfDay.minute,
+                        );
+                        dateTimeString = selectedDateTime.toString();
+                      });
+                      return selectedDateTime;
+                    }
+                  }
+                },
               ),
             ),
-            Divider(),
+            Divider(height: 25,),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 32.1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(_orangeColor),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      onGetLocation();
+                  FormField(
+                    validator: (value) {
+                      if (latitude == 0 || longitude == 0) {
+                        return 'Please choose a location.';
+                      }
+                      return null;
                     },
-                    child: const Text('Choose Location'),
+                    builder: (FormFieldState state) {
+                      return ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStateProperty.all<Color>(_orangeColor),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              side: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          onGetLocation();
+                        },
+                        child: const Text('Choose Location'),
+                      );
+                    }
                   ),
                   AnimatedButton(
                     transitionType: TransitionType.LEFT_TO_RIGHT,
@@ -408,13 +416,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     backgroundColor: Colors.grey,
                     width: 120,
                     height: 40,
-                    borderRadius: 18.0,
+                    borderRadius: 20.0,
                     isReverse: true,
                   ),
                 ],
               ),
             ),
-            Divider(),
+            Divider(height: 25,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -437,7 +445,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     backgroundColor: _orangeColor,
                     height: 45,
                     width: 200,
-                    borderRadius: 18.0,
+                    borderRadius: 20.0,
                     isReverse: true,
                   ),
                   AnimatedButton(
@@ -469,7 +477,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     selectedTextColor: Colors.white,
                     selectedBackgroundColor: Colors.lightBlue,
                     backgroundColor: Colors.green,
-                    borderRadius: 18.0,
+                    borderRadius: 20.0,
                     height: 45,
                     width: 100,
                   ),

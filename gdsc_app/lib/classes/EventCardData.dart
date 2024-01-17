@@ -50,8 +50,6 @@ class EventCardData {
 
           if (clubIteration.statusCode == 200) {
             var clubDataResponse = jsonDecode(clubIteration.body)['message'];
-            print("HIII");
-            print(clubDataResponse);
             clubInfo.add(
               ClubCardData(
                   rating: clubDataResponse['avgRating'].toDouble(),
