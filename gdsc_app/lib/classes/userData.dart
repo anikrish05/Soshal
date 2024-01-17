@@ -22,11 +22,46 @@ class UserData {
   List<ClubCardData> clubData = [];
   int classOf;
   List<EventCardData> eventData = [];
-
+  List<ClubCardData> followingClubData = [];
   UserData({required this.uid, required this.displayName, required this.email, required this.following,
     required this.role, required this.myEvents, required this.clubIds, required this.downloadURL, required this.classOf,
     required this.likedEvents, required this.dislikedEvents
   });
+  Future<void> getFollowingData() async {
+    followingClubData = [];
+    following.forEach((key, value) async {
+      if (value[0] == 'Accepted') {
+        try {
+          final clubIteration = await get(
+            Uri.parse('$serverUrl/api/clubs/getClub/$key'),
+            headers: await getHeaders(),
+          );
+          if (clubIteration.statusCode == 200) {
+            var clubDataResponse = jsonDecode(clubIteration.body)['message'];
+            ClubCardData clubCardData = ClubCardData(
+              rating: clubDataResponse['avgRating'].toDouble(),
+              admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
+              category: clubDataResponse['category'],
+              description: clubDataResponse['description'],
+              downloadURL: clubDataResponse['downloadURL'],
+              events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
+              followers: clubDataResponse['followers'],
+              name: clubDataResponse['name'],
+              type: clubDataResponse['type'],
+              verified: clubDataResponse['verified'],
+              id: key,
+            );
+            followingClubData.add(clubCardData);
+            print("Club data added for ID $key");
+          } else {
+            print("Error fetching club data for ID $key - StatusCode: ${clubIteration.statusCode}");
+          }
+        } catch (error) {
+          print("Error fetching club data for ID $key: $error");
+        }
+      }
+    });
+  }
 
   Future<void> getClubData() async {
     clubData = [];
@@ -64,7 +99,7 @@ class UserData {
             print("Error fetching club data for ID ${this.clubIds[i]} - StatusCode: ${clubIteration.statusCode}");
           }
         } catch (error) {
-          print("Error fetching club datqa for ID ${this.clubIds[i]}: $error");
+          print("Error fetching club data for ID ${this.clubIds[i]}: $error");
         }
       }
     } else {
