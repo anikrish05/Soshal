@@ -40,7 +40,7 @@ const createEvent = async (req, res) => {
             rsvpList: [],
             tags: tags,
             likedBy: [],
-            disLikedBy; []
+            disLikedBy: [],
         };
         addDoc(collection(db, "events"), data)
             .then((docRef) => {

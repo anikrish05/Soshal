@@ -25,10 +25,11 @@ const createFriendGroup = async (req, res) => {
       name: name,
     }
     const friendCollection = collection(db, 'friends');
-    addDoc(friendCollection, data).then((docRef) => {
-      for (var i = 0; i < friendCircle.length; i++) {
-        devices.push(await addUserToGroup(friendCircle[i], docRef.id))
-      }
+    addDoc(friendCollection, data).then(async (docRef) => {
+      friendCircle.forEach(async (friend) => {
+        var currDevice = await addUserToGroup(friendCircle[i], docRef.id)
+        devices.push(currDevice)
+      });
       const notificationPayload = {
         registration_ids: devices,
         notification: {
