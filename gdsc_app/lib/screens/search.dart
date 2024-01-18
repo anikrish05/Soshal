@@ -153,7 +153,6 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
-
               admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
               rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
                   .map((rsvp) => rsvp.toString())),
@@ -168,8 +167,7 @@ class _SearchScreenState extends State<SearchScreen>
               time: data['events'][i]['timestamp'],
               likedBy: List<String>.from((data['events'][i]['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
               disLikedBy: List<String>.from((data['events'][i]['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
-            tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
-
+              tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
           ),
         );
       }
@@ -382,39 +380,45 @@ class _SearchScreenState extends State<SearchScreen>
                       ),
                     ),
                   ),
-                  child: Text(
-                    'Organizations Followed',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.withOpacity(0.8)),
+                  child: Center(
+                    child: Text(
+                      'Organizations Followed',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.withOpacity(0.8)),
+                    ),
                   ),
                 ),
                 SizedBox(height: 15.0),
                 if (filteredFollowers.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height *
-                          0.6, // Adjust the height accordingly
-                      child: ListView.builder(
-                        itemCount: followerWidgets.length,
-                        itemBuilder: (context, index) {
-                          return followerWidgets[
-                              index]; // Your event widget item here
-                        },
+                    child: Center(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height *
+                            0.6, // Adjust the height accordingly
+                        child: ListView.builder(
+                          itemCount: followerWidgets.length,
+                          itemBuilder: (context, index) {
+                            return followerWidgets[
+                                index]; // Your event widget item here
+                          },
+                        ),
                       ),
                     ),
                   )
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ListView.builder(
-                        itemCount: user!.followingClubData.length,
-                        itemBuilder: (context, index){
-                          //I currently put isOwner true as temporary, change it afterwards
-                          return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
-                        }
+                    child: Center(
+                      child: ListView.builder(
+                          itemCount: user!.followingClubData.length,
+                          itemBuilder: (context, index){
+                            //I currently put isOwner true as temporary, change it afterwards
+                            return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
+                          }
+                      ),
                     ),
                   ),
               ],

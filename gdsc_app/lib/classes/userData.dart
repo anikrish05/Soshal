@@ -52,6 +52,7 @@ class UserData {
               type: clubDataResponse['type'],
               verified: clubDataResponse['verified'],
               id: key,
+              tags: clubDataResponse['tags'],
             );
             followingClubData.add(clubCardData);
             print("Club data added for ID $key");
