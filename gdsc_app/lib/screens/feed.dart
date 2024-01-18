@@ -228,7 +228,6 @@ class _MyAppState extends State<MyApp> {
       latitude: eventDataCopy['latitude'],
       time: eventDataCopy['timestamp'],
       comments: eventDataCopy['comments'],
-      rating: eventDataCopy['rating'].toDouble(),
       image: eventDataCopy['downloadURL'] ==
           ""
           ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'
