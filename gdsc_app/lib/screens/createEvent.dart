@@ -127,7 +127,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         "admin": adminsAsList,
         "name": eventName.text,
         "description": eventDesc.text,
-        "downloadURL": "",
         "latitude": latitude,
         "longitude": longitude,
         "timestamp": timeStamp,

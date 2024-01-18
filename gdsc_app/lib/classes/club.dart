@@ -25,7 +25,6 @@ class Club{
         body: jsonEncode(<String, dynamic>{
         "name": clubName,
         "description": clubBio,
-        "downloadURL": "",
         "type": type,
         "category": category,
         "admin": admin,

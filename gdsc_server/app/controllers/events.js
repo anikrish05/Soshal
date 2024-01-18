@@ -26,13 +26,12 @@ async function getAssociatedClubForEvent(admin) {
 
 const createEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
-        const { admin, name, description, downloadURL, latitude, longitude, timestamp, repeat, tags } = req.body;
+        const { admin, name, description, latitude, longitude, timestamp, repeat, tags } = req.body;
         const data = {
             name: name,
             admin: admin,
             comments: [],
             description: description,
-            downloadURL: downloadURL,
             latitude: latitude,
             longitude: longitude,
             timestamp: timestamp,
@@ -45,7 +44,7 @@ const createEvent = async (req, res) => {
         addDoc(collection(db, "events"), data)
             .then((docRef) => {
                 associatedClubEventAdd(admin, docRef.id);
-                res.status(200).send(JSON.stringify({ message: "Event Added" }));
+                res.status(200).send(JSON.stringify({ message: docRef.id }));
             })
             .catch(error => {
                 res.status(500).send(JSON.stringify({ message: "Failed" }));
@@ -99,6 +98,43 @@ const getEvent = async (req, res) => {
     }
 };
 
+const updateEventImage = async (req, res) => {
+  try {
+    if (await checkAuthorization(req, res)) {
+      const { id, image } = req.body;
+
+      // Check if 'image' is defined
+      if (!image || !id) {
+        return res.status(400).send("Image data or ID not provided");
+      }
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `events/${id}/${Date.now()}.png`);
+
+      // Convert the base64 string to a buffer
+      const buffer = Buffer.from(image, 'base64');
+
+      // Use uploadBytes directly
+      await uploadBytes(storageRef, buffer);
+
+      try {
+        // Wait for the download URL
+        const URL = await getDownloadURL(storageRef);
+        // Assuming you have a collection named 'users' in your Firestore
+        await setDoc(doc(db, "events", id), { downloadURL: URL }, { merge: true });
+        res.status(200).send("Image uploaded successfully");
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Error getting download URL");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 const deleteEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
         const { eventID } = req.body;
@@ -113,5 +149,6 @@ module.exports = {
     createEvent,
     getFeedPosts,
     getEvent,
-    deleteEvent
+    deleteEvent,
+    updateEventImage
 };

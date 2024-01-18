@@ -21,13 +21,12 @@ async function addUserToClub(userId, clubId) {
 const createClub = async (req, res) => {
   //hi
   if (await checkAuthorization(req, res)) {
-    const { name, description, downloadURL, type, category, admin, tags } = req.body;
+    const { name, description, type, category, admin, tags } = req.body;
 
     const data = {
       verified: false,
       name: name,
       description: description,
-      downloadURL: downloadURL,
       type: type,
       category: category,
       followers: {},
@@ -41,7 +40,7 @@ const createClub = async (req, res) => {
       for (var i = 0; i < admin.length; i++) {
         addUserToClub(admin[i], docRef.id)
       }
-      res.status(200).send(JSON.stringify({ message: "Club Added" }))
+      res.status(200).send(JSON.stringify({ message: docRef.id }))
     }).catch(error => {
       res.status(500).send(JSON.stringify({ message: "Failed" }))
     });
