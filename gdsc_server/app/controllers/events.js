@@ -1,7 +1,7 @@
 const { db, auth } = require('../../db/config');
 const { checkAuthorization } = require('./authorizationUtil');
 
-const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc } = require('firebase/firestore');
+const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc } = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, verifyIdToken } = require("firebase/auth");
 
 async function associatedClubEventAdd(clubList, eventId) {
@@ -26,7 +26,7 @@ async function getAssociatedClubForEvent(admin) {
 
 const createEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
-        const { admin, name, description, downloadURL, latitude, longitude, timestamp, repeat } = req.body;
+        const { admin, name, description, downloadURL, latitude, longitude, timestamp, repeat, tags } = req.body;
         const data = {
             name: name,
             admin: admin,
@@ -35,10 +35,12 @@ const createEvent = async (req, res) => {
             downloadURL: downloadURL,
             latitude: latitude,
             longitude: longitude,
-            rating: 0,
             timestamp: timestamp,
             repeat: repeat,
-            rsvpList: []
+            rsvpList: [],
+            tags: tags,
+            likedBy: [],
+            disLikedBy: [],
         };
         addDoc(collection(db, "events"), data)
             .then((docRef) => {
@@ -97,8 +99,19 @@ const getEvent = async (req, res) => {
     }
 };
 
+const deleteEvent = async (req, res) => {
+    if (await checkAuthorization(req, res)) {
+        const { eventID } = req.body;
+
+        await deleteDoc(doc(db, "events". eventID));
+
+
+    }
+}
+
 module.exports = {
     createEvent,
     getFeedPosts,
-    getEvent
+    getEvent,
+    deleteEvent
 };

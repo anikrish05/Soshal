@@ -17,7 +17,8 @@ class Club{
   late List<dynamic>? events;
   late List<dynamic>? admin;
   late double? avgRating;
-  Future<bool> addClub(clubName, clubBio, location, category, type, admin ) async {
+  late List<dynamic>? tags;
+  Future<bool> addClub(clubName, clubBio, location, category, type, admin, tags ) async {
     print("in SignIn");
     final response = await post(Uri.parse('$serverUrl/api/clubs/createClub'),
         headers: await getHeaders(),
@@ -28,6 +29,7 @@ class Club{
         "type": type,
         "category": category,
         "admin": admin,
+          "tags": tags
       }),
     );
     if(response.statusCode == 200){
@@ -56,6 +58,7 @@ class Club{
     this.events = data['events'];
     this.admin = data['admin'];
     this.avgRating = data['avgRating'];
+    this.tags = data['tags'];
     if(response.statusCode == 200){
       return true;
     }

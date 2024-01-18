@@ -66,6 +66,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         downloadURL: data['downloadURL'],
         likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
         dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
+        friendGroups: List<String>.from((data['friendGroups'] ?? []).map((friend) => friend.toString())),
+        interestedTags: List<String>.from((data['interestedTags'] ?? []).map((tag) => tag.toString())),
+
+
       );
       user = tempUser;
     }

@@ -18,6 +18,7 @@ class ClubCardData {
   bool verified;
   final String id;
   double rating;
+  List<String> tags;
   List<EventCardData> eventData = [];
   List<List<dynamic>> followerData = [];
   List<List<dynamic>> followerDeclinedData = [];
@@ -33,7 +34,8 @@ class ClubCardData {
     required this.type,
     required this.verified,
     required this.id,
-    required this.rating
+    required this.rating,
+    required this.tags
   });
   Future<void> getALlEventsForClub() async {
     eventData = [];
@@ -62,6 +64,8 @@ class ClubCardData {
                 id: this.events[i],
                 likedBy: List<String>.from((eventDataResponse['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
                 disLikedBy: List<String>.from((eventDataResponse['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
+                tags: List<String>.from((eventDataResponse['tags'] ?? []).map((tag) => tag.toString())),
+
               ),
             );
 
@@ -105,6 +109,10 @@ class ClubCardData {
                 classOf: userData['classOf'],
                 likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
                 dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
+                friendGroups: List<String>.from((userData['friendGroups'] ?? []).map((friend) => friend.toString())),
+                interestedTags: List<String>.from((userData['tags'] ?? []).map((tag) => tag.toString())),
+
+
               ),
               dataArr[1],
             ]);
@@ -124,6 +132,10 @@ class ClubCardData {
                 classOf: userData['classOf'],
                 likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
                 dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
+                friendGroups: List<String>.from((userData['friendGroups'] ?? []).map((friend) => friend.toString())),
+                interestedTags: List<String>.from((userData['interestedTags'] ?? []).map((tag) => tag.toString())),
+
+
               ),
               dataArr[1],
             ]);
@@ -143,6 +155,9 @@ class ClubCardData {
                 classOf: userData['classOf'],
                 likedEvents: List<String>.from((userData['likedEvents'] ?? []).map((event) => event.toString())),
                 dislikedEvents: List<String>.from((userData['dislikedEvents'] ?? []).map((event) => event.toString())),
+                friendGroups: List<String>.from((userData['friendGroups'] ?? []).map((friend) => friend.toString())),
+                interestedTags: List<String>.from((userData['interestedTags'] ?? []).map((tag) => tag.toString())),
+
               ),
               dataArr[1],
             ]);

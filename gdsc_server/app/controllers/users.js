@@ -27,7 +27,11 @@ const signup = async (req, res) => {
       myEvents: [],
       clubsOwned: [],
       classOf: classOf,
-      notifToken: token
+      notifToken: token,
+      dislikedEvents: [],
+      likedEvents: [],
+      friendGroups: [],
+      interestedTags: []
     };
 
     await setDoc(doc(db, "users", data.uid), data);

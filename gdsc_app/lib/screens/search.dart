@@ -69,10 +69,10 @@ class _SearchScreenState extends State<SearchScreen>
         clubIds: List<String>.from(
             (data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
         downloadURL: data['downloadURL'],
-        likedEvents: List<String>.from(
-            (data['likedEvents'] ?? []).map((event) => event.toString())),
-        dislikedEvents: List<String>.from(
-            (data['dislikedEvents'] ?? []).map((event) => event.toString())),
+        likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
+        dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
+        friendGroups: List<String>.from((data['friendGroups'] ?? []).map((friend) => friend.toString())),
+        interestedTags: List<String>.from((data['interestedTags'] ?? []).map((tag) => tag.toString())),
       );
       user = tempUser;
     }
@@ -141,6 +141,8 @@ class _SearchScreenState extends State<SearchScreen>
               downloadURL: data['clubs'][i]['downloadURL'],
               events: List<String>.from((data['clubs'][i]['events'] ?? [])
                   .map((event) => event.toString())),
+              tags: List<String>.from((data['clubs'][i]['tags'] ?? [])
+                  .map((tag) => tag.toString())),
               followers: data['clubs'][i]['followers'],
               name: data['clubs'][i]['name'],
               type: data['clubs'][i]['type'],
@@ -151,24 +153,23 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
-            admin: List<String>.from((data['events'][i]['admin'] ?? [])
-                .map((admin) => admin.toString())),
-            rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
-                .map((rsvp) => rsvp.toString())),
-            name: data['events'][i]['name'],
-            description: data['events'][i]['description'],
-            downloadURL: data['events'][i]['downloadURL'],
-            latitude: data['events'][i]['latitude'],
-            longitude: data['events'][i]['longitude'],
-            comments: List<String>.from((data['events'][i]['comments'] ?? [])
-                .map((comment) => comment.toString())),
-            id: data['events'][i]['id'],
-            time: data['events'][i]['timestamp'],
-            likedBy: List<String>.from((data['events'][i]['likedBy'] ?? [])
-                .map((likedBy) => likedBy.toString())),
-            disLikedBy: List<String>.from(
-                (data['events'][i]['disLikedBy'] ?? [])
-                    .map((disLikedBy) => disLikedBy.toString())),
+
+              admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
+              rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
+                  .map((rsvp) => rsvp.toString())),
+              name: data['events'][i]['name'],
+              description: data['events'][i]['description'],
+              downloadURL: data['events'][i]['downloadURL'],
+              latitude: data['events'][i]['latitude'],
+              longitude: data['events'][i]['longitude'],
+              comments: List<String>.from((data['events'][i]['comments'] ?? [])
+                  .map((comment) => comment.toString())),
+              id: data['events'][i]['id'],
+              time: data['events'][i]['timestamp'],
+              likedBy: List<String>.from((data['events'][i]['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
+              disLikedBy: List<String>.from((data['events'][i]['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
+            tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
+
           ),
         );
       }

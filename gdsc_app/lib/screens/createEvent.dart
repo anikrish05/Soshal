@@ -94,6 +94,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             downloadURL: responseData[i]["downloadURL"] ?? "",
             events: List<String>.from((responseData[i]['events'] ?? [])
                 .map((event) => event.toString())),
+            tags: List<String>.from((responseData[i]['tags'] ?? [])
+                .map((tag) => tag.toString())),
             followers: responseData[i]["followers"] ?? {},
             name: responseData[i]["name"] ?? "",
             type: responseData[i]["type"] ?? "",
@@ -130,6 +132,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         "longitude": longitude,
         "timestamp": timeStamp,
         "repeat": repeatable,
+        "tags": [],
       }),
     );
     Navigator.pop(context);
