@@ -153,7 +153,6 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
-
               admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
               rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
                   .map((rsvp) => rsvp.toString())),
@@ -168,8 +167,7 @@ class _SearchScreenState extends State<SearchScreen>
               time: data['events'][i]['timestamp'],
               likedBy: List<String>.from((data['events'][i]['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
               disLikedBy: List<String>.from((data['events'][i]['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
-            tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
-
+              tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
           ),
         );
       }
