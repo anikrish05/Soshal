@@ -30,16 +30,18 @@ class _SearchScreenState extends State<SearchScreen>
   Color _colorTab = Color(0xFFFF8050);
   late TabController tabController;
 
-  List<ClubCardData> filteredItemsClubs = [];
-  List<EventCardData> filteredItemsEvents = [];
+  Set<ClubCardData> filteredItemsClubs = {};
+  Set<EventCardData> filteredItemsEvents = {};
+  Set<ClubCardData> filteredFollowers = {};
   UserData? user;
 
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-    final response = await http.get(Uri.parse('$serverUrl/api/users/signedIn'),
-        headers: await getHeaders(),
+    final response = await http.get(
+      Uri.parse('$serverUrl/api/users/signedIn'),
+      headers: await getHeaders(),
     );
     if ((jsonDecode(response.body))['message'] == false) {
       Navigator.push(
@@ -49,7 +51,8 @@ class _SearchScreenState extends State<SearchScreen>
         ),
       );
     } else {
-      final response = await http.get(Uri.parse('$serverUrl/api/users/userData'),
+      final response = await http.get(
+        Uri.parse('$serverUrl/api/users/userData'),
         headers: await getHeaders(),
       );
       var data = jsonDecode(response.body)['message'];
@@ -61,20 +64,21 @@ class _SearchScreenState extends State<SearchScreen>
         email: data['email'],
         following: data['following'],
         role: data['role'],
-        myEvents: List<String>.from((data['myEvents'] ?? []).map((event) => event.toString())),
-        clubIds: List<String>.from((data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
+        myEvents: List<String>.from(
+            (data['myEvents'] ?? []).map((event) => event.toString())),
+        clubIds: List<String>.from(
+            (data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
         downloadURL: data['downloadURL'],
         likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
         dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
         friendGroups: List<String>.from((data['friendGroups'] ?? []).map((friend) => friend.toString())),
         interestedTags: List<String>.from((data['interestedTags'] ?? []).map((tag) => tag.toString())),
-
-
-
       );
       user = tempUser;
     }
+    await user!.getFollowingData();
   }
+
   Future<void> fetchData() async {
     // Fetch user data first
     await getUser();
@@ -84,58 +88,46 @@ class _SearchScreenState extends State<SearchScreen>
       await fetchClubs();
     }
   }
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
+
   void performSearch(String query) {
     setState(() {
       filteredItemsClubs = clubs
-          .where((club) =>
-          club.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+          .where(
+              (club) => club.name.toLowerCase().contains(query.toLowerCase()))
+          .toSet();
 
       filteredItemsEvents = events
-          .where((event) =>
-          event.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+          .where(
+              (event) => event.name.toLowerCase().contains(query.toLowerCase()))
+          .toSet();
 
-      // Keep only the first occurrence of each club based on id
-      final Set<String> clubIds = Set();
-      filteredItemsClubs.removeWhere((club) {
-        if (!clubIds.contains(club.id)) {
-          clubIds.add(club.id);
-          return false;
-        } else {
-          return true;
-        }
-      });
-
-      // Keep only the first occurrence of each event based on id
-      final Set<String> eventIds = Set();
-      filteredItemsEvents.removeWhere((event) {
-        if (!eventIds.contains(event.id)) {
-          eventIds.add(event.id);
-          return false;
-        } else {
-          return true;
-        }
-      });
+      filteredFollowers = user!.followingClubData
+          .where(
+              (event) => event.name.toLowerCase().contains(query.toLowerCase()))
+          .toSet();
     });
   }
 
   Future<bool> fetchClubs() async {
     print("IN FETCH CLUBS");
-    final response = await http.get(Uri.parse(
-        '$serverUrl/api/clubs/getDataForSearchPage'),
-      headers: await getHeaders()
-    );
+    final response = await http.get(
+        Uri.parse('$serverUrl/api/clubs/getDataForSearchPage'),
+        headers: await getHeaders());
     print(response.statusCode);
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data =
-      json.decode(response.body)["message"];
+      final Map<String, dynamic> data = json.decode(response.body)["message"];
       print(data['clubs']);
       print(data['events']);
       for (int i = 0; i < data['clubs'].length; i++) {
@@ -161,6 +153,7 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
+
               admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
               rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
                   .map((rsvp) => rsvp.toString())),
@@ -220,138 +213,220 @@ class _SearchScreenState extends State<SearchScreen>
   }
 
   Widget buildText() => SizedBox(
-    width: 350,
-    child: TextField(
-      onSubmitted: (value) {
-        performSearch(searchController.text);
-      },
-      textInputAction: TextInputAction.search,
-      controller: searchController,
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(50.0),
+        width: 350,
+        child: TextField(
+          onSubmitted: (value) {
+            performSearch(searchController.text);
+          },
+          textInputAction: TextInputAction.search,
+          controller: searchController,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            hintText: "Search",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            filled: true,
+            fillColor: _color2,
+          ),
         ),
-        hintText: "Search",
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        filled: true,
-        fillColor: _color2,
-      ),
-    ),
-  );
+      );
 
   Widget buildTabBar() => TabBar(
-    unselectedLabelColor: _colorTab,
-    indicatorSize: TabBarIndicatorSize.tab,
-    indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(50), color: _colorTab),
-    controller: tabController,
-    tabs: [
-      Tab(
-        text: 'Discover',
-      ),
-      Tab(
-        text: 'Following',
-      ),
-      Tab(
-        text: 'Near Me',
-      ),
-    ],
-  );
+        unselectedLabelColor: _colorTab,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(50), color: _colorTab),
+        controller: tabController,
+        tabs: [
+          Tab(
+            text: 'Discover',
+          ),
+          Tab(
+            text: 'Following',
+          ),
+          Tab(
+            text: 'Tags',
+          ),
+        ],
+      );
 
   Widget buildSearchResultList() {
-    List<Widget> clubWidgets = filteredItemsClubs.map((club) =>
-        ClubCardWidget(
-          club: club,
-          isOwner: user!.clubIds.contains(club.id),
-          currUser: user!,
-        )).toList();
+    List<Widget> clubWidgets = filteredItemsClubs
+        .map((club) => ClubCardWidget(
+              club: club,
+              isOwner: user!.clubIds.contains(club.id),
+              currUser: user!,
+            ))
+        .toList();
 
-    List<Widget> eventWidgets = filteredItemsEvents.map((event) =>
-        EventCardWidget(event: event, isOwner: false)).toList();
+    List<Widget> eventWidgets = filteredItemsEvents
+        .map((event) => EventCardWidget(event: event, isOwner: false))
+        .toList();
+
+    List<Widget> followerWidgets = filteredFollowers
+        .map((club) => ClubCardWidget(
+              club: club,
+              isOwner: user!.clubIds.contains(club.id),
+              currUser: user!,
+            ))
+        .toList();
 
     ScrollController _scrollController = ScrollController();
 
-    return Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: MediaQuery.of(context).size.width * 0.002,
-                    color: Colors.grey.withOpacity(0.2),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: TabBarView(
+        controller: tabController,
+        children: [
+          Container(
+            width:
+                MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Organizations',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
                   ),
                 ),
-              ),
-              child: Text(
-                'Organizations',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.withOpacity(0.8)),
-              ),
+                SizedBox(height: 16.0),
+                // Conditionally display club widgets or 'No organizations found' text
+                if (clubWidgets != null && clubWidgets.isNotEmpty)
+                  SizedBox(height: 100, child: ListView(children: clubWidgets))
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'No organizations found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                SizedBox(height: 16.0),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Events',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
+                  ),
+                ),
+                SizedBox(height: 15.0),
+                // Display event cards or 'No results found' text based on eventWidgets list
+                if (eventWidgets != null && eventWidgets.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.6, // Adjust the height accordingly
+                      child: ListView.builder(
+                        itemCount: eventWidgets.length,
+                        itemBuilder: (context, index) {
+                          return eventWidgets[
+                              index]; // Your event widget item here
+                        },
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+              ],
             ),
-            SizedBox(height: 16.0),
-            // Conditionally display club widgets or 'No organizations found' text
-            if (clubWidgets != null && clubWidgets.isNotEmpty)
-              SizedBox(height: 100, child: ListView(children: clubWidgets))
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  'No organizations found',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ),
-            SizedBox(height: 16.0),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: MediaQuery.of(context).size.width * 0.002,
-                    color: Colors.grey.withOpacity(0.2),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Organizations Followed',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
                   ),
                 ),
-              ),
-              child: Text(
-                'Events',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.withOpacity(0.8)),
-              ),
+                SizedBox(height: 15.0),
+                if (filteredFollowers.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.6, // Adjust the height accordingly
+                      child: ListView.builder(
+                        itemCount: followerWidgets.length,
+                        itemBuilder: (context, index) {
+                          return followerWidgets[
+                              index]; // Your event widget item here
+                        },
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListView.builder(
+                        itemCount: user!.followingClubData.length,
+                        itemBuilder: (context, index){
+                          //I currently put isOwner true as temporary, change it afterwards
+                          return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
+                        }
+                    ),
+                  ),
+              ],
             ),
-            SizedBox(height: 15.0),
-            // Display event cards or 'No results found' text based on eventWidgets list
-            if (eventWidgets != null && eventWidgets.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3, // Adjust the height accordingly
-                  child: ListView.builder(
-                    itemCount: eventWidgets.length,
-                    itemBuilder: (context, index) {
-                      return eventWidgets[index]; // Your event widget item here
-                    },
-                  ),
-                ),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  'No results found',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              Text("Tags to be implemented here")
+            ],
+          ),
+        ],
       ),
     );
-
   }
-
 }
