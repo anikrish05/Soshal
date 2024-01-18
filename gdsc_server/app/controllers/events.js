@@ -138,9 +138,8 @@ const updateEventImage = async (req, res) => {
 const deleteEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
         const { eventID } = req.body;
-
-        await deleteDoc(doc(db, "events". eventID));
-
+        const eventDoc = await getDoc(doc(db, "events". eventID));
+        const eventData = eventDoc.data()
 
     }
 }

@@ -91,15 +91,16 @@ const signedIn = async (req, res) => {
 
 
 
-const signout  = async (req, res) => {
+const signout = async (req, res) => {
   if (await checkAuthorization(req, res)) {
-    auth.signOut.then(() => {
+    try {
+      await signOut(auth);
       res.status(200).send(JSON.stringify({ message: "Signed Out" }));
-    }).catch((error) => {
-      res.status(500).send(JSON.stringify({ message: error }));
-    });
+    } catch (error) {
+      res.status(500).send(JSON.stringify({ message: error.message }));
+    }
   }
-}
+};
 
 
 const userData  = async (req, res) => {
