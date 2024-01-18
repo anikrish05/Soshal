@@ -30,8 +30,9 @@ class _SearchScreenState extends State<SearchScreen>
   Color _colorTab = Color(0xFFFF8050);
   late TabController tabController;
 
-  List<ClubCardData> filteredItemsClubs = [];
-  List<EventCardData> filteredItemsEvents = [];
+  Set<ClubCardData> filteredItemsClubs = {};
+  Set<EventCardData> filteredItemsEvents = {};
+  Set<ClubCardData> filteredFollowers = {};
   UserData? user;
 
   bool isSearchingClubs = false;
@@ -105,34 +106,17 @@ class _SearchScreenState extends State<SearchScreen>
       filteredItemsClubs = clubs
           .where(
               (club) => club.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+          .toSet();
 
       filteredItemsEvents = events
           .where(
               (event) => event.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+          .toSet();
 
-      // Keep only the first occurrence of each club based on id
-      final Set<String> clubIds = Set();
-      filteredItemsClubs.removeWhere((club) {
-        if (!clubIds.contains(club.id)) {
-          clubIds.add(club.id);
-          return false;
-        } else {
-          return true;
-        }
-      });
-
-      // Keep only the first occurrence of each event based on id
-      final Set<String> eventIds = Set();
-      filteredItemsEvents.removeWhere((event) {
-        if (!eventIds.contains(event.id)) {
-          eventIds.add(event.id);
-          return false;
-        } else {
-          return true;
-        }
-      });
+      filteredFollowers = user!.followingClubData
+          .where(
+              (event) => event.name.toLowerCase().contains(query.toLowerCase()))
+          .toSet();
     });
   }
 
@@ -263,7 +247,7 @@ class _SearchScreenState extends State<SearchScreen>
             text: 'Following',
           ),
           Tab(
-            text: 'Near Me',
+            text: 'Tags',
           ),
         ],
       );
@@ -279,6 +263,14 @@ class _SearchScreenState extends State<SearchScreen>
 
     List<Widget> eventWidgets = filteredItemsEvents
         .map((event) => EventCardWidget(event: event, isOwner: false))
+        .toList();
+
+    List<Widget> followerWidgets = filteredFollowers
+        .map((club) => ClubCardWidget(
+              club: club,
+              isOwner: user!.clubIds.contains(club.id),
+              currUser: user!,
+            ))
         .toList();
 
     ScrollController _scrollController = ScrollController();
@@ -373,18 +365,65 @@ class _SearchScreenState extends State<SearchScreen>
               ],
             ),
           ),
-          ListView.builder(
-              itemCount: user!.followingClubData.length,
-              itemBuilder: (context, index){
-                //I currently put isOwner true as temporary, change it afterwards
-                return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: MediaQuery.of(context).size.width * 0.002,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Organizations Followed',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.8)),
+                  ),
+                ),
+                SizedBox(height: 15.0),
+                if (filteredFollowers.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.6, // Adjust the height accordingly
+                      child: ListView.builder(
+                        itemCount: followerWidgets.length,
+                        itemBuilder: (context, index) {
+                          return followerWidgets[
+                              index]; // Your event widget item here
+                        },
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListView.builder(
+                        itemCount: user!.followingClubData.length,
+                        itemBuilder: (context, index){
+                          //I currently put isOwner true as temporary, change it afterwards
+                          return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
+                        }
+                    ),
+                  ),
+              ],
+            ),
           ),
           Column(
             children: [
-              Text("Sample Following Page")
+              Text("Tags to be implemented here")
             ],
-          ), // second tab here
+          ),
         ],
       ),
     );
