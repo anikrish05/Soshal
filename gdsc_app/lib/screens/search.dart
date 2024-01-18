@@ -381,39 +381,45 @@ class _SearchScreenState extends State<SearchScreen>
                       ),
                     ),
                   ),
-                  child: Text(
-                    'Organizations Followed',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.withOpacity(0.8)),
+                  child: Center(
+                    child: Text(
+                      'Organizations Followed',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.withOpacity(0.8)),
+                    ),
                   ),
                 ),
                 SizedBox(height: 15.0),
                 if (filteredFollowers.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height *
-                          0.6, // Adjust the height accordingly
-                      child: ListView.builder(
-                        itemCount: followerWidgets.length,
-                        itemBuilder: (context, index) {
-                          return followerWidgets[
-                              index]; // Your event widget item here
-                        },
+                    child: Center(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height *
+                            0.6, // Adjust the height accordingly
+                        child: ListView.builder(
+                          itemCount: followerWidgets.length,
+                          itemBuilder: (context, index) {
+                            return followerWidgets[
+                                index]; // Your event widget item here
+                          },
+                        ),
                       ),
                     ),
                   )
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ListView.builder(
-                        itemCount: user!.followingClubData.length,
-                        itemBuilder: (context, index){
-                          //I currently put isOwner true as temporary, change it afterwards
-                          return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
-                        }
+                    child: Center(
+                      child: ListView.builder(
+                          itemCount: user!.followingClubData.length,
+                          itemBuilder: (context, index){
+                            //I currently put isOwner true as temporary, change it afterwards
+                            return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
+                          }
+                      ),
                     ),
                   ),
               ],

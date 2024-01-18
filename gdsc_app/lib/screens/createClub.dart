@@ -30,6 +30,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   Set<UserData> users = {};
   Set<UserData> selectedAdmins = {};
+  GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
   int indexPubOrPriv = 1;
@@ -98,160 +99,206 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   Widget buildPage() {
-    return ListView(children: [
-      Container(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset('assets/ex1.jpeg',
-                height: 150, width: 150, fit: BoxFit.cover),
-          ),
-          VerticalDivider(),
-          Container(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                SizedBox(
-                  height: 40,
-                  width: 150,
-                  child: TextField(
-                    controller: clubName,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      hintText: "Club Name",
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    ),
-                  ),
-                ),
-                Divider(),
-                SizedBox(
-                  height: 110,
-                  width: 150,
-                  child: TextField(
-                    controller: clubBio,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      hintText: "Add Club Bio",
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    ),
-                    maxLines: 3,
-                  ),
-                )
-              ]))
-        ],
-      )),
-      Divider(),
-      Container(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            SizedBox(
-              height: 40,
-              width: 150,
-              child: TextField(
-                controller: category,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                  hintText: "Category",
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                ),
-              ),
+    return Form(
+      key: _oFormKey,
+      child: ListView(children: [
+        Container(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset('assets/ex1.jpeg',
+                  height: 150, width: 150, fit: BoxFit.cover),
             ),
             VerticalDivider(),
-            ToggleSwitch(
-              minWidth: 77.5,
-              cornerRadius: 20.0,
-              activeBgColors: [
-                [_orangeColor],
-                [_orangeColor]
-              ],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey,
-              inactiveFgColor: Colors.white,
-              initialLabelIndex: 0,
-              totalSwitches: 2,
-              labels: ['Public', 'Private'],
-              radiusStyle: true,
-              onToggle: (index) {
-                if (index == 1) {
-                  indexPubOrPriv = 0;
-                } else if (index == 0) {
-                  indexPubOrPriv = 1;
-                }
-              },
-            ),
-          ])),
-      Divider(),
-      TextField(
-        decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-          hintText: "Contact Info",
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        ),
-      ),
-      Divider(),
-      TypeAheadField<UserData>(
-        builder: (context, controller, focusNode) {
-          return TextField(
-            controller: controller,
-            focusNode: focusNode,
-            decoration: InputDecoration(
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-              hintText: "Search Admins",
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            ),
-          );
-        },
-        itemBuilder: (context, suggestion) {
-          return ListTile(
-            title: Text(suggestion.displayName),
-            trailing: Icon(selectedAdmins.contains(suggestion)
-                ? Icons.check_circle
-                : Icons.check_circle_outline),
-          );
-        },
-        onSelected: (suggestion) {
-          toggleSelectedAdmin(suggestion);
-          controller.selection =
-              TextSelection.collapsed(offset: 0); // Reset cursor
-          controller.clear(); // Clear the field
-        },
-        suggestionsCallback: (String search) {
-          if (search == "" && !selectedAdmins.isEmpty) {
-            return selectedAdmins.toList();
-          }
-          return users
-              .where((admin) => admin.displayName
-                  .toLowerCase()
-                  .contains(search.toLowerCase()))
-              .toList();
-        },
-      ),
-      Divider(),
-      ElevatedButton(
-          child: Text('Create Club'),
-          onPressed: () {
-            submit();
+            Container(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                  SizedBox(
+                    height: 65,
+                    width: 200,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title.';
+                        }
+                        return null;
+                      },
+                      controller: clubName,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        hintText: "Club Name",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      ),
+                    ),
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 110,
+                    width: 200,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a biography.';
+                        }
+                        return null;
+                      },
+                      controller: clubBio,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        hintText: "Add Club Bio",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      ),
+                      maxLines: 3,
+                    ),
+                  )
+                ]))
+          ],
+        )),
+        Divider(),
+        Container(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              Expanded(
+                child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a category.';
+                    }
+                    return null;
+                  },
+                  controller: category,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "Category",
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  ),
+                ),
+              ),
+              VerticalDivider(),
+              ToggleSwitch(
+                minWidth: 77.5,
+                cornerRadius: 20.0,
+                activeBgColors: [
+                  [_orangeColor],
+                  [_orangeColor]
+                ],
+                activeFgColor: Colors.white,
+                inactiveBgColor: Colors.grey,
+                inactiveFgColor: Colors.white,
+                initialLabelIndex: 0,
+                totalSwitches: 2,
+                labels: ['Public', 'Private'],
+                radiusStyle: true,
+                onToggle: (index) {
+                  if (index == 1) {
+                    indexPubOrPriv = 0;
+                  } else if (index == 0) {
+                    indexPubOrPriv = 1;
+                  }
+                },
+              ),
+            ])),
+        Divider(),
+        TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a phone number.';
+            }
+            return null;
           },
-          style: ButtonStyle(
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                side: BorderSide.none,
-              )),
-              backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))),
-    ]);
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+            hintText: "Contact Info (Phone Number)",
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          ),
+        ),
+        Divider(),
+        TypeAheadField<UserData>(
+          builder: (context, controller, focusNode) {
+            return TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please choose at least one admin.';
+                }
+                return null;
+              },
+              controller: controller,
+              focusNode: focusNode,
+              decoration: InputDecoration(
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                hintText: "Search Admins",
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              ),
+            );
+          },
+          itemBuilder: (context, suggestion) {
+            return ListTile(
+              title: Text(suggestion.displayName),
+              trailing: Icon(selectedAdmins.contains(suggestion)
+                  ? Icons.check_circle
+                  : Icons.check_circle_outline),
+            );
+          },
+          onSelected: (suggestion) {
+            toggleSelectedAdmin(suggestion);
+            controller.selection =
+                TextSelection.collapsed(offset: 0); // Reset cursor
+            controller.clear(); // Clear the field
+          },
+          suggestionsCallback: (String search) {
+            if (search == "" && !selectedAdmins.isEmpty) {
+              return selectedAdmins.toList();
+            }
+            return users
+                .where((admin) => admin.displayName
+                    .toLowerCase()
+                    .contains(search.toLowerCase()))
+                .toList();
+          },
+        ),
+        Divider(),
+        ElevatedButton(
+            child: Text('Create Club'),
+            onPressed: () {
+              if (_oFormKey.currentState!.validate()) {
+                submit();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('New club created successfully!'),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text('Please fill out all fields!'),
+                  ),
+                );
+              }
+            },
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                  side: BorderSide.none,
+                )),
+                backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))),
+      ]),
+    );
   }
 
   Future<void> getAdmin() async {
