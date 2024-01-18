@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 // Define the color as a global variable
+
 Color _orangeColor = Color(0xFFFF8050);
 
 class ProfileHeaderWidget extends StatefulWidget {

@@ -9,6 +9,7 @@ class CreateButtonsWidget extends StatelessWidget {
     this.onCreateClub = onCreateClub;
   }
   Color _buttonColor = Color(0xFF88898C);
+
   @override
   Widget build(BuildContext context) {
     return Align(
