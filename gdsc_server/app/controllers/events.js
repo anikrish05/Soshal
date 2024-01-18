@@ -138,9 +138,30 @@ const updateEventImage = async (req, res) => {
 const deleteEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
         const { eventID } = req.body;
-        const eventDoc = await getDoc(doc(db, "events". eventID));
+        const eventDoc = await getDoc(doc(db, "events", eventID));
+        const clubCollection = collection(db, "clubs")
+        const userCollection = collection(db, "users")
         const eventData = eventDoc.data()
-
+        eventData.admin.forEach(async (clubID) =>{
+            const tempClub = (await getDoc(doc(db, "clubs", clubID))).data();
+            await setDoc(doc(db, "clubs", clubID), { events: tempClub.events.filter(item => item !== clubID) }, { merge: true });
+        });
+        eventData.disLikedBy.forEach(async (userID) =>{
+            const tempUser = (await getDoc(doc(db, "users", userID))).data();
+            await setDoc(doc(db, "users", userID), { dislikedEvents: tempUser.dislikedEvents.filter(item => item !== eventID) }, { merge: true });
+        });
+        eventData.likedBy.forEach(async (userID) =>{
+            const tempUser = (await getDoc(doc(db, "users", userID))).data();
+            await setDoc(doc(db, "users", userID), { likedEvents: tempUser.likedEvents.filter(item => item !== eventID) }, { merge: true });
+        });
+        eventData.rsvpList.forEach(async (userID) =>{
+            const tempUser = (await getDoc(doc(db, "users", userID))).data();
+            await setDoc(doc(db, "users", userID), { myEvents: tempUser.myEvents.filter(item => item !== eventID) }, { merge: true });
+        });
+        eventData.comments.forEach(async (commentID) =>{
+            await deleteDoc(doc(db, "comments", commentID))
+        });
+        res.status(200).send({"message": "success"})
     }
 }
 
