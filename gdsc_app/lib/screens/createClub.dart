@@ -9,6 +9,7 @@ import '../utils.dart';
 import '../widgets/loader.dart';
 import '../classes/userData.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CreateClubScreen extends StatefulWidget {
   late String currUserId;
@@ -270,6 +271,19 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           },
         ),
         Divider(),
+        MultiSelectDialogField(
+          items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
+          onConfirm: (List<UserData> values) {
+            selectedAdmins = values.toSet();
+          },
+          searchable: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please choose at least one admin.';
+            }
+            return null;
+          },
+        ),
         ElevatedButton(
             child: Text('Create Club'),
             onPressed: () {
