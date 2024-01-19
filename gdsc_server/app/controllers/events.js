@@ -1,6 +1,7 @@
 const { db, auth } = require('../../db/config');
 const { checkAuthorization } = require('./authorizationUtil');
-
+const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
+const { ref, uploadBytes } = require('firebase/storage');
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc } = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, verifyIdToken } = require("firebase/auth");
 
@@ -98,6 +99,14 @@ const getEvent = async (req, res) => {
     }
 };
 
+const updateEvent = async(req, res) => {
+  const {name, description, latitude, longitude, timestamp, repeat, id} = req.body;
+  await checkAuthorization(req, res);
+  const clubDoc = doc(db, "events", id);
+    await setDoc(clubDoc, { name: name, description: description, latitude: latitude, longitude: longitude, timestamp: timestamp, repeat: repeat }, { merge: true });
+   res.status(200).send(JSON.stringify({'message':"success"}))
+};
+
 const updateEventImage = async (req, res) => {
   try {
     if (await checkAuthorization(req, res)) {
@@ -170,5 +179,6 @@ module.exports = {
     getFeedPosts,
     getEvent,
     deleteEvent,
-    updateEventImage
+    updateEventImage,
+    updateEvent
 };
