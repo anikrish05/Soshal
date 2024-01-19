@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/widgets/loader.dart';
-import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
 
 import '../classes/userData.dart';
@@ -33,6 +32,7 @@ class _SearchScreenState extends State<SearchScreen>
   Set<ClubCardData> filteredItemsClubs = {};
   Set<EventCardData> filteredItemsEvents = {};
   Set<ClubCardData> filteredFollowers = {};
+  List<ClubCardData> followingData = [];
   UserData? user;
 
   bool isSearchingClubs = false;
@@ -77,6 +77,7 @@ class _SearchScreenState extends State<SearchScreen>
       user = tempUser;
     }
     await user!.getFollowingData();
+    followingData = user!.followingClubData;
   }
 
   Future<void> fetchData() async {
@@ -118,6 +119,8 @@ class _SearchScreenState extends State<SearchScreen>
               (event) => event.name.toLowerCase().contains(query.toLowerCase()))
           .toSet();
     });
+    print("FILTERED FOLLOWERS");
+    print(followingData);
   }
 
   Future<bool> fetchClubs() async {
@@ -128,8 +131,6 @@ class _SearchScreenState extends State<SearchScreen>
     print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body)["message"];
-      print(data['clubs']);
-      print(data['events']);
       for (int i = 0; i < data['clubs'].length; i++) {
         clubs.add(
           ClubCardData(
@@ -391,34 +392,27 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                 ),
                 SizedBox(height: 15.0),
-                if (filteredFollowers.isNotEmpty)
+                if (followerWidgets != null && followerWidgets.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Center(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height *
-                            0.6, // Adjust the height accordingly
-                        child: ListView.builder(
-                          itemCount: followerWidgets.length,
-                          itemBuilder: (context, index) {
-                            return followerWidgets[
-                                index]; // Your event widget item here
-                          },
-                        ),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.6, // Adjust the height accordingly
+                      child: ListView.builder(
+                        itemCount: followerWidgets.length,
+                        itemBuilder: (context, index) {
+                          return followerWidgets[
+                          index]; // Your event widget item here
+                        },
                       ),
                     ),
                   )
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Center(
-                      child: ListView.builder(
-                          itemCount: user!.followingClubData.length,
-                          itemBuilder: (context, index){
-                            //I currently put isOwner true as temporary, change it afterwards
-                            return ClubCardWidget(club: user!.followingClubData[index], isOwner: false, currUser: user!);
-                          }
-                      ),
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ),
               ],

@@ -46,13 +46,13 @@ class UserData {
               category: clubDataResponse['category'],
               description: clubDataResponse['description'],
               downloadURL: clubDataResponse['downloadURL'],
-              events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
+              events: List<String>.from((clubDataResponse['events'] ?? []).map((admin) => admin.toString())),
               followers: clubDataResponse['followers'],
               name: clubDataResponse['name'],
               type: clubDataResponse['type'],
               verified: clubDataResponse['verified'],
               id: key,
-              tags: clubDataResponse['tags'],
+              tags: List<String>.from((clubDataResponse['tags'] ?? []).map((tag) => tag.toString())),
             );
             followingClubData.add(clubCardData);
             print("Club data added for ID $key");

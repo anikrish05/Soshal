@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,7 @@ import '../utils.dart';
 import '../widgets/loader.dart';
 import '../classes/userData.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CreateClubScreen extends StatefulWidget {
   late String currUserId;
@@ -69,6 +71,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       debugPrint("$selection added as admin.");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +271,28 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                     .contains(search.toLowerCase()))
                 .toList();
           },
+        ),
+        Divider(),
+        MultiSelectDialogField(
+          buttonText: Text("Search Admins"),
+          items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
+          onConfirm: (List<UserData> values) {
+            selectedAdmins = values.toSet();
+          },
+          searchable: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please choose at least one admin.';
+            }
+            return null;
+          },
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            border: Border.all(
+              color: Colors.grey,
+              width: 1.2,
+            ),
+          ),
         ),
         Divider(),
         ElevatedButton(
