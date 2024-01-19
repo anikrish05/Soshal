@@ -119,8 +119,6 @@ class _SearchScreenState extends State<SearchScreen>
               (event) => event.name.toLowerCase().contains(query.toLowerCase()))
           .toSet();
     });
-    print("FILTERED FOLLOWERS");
-    print(followingData);
   }
 
   Future<bool> fetchClubs() async {
