@@ -7,7 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/widgets/loader.dart';
+import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
 import 'package:gdsc_app/widgets/eventWidgets/eventCard.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../classes/userData.dart';
 import '../app_config.dart';
@@ -32,7 +34,10 @@ class _SearchScreenState extends State<SearchScreen>
   Set<ClubCardData> filteredItemsClubs = {};
   Set<EventCardData> filteredItemsEvents = {};
   Set<ClubCardData> filteredFollowers = {};
-  List<ClubCardData> followingData = [];
+  Set<ClubCardData> filteredTaggedClubs = {};
+  Set<String> filteredTaggedEvents = {};
+  List<String> selectedTags = [];
+  List<String> sampleTags = ["Party", "Social", "Club Event", "Hackathon"]; // will need to replace this with master tag list
   UserData? user;
 
   bool isSearchingClubs = false;
@@ -69,15 +74,18 @@ class _SearchScreenState extends State<SearchScreen>
         clubIds: List<String>.from(
             (data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
         downloadURL: data['downloadURL'],
-        likedEvents: List<String>.from((data['likedEvents'] ?? []).map((event) => event.toString())),
-        dislikedEvents: List<String>.from((data['dislikedEvents'] ?? []).map((event) => event.toString())),
-        friendGroups: List<String>.from((data['friendGroups'] ?? []).map((friend) => friend.toString())),
-        interestedTags: List<String>.from((data['interestedTags'] ?? []).map((tag) => tag.toString())),
+        likedEvents: List<String>.from(
+            (data['likedEvents'] ?? []).map((event) => event.toString())),
+        dislikedEvents: List<String>.from(
+            (data['dislikedEvents'] ?? []).map((event) => event.toString())),
+        friendGroups: List<String>.from(
+            (data['friendGroups'] ?? []).map((friend) => friend.toString())),
+        interestedTags: List<String>.from(
+            (data['interestedTags'] ?? []).map((tag) => tag.toString())),
       );
       user = tempUser;
     }
     await user!.getFollowingData();
-    followingData = user!.followingClubData;
   }
 
   Future<void> fetchData() async {
@@ -118,6 +126,10 @@ class _SearchScreenState extends State<SearchScreen>
           .where(
               (event) => event.name.toLowerCase().contains(query.toLowerCase()))
           .toSet();
+
+      /*filteredTaggedClubs = clubs
+          .where((club) => club.tags.contains(query.toLowerCase()))
+          .toSet();*/
     });
   }
 
@@ -129,6 +141,8 @@ class _SearchScreenState extends State<SearchScreen>
     print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body)["message"];
+      print(data['clubs']);
+      print(data['events']);
       for (int i = 0; i < data['clubs'].length; i++) {
         clubs.add(
           ClubCardData(
@@ -152,21 +166,26 @@ class _SearchScreenState extends State<SearchScreen>
       for (int i = 0; i < data['events'].length; i++) {
         events.add(
           EventCardData(
-              admin: List<String>.from((data['events'][i]['admin'] ?? []).map((admin) => admin.toString())),
-              rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
-                  .map((rsvp) => rsvp.toString())),
-              name: data['events'][i]['name'],
-              description: data['events'][i]['description'],
-              downloadURL: data['events'][i]['downloadURL'],
-              latitude: data['events'][i]['latitude'],
-              longitude: data['events'][i]['longitude'],
-              comments: List<String>.from((data['events'][i]['comments'] ?? [])
-                  .map((comment) => comment.toString())),
-              id: data['events'][i]['id'],
-              time: data['events'][i]['timestamp'],
-              likedBy: List<String>.from((data['events'][i]['likedBy'] ?? []).map((likedBy) => likedBy.toString())),
-              disLikedBy: List<String>.from((data['events'][i]['disLikedBy'] ?? []).map((disLikedBy) => disLikedBy.toString())),
-              tags: List<String>.from((data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
+            admin: List<String>.from((data['events'][i]['admin'] ?? [])
+                .map((admin) => admin.toString())),
+            rsvpList: List<String>.from((data['events'][i]['rsvpList'] ?? [])
+                .map((rsvp) => rsvp.toString())),
+            name: data['events'][i]['name'],
+            description: data['events'][i]['description'],
+            downloadURL: data['events'][i]['downloadURL'],
+            latitude: data['events'][i]['latitude'],
+            longitude: data['events'][i]['longitude'],
+            comments: List<String>.from((data['events'][i]['comments'] ?? [])
+                .map((comment) => comment.toString())),
+            id: data['events'][i]['id'],
+            time: data['events'][i]['timestamp'],
+            likedBy: List<String>.from((data['events'][i]['likedBy'] ?? [])
+                .map((likedBy) => likedBy.toString())),
+            disLikedBy: List<String>.from(
+                (data['events'][i]['disLikedBy'] ?? [])
+                    .map((disLikedBy) => disLikedBy.toString())),
+            tags: List<String>.from(
+                (data['events'][i]['tags'] ?? []).map((tag) => tag.toString())),
           ),
         );
       }
@@ -209,26 +228,43 @@ class _SearchScreenState extends State<SearchScreen>
     );
   }
 
-  Widget buildText() => SizedBox(
-        width: 350,
-        child: TextField(
-          onSubmitted: (value) {
-            performSearch(searchController.text);
-          },
-          textInputAction: TextInputAction.search,
-          controller: searchController,
-          decoration: InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(50.0),
+  Widget buildText() => Column(
+        children: [
+          SizedBox(
+            width: 350,
+            child: TextField(
+              onSubmitted: (value) {
+                performSearch(searchController.text);
+              },
+              textInputAction: TextInputAction.search,
+              controller: searchController,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                hintText: "Search",
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                filled: true,
+                fillColor: _color2,
+              ),
             ),
-            hintText: "Search",
-            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            filled: true,
-            fillColor: _color2,
           ),
-        ),
+          MultiSelectDialogField(
+            items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
+            onConfirm: (List<String> values) {
+              selectedTags = values;
+            },
+            searchable: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please choose at least one admin.';
+              }
+              return null;
+            },
+          ),
+        ],
       );
 
   Widget buildTabBar() => TabBar(
@@ -390,18 +426,20 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                 ),
                 SizedBox(height: 15.0),
-                if (followerWidgets != null && followerWidgets.isNotEmpty)
+                if (filteredFollowers.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height *
-                          0.6, // Adjust the height accordingly
-                      child: ListView.builder(
-                        itemCount: followerWidgets.length,
-                        itemBuilder: (context, index) {
-                          return followerWidgets[
-                          index]; // Your event widget item here
-                        },
+                    child: Center(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height *
+                            0.6, // Adjust the height accordingly
+                        child: ListView.builder(
+                          itemCount: followerWidgets.length,
+                          itemBuilder: (context, index) {
+                            return followerWidgets[
+                                index]; // Your event widget item here
+                          },
+                        ),
                       ),
                     ),
                   )
@@ -417,9 +455,7 @@ class _SearchScreenState extends State<SearchScreen>
             ),
           ),
           Column(
-            children: [
-              Text("Tags to be implemented here")
-            ],
+            children: [Text("Tags to be implemented here")],
           ),
         ],
       ),
