@@ -8,9 +8,13 @@ import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:gdsc_app/screens/editEvent.dart';
+import '../../app_config.dart';
+import '../../utils.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/profileWidgets/rsvpCard.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -36,6 +40,8 @@ class _EventProfilePageState extends State<EventProfilePage>
   double latitude = 0.0;
   double longitude = 0.0;
 
+
+
   @override
   void dispose() {
     tabController.dispose(); // Dispose of the tabController at the end
@@ -53,7 +59,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       body: jsonEncode(<String, dynamic>{
         "name": widget.event.name,
         "description": widget.event.description,
-        "downloadURL": "",
+        "downloadURL": widget.event.downloadURL,
         "latitude": latitude,
         "longitude": longitude,
         "timestamp": timeStamp,
@@ -204,7 +210,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                                   setState(() {
                                     isEditing = true;
                                   });
-                                  _showEditSheet(context);
+                                  onUpdateEvent();
                                 },
                                 child:Row(
                                   children: [
@@ -213,7 +219,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                                           setState(() {
                                             isEditing = true;
                                           });
-                                          _showEditSheet(context);
+                                          onUpdateEvent();
                                         },
                                         child: Container(
                                           padding: EdgeInsets.all(8),
@@ -584,7 +590,52 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
 
+  void onUpdateEvent() async
+  {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UpdateEventScreen(event: widget.event!)),
+    );
 
+    final eventData = {
+      "name": result[0],
+      "description": result[1],
+      "latitude": result[2],
+      "longitude": result[3],
+      "timestamp": result[5],
+      "repeat": result[4],
+      "id": result[6]
+    };
+
+    setState(() {
+
+      widget.event.name = result[0];
+      widget.event.description = result[1];
+      widget.event.latitude = result[2];
+      widget.event.longitude = result[3];
+      widget.event.time = result[5];
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/events/updateEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(eventData),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData['message']); // Assuming the server responds with a JSON object containing a 'message' property
+      } else {
+        print('Error: ${response.statusCode}');
+        print(response.body);
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+
+
+  }
 
 
 
