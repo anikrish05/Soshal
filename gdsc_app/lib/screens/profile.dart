@@ -16,6 +16,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import '../app_config.dart';
+import 'package:gdsc_app/screens/sign.dart';
+
+
+
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -308,54 +312,69 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Center(child: Text("Settings")),
+          title: Center(
+            child: Text(
+
+              "Settings",
+
+              style: TextStyle(
+              color: _orangeColor,
+            ),
+          ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20), // Adjust the border radius as needed
+          ),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  // Add your sign-out logic here
-                  // For example, you can navigate to the sign-in page
-                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInPage()));
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: _orangeColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the border radius as needed
-                  ),
-                  textStyle: TextStyle(
-                    fontSize: 18, // Adjust the font size as needed
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Borel'  // Make the font bold
-                  ),
+            SizedBox(height: 1),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the current page
+
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+              },
+
+
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white, // Set the background color to white
+                onPrimary: _orangeColor, // Set the text color to orange
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  side: BorderSide(color: _orangeColor, width: 1), // Add a thin orange border
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text("sign out"),
+                textStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 10),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                child: Text("Sign out"),
+              ),
+            ),
+            SizedBox(height: 1),
               ElevatedButton(
                 onPressed: () {
-                  // Add your delete account logic here
-                  // ...
                   Navigator.of(context).pop();
+                  Navigator.pushNamed(context, '/sign');
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: _orangeColor,
+                  primary: Colors.white, // Set the background color to white
+                  onPrimary: _orangeColor, // Set the text color to orange
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the border radius as needed
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: _orangeColor, width: 1), // Add a thin orange border
                   ),
                   textStyle: TextStyle(
-                    fontSize: 18, // Adjust the font size as needed
-                    fontWeight: FontWeight.bold, // Make the font bold
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
                   child: Text("Delete Account"),
                 ),
               ),

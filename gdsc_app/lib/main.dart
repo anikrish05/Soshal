@@ -89,15 +89,21 @@ class _HomeState extends State<Home> {
         selectedIconTheme: IconThemeData(color: _orangeColor, size: 40), // Use the global variable here
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
+            icon: ImageIcon(AssetImage('assets/newMap.png'),
+              size: 40, // Adjust width as needed
+            ),
             label: '', // Remove the label
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '', // Remove the label
+            icon: ImageIcon(AssetImage('assets/newSearch.png'),
+              size: 40,
+            ),// Adjust width as needed
+            label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: ImageIcon(AssetImage('assets/newPerson.png'),
+              size: 40,
+            ),
             label: '', // Remove the label
           ),
         ],
