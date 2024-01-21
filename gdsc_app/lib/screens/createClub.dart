@@ -228,51 +228,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           ),
         ),
         Divider(),
-        TypeAheadField<UserData>(
-          builder: (context, controller, focusNode) {
-            return TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please choose at least one admin.';
-                }
-                return null;
-              },
-              controller: controller,
-              focusNode: focusNode,
-              decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                hintText: "Search Admins",
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              ),
-            );
-          },
-          itemBuilder: (context, suggestion) {
-            return ListTile(
-              title: Text(suggestion.displayName),
-              trailing: Icon(selectedAdmins.contains(suggestion)
-                  ? Icons.check_circle
-                  : Icons.check_circle_outline),
-            );
-          },
-          onSelected: (suggestion) {
-            toggleSelectedAdmin(suggestion);
-            controller.selection =
-                TextSelection.collapsed(offset: 0); // Reset cursor
-            controller.clear(); // Clear the field
-          },
-          suggestionsCallback: (String search) {
-            if (search == "" && !selectedAdmins.isEmpty) {
-              return selectedAdmins.toList();
-            }
-            return users
-                .where((admin) => admin.displayName
-                    .toLowerCase()
-                    .contains(search.toLowerCase()))
-                .toList();
-          },
-        ),
-        Divider(),
         MultiSelectDialogField(
           buttonText: Text("Search Admins"),
           items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
@@ -367,3 +322,51 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     }
   }
 }
+
+/* Deprecated TypeAhead Code (replaced by MultiSelectDialog)
+
+        TypeAheadField<UserData>(
+          builder: (context, controller, focusNode) {
+            return TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please choose at least one admin.';
+                }
+                return null;
+              },
+              controller: controller,
+              focusNode: focusNode,
+              decoration: InputDecoration(
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                hintText: "Search Admins",
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              ),
+            );
+          },
+          itemBuilder: (context, suggestion) {
+            return ListTile(
+              title: Text(suggestion.displayName),
+              trailing: Icon(selectedAdmins.contains(suggestion)
+                  ? Icons.check_circle
+                  : Icons.check_circle_outline),
+            );
+          },
+          onSelected: (suggestion) {
+            toggleSelectedAdmin(suggestion);
+            controller.selection =
+                TextSelection.collapsed(offset: 0); // Reset cursor
+            controller.clear(); // Clear the field
+          },
+          suggestionsCallback: (String search) {
+            if (search == "" && !selectedAdmins.isEmpty) {
+              return selectedAdmins.toList();
+            }
+            return users
+                .where((admin) => admin.displayName
+                    .toLowerCase()
+                    .contains(search.toLowerCase()))
+                .toList();
+          },
+        ),
+ */
