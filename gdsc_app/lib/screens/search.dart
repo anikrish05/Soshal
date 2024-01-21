@@ -34,10 +34,13 @@ class _SearchScreenState extends State<SearchScreen>
   Set<ClubCardData> filteredItemsClubs = {};
   Set<EventCardData> filteredItemsEvents = {};
   Set<ClubCardData> filteredFollowers = {};
-  Set<ClubCardData> filteredTaggedClubs = {};
-  Set<String> filteredTaggedEvents = {};
-  List<String> selectedTags = [];
-  List<String> sampleTags = ["Party", "Social", "Club Event", "Hackathon"]; // will need to replace this with master tag list
+  Set<String> selectedTags = {};
+  List<String> sampleTags = [
+    "Party",
+    "Social",
+    "Club Event",
+    "Hackathon"
+  ]; // will need to replace this with master tag list
   UserData? user;
 
   bool isSearchingClubs = false;
@@ -101,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -112,28 +115,38 @@ class _SearchScreenState extends State<SearchScreen>
 
   void performSearch(String query) {
     setState(() {
-      filteredItemsClubs = clubs
-          .where(
-              (club) => club.name.toLowerCase().contains(query.toLowerCase()))
-          .toSet();
+      filteredItemsClubs = clubs.where((club) {
+        if (selectedTags.isNotEmpty) {
+          return selectedTags
+              .any((selectedTag) => club.tags.contains(selectedTag));
+        } else {
+          return club.name.toLowerCase().contains(query.toLowerCase());
+        }
+      }).toSet(); // gets all filtered clubs that also have selected tags
 
-      filteredItemsEvents = events
-          .where(
-              (event) => event.name.toLowerCase().contains(query.toLowerCase()))
-          .toSet();
+      filteredItemsEvents = events.where((event) {
+        if (selectedTags.isNotEmpty) {
+          return selectedTags
+              .any((selectedTag) => event.tags.contains(selectedTag));
+        } else {
+          return event.name.toLowerCase().contains(query.toLowerCase());
+        }
+      }).toSet(); // gets all filtered clubs that also have selected tags
 
-      filteredFollowers = user!.followingClubData
-          .where(
-              (event) => event.name.toLowerCase().contains(query.toLowerCase()))
-          .toSet();
-
-      /*filteredTaggedClubs = clubs
-          .where((club) => club.tags.contains(query.toLowerCase()))
-          .toSet();*/
+      filteredFollowers = user!.followingClubData.where((club) {
+        if (selectedTags.isNotEmpty) {
+          return selectedTags
+              .any((selectedTag) => club.tags.contains(selectedTag));
+        } else {
+          return club.name.toLowerCase().contains(query.toLowerCase());
+        }
+      }).toSet();
     });
   }
 
   Future<bool> fetchClubs() async {
+    clubs = [];
+    events = [];
     print("IN FETCH CLUBS");
     final response = await http.get(
         Uri.parse('$serverUrl/api/clubs/getDataForSearchPage'),
@@ -252,9 +265,15 @@ class _SearchScreenState extends State<SearchScreen>
             ),
           ),
           MultiSelectDialogField(
+            buttonText: Text("Select Club/Event Tags"),
+            title: Text("Select Tags"),
+            initialValue: selectedTags.toList(),
             items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
             onConfirm: (List<String> values) {
-              selectedTags = values;
+              setState(() {
+                selectedTags = values.toSet();
+                performSearch('');
+              });
             },
             searchable: true,
             validator: (value) {
@@ -280,32 +299,29 @@ class _SearchScreenState extends State<SearchScreen>
           Tab(
             text: 'Following',
           ),
-          Tab(
-            text: 'Tags',
-          ),
         ],
       );
 
   Widget buildSearchResultList() {
-    List<Widget> clubWidgets = filteredItemsClubs
+    Set<Widget> clubWidgets = filteredItemsClubs
         .map((club) => ClubCardWidget(
               club: club,
               isOwner: user!.clubIds.contains(club.id),
               currUser: user!,
             ))
-        .toList();
+        .toSet();
 
-    List<Widget> eventWidgets = filteredItemsEvents
+    Set<Widget> eventWidgets = filteredItemsEvents
         .map((event) => EventCardWidget(event: event, isOwner: false))
-        .toList();
+        .toSet();
 
-    List<Widget> followerWidgets = filteredFollowers
+    Set<Widget> followerWidgets = filteredFollowers
         .map((club) => ClubCardWidget(
               club: club,
               isOwner: user!.clubIds.contains(club.id),
               currUser: user!,
             ))
-        .toList();
+        .toSet();
 
     ScrollController _scrollController = ScrollController();
 
@@ -342,7 +358,7 @@ class _SearchScreenState extends State<SearchScreen>
                 SizedBox(height: 16.0),
                 // Conditionally display club widgets or 'No organizations found' text
                 if (clubWidgets != null && clubWidgets.isNotEmpty)
-                  SizedBox(height: 100, child: ListView(children: clubWidgets))
+                  SizedBox(height: 100, child: ListView(children: clubWidgets.toList()))
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -382,7 +398,7 @@ class _SearchScreenState extends State<SearchScreen>
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
                         itemBuilder: (context, index) {
-                          return eventWidgets[
+                          return eventWidgets.toList()[
                               index]; // Your event widget item here
                         },
                       ),
@@ -436,7 +452,7 @@ class _SearchScreenState extends State<SearchScreen>
                         child: ListView.builder(
                           itemCount: followerWidgets.length,
                           itemBuilder: (context, index) {
-                            return followerWidgets[
+                            return followerWidgets.toList()[
                                 index]; // Your event widget item here
                           },
                         ),
@@ -453,9 +469,6 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
               ],
             ),
-          ),
-          Column(
-            children: [Text("Tags to be implemented here")],
           ),
         ],
       ),
