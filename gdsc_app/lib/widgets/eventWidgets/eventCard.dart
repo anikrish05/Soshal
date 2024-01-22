@@ -14,6 +14,7 @@ class EventCardWidget extends StatefulWidget {
   final bool isOwner;
 
   EventCardWidget({required this.event, required this.isOwner});
+
   @override
   State<EventCardWidget> createState() => _EventCardWidgetState();
 }
@@ -23,12 +24,14 @@ class _EventCardWidgetState extends State<EventCardWidget> {
   String locationText = "";
   double rating = 3.5;
   final format = DateFormat("yyyy-MM-dd HH:mm");
+  Color _greyColor = Color(0xFFD3D3D3);
 
   String clubs = "";
 
-  Future<void> getStreetName() async{
+  Future<void> getStreetName() async {
     print("in get street name");
-    List<Placemark> placemarks = await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
+    List<Placemark> placemarks =
+    await placemarkFromCoordinates(widget.event.latitude, widget.event.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
@@ -56,15 +59,14 @@ class _EventCardWidgetState extends State<EventCardWidget> {
     displayClubNames();
   }
 
-  Future<void> displayClubNames() async{
+  Future<void> displayClubNames() async {
     String tempClubs = "";
     await widget.event.getAllClubsForEvent();
-    for(var i =0;i<widget.event.clubInfo.length;i++){
-      if(i!=widget.event.clubInfo.length-1){
-        tempClubs+=widget.event.clubInfo[i].name + ", ";
-      }
-      else{
-        tempClubs+=widget.event.clubInfo[i].name;
+    for (var i = 0; i < widget.event.clubInfo.length; i++) {
+      if (i != widget.event.clubInfo.length - 1) {
+        tempClubs += widget.event.clubInfo[i].name + ", ";
+      } else {
+        tempClubs += widget.event.clubInfo[i].name;
       }
     }
     setState(() {
@@ -83,15 +85,14 @@ class _EventCardWidgetState extends State<EventCardWidget> {
         child: GestureDetector(
           onTap: () {
             print(widget.isOwner);
-            if(widget.isOwner){
+            if (widget.isOwner) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => EventProfilePage(event: widget.event),
                 ),
               );
-            }
-            else{
+            } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -103,7 +104,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.89, // Adjust the width here
             child: Card(
-              color: _cardColor,
+              color: _greyColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20), // Set the border radius
               ),
@@ -121,7 +122,9 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                             height: imageHeight,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network('https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727', fit: BoxFit.cover), // Replace 'IMAGE_URL' with your image url
+                              child: Image.network(
+                                  'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727',
+                                  fit: BoxFit.cover), // Replace 'IMAGE_URL' with your image url
                             ),
                           ),
                           SizedBox(width: 16),
@@ -129,21 +132,15 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${widget.event.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), // Replace 'Title Header' with your title
+                                Text('${widget.event.name}',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                // Replace 'Title Header' with your title
                                 SizedBox(height: 8), // Add more spacing vertically
                                 Text('By: $clubs'), // Replace 'Club Name' with your club name
-                                SizedBox(height: 8), // Add more spacing vertically
-                                RatingBarIndicator(
-                                  rating: rating,
-                                  itemBuilder: (context, index) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  itemCount: 5,
-                                  itemSize: 15.0, // Adjust the size of the stars here
-                                  direction: Axis.horizontal,
-                                ),
-                                SizedBox(height: 8), // Add more spacing vertically
+                                SizedBox(height: 8),
+                                ThumbsUpWidget(likePercentage: 50),
+                                SizedBox(height: 8),
+
                                 Row(
                                   children: [
                                     Icon(Icons.location_on), // Add a location icon
@@ -154,7 +151,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                                 Row(
                                   children: [
                                     Icon(Icons.access_time),
-                                    Text(" "),// Add a clock icon
+                                    Text(" "), // Add a clock icon
                                     Text(getFormattedDateTime(widget.event.time)),
                                   ],
                                 ),
@@ -163,16 +160,6 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    child: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle your button tap here
-                      },
                     ),
                   ),
                 ],
@@ -184,3 +171,44 @@ class _EventCardWidgetState extends State<EventCardWidget> {
     );
   }
 }
+
+class ThumbsUpWidget extends StatelessWidget {
+  final int likePercentage;
+
+  ThumbsUpWidget({required this.likePercentage});
+
+  @override
+  Widget build(BuildContext context) {
+    bool isThumbsUp = likePercentage >= 50;
+    Color _greyColor = Color(0xFFD3D3D3);
+    Color _orangeColor = Color(0xFFFF8050);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start, // Align to the left
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isThumbsUp ?  _orangeColor : _orangeColor, // Change color based on thumbs-up or thumbs-down
+          ),
+          padding: EdgeInsets.all(5),
+          child: Icon(
+            isThumbsUp ? Icons.thumb_up : Icons.thumb_down, // Change icon based on thumbs-up or thumbs-down
+            color: Colors.white,
+            size: 16, // Adjust the size as needed
+          ),
+        ),
+        SizedBox(width: 5),
+        Text(
+          '$likePercentage%',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
