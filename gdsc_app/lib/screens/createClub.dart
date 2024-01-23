@@ -228,6 +228,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           ),
         ),
         Divider(),
+        /// Creates a multi-select dialog field for searching and selecting admins.
         MultiSelectDialogField(
           buttonText: Text("Search Admins"),
           items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
