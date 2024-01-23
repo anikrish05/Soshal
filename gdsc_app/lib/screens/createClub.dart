@@ -54,9 +54,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     if (!adminsAsList.contains(currUserId)) {
       adminsAsList.add(currUserId);
     }
-    club
-        .addClub(clubName.text, clubBio.text, location.text, category.text,
-            type, adminsAsList, []) //that last array is passing in empty tags list, populate please
+    club.addClub(
+            clubName.text,
+            clubBio.text,
+            location.text,
+            category.text,
+            type,
+            adminsAsList,
+            []) //that last array is passing in empty tags list, populate please
         .then((check) => {
               if (check) {Navigator.of(context).pop()}
             });
@@ -71,7 +76,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       debugPrint("$selection added as admin.");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,179 +110,200 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       key: _oFormKey,
       child: ListView(children: [
         Container(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset('assets/ex1.jpeg',
-                  height: 150, width: 150, fit: BoxFit.cover),
-            ),
-            VerticalDivider(),
-            Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset('assets/ex1.jpeg',
+                    height: 150, width: 150, fit: BoxFit.cover),
+              ),
+              VerticalDivider(),
+              Container(
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                  SizedBox(
-                    height: 65,
-                    width: 200,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a title.';
-                        }
-                        return null;
-                      },
-                      controller: clubName,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        hintText: "Club Name",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a title.';
+                          }
+                          return null;
+                        },
+                        controller: clubName,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          hintText: "Club Name",
+                          contentPadding:
+                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                        ),
                       ),
                     ),
-                  ),
-                  Divider(),
-                  SizedBox(
-                    height: 110,
-                    width: 200,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a biography.';
-                        }
-                        return null;
-                      },
-                      controller: clubBio,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        hintText: "Add Club Bio",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    Divider(),
+                    SizedBox(
+                      height: 100,
+                      width: 200,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a biography.';
+                          }
+                          return null;
+                        },
+                        controller: clubBio,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          hintText: "Add Club Bio",
+                          contentPadding:
+                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                        ),
+                        maxLines: 3,
                       ),
-                      maxLines: 3,
                     ),
-                  )
-                ]))
-          ],
-        )),
-        Divider(),
-        Container(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-              Expanded(
-                child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a category.';
-                    }
-                    return null;
-                  },
-                  controller: category,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    hintText: "Category",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 20),
+          child: Column(
+            children: [
+              Divider(
+                height: 40,
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a category.';
+                          }
+                          return null;
+                        },
+                        controller: category,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          hintText: "Category",
+                          contentPadding:
+                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                        ),
+                      ),
+                    ),
+                    VerticalDivider(),
+                    ToggleSwitch(
+                      minWidth: 77.5,
+                      cornerRadius: 20.0,
+                      activeBgColors: [
+                        [_orangeColor],
+                        [_orangeColor]
+                      ],
+                      activeFgColor: Colors.white,
+                      inactiveBgColor: Colors.grey,
+                      inactiveFgColor: Colors.white,
+                      initialLabelIndex: 0,
+                      totalSwitches: 2,
+                      labels: ['Public', 'Private'],
+                      radiusStyle: true,
+                      onToggle: (index) {
+                        if (index == 1) {
+                          indexPubOrPriv = 0;
+                        } else if (index == 0) {
+                          indexPubOrPriv = 1;
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Divider(height: 40),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a phone number.';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: "Contact Info (Phone Number)",
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                ),
+              ),
+              Divider(height: 40),
+          
+              /// Creates a multi-select dialog field for searching and selecting admins.
+              MultiSelectDialogField(
+                buttonText: Text("Search Admins"),
+                items:
+                    users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
+                initialValue:
+                    users.where((user) => user.uid == currUserId).toList(),
+                onConfirm: (List<Object> values) {
+                  selectedAdmins =
+                      values.map((value) => value as UserData).toSet();
+                },
+                searchable: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please choose at least one admin.';
+                  }
+                  return null;
+                },
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1.2,
                   ),
                 ),
               ),
-              VerticalDivider(),
-              ToggleSwitch(
-                minWidth: 77.5,
-                cornerRadius: 20.0,
-                activeBgColors: [
-                  [_orangeColor],
-                  [_orangeColor]
-                ],
-                activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey,
-                inactiveFgColor: Colors.white,
-                initialLabelIndex: 0,
-                totalSwitches: 2,
-                labels: ['Public', 'Private'],
-                radiusStyle: true,
-                onToggle: (index) {
-                  if (index == 1) {
-                    indexPubOrPriv = 0;
-                  } else if (index == 0) {
-                    indexPubOrPriv = 1;
+              Divider(),
+              ElevatedButton(
+                child: Text('Create Club'),
+                onPressed: () {
+                  if (_oFormKey.currentState!.validate()) {
+                    submit();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.green,
+                        content: Text('New club created successfully!'),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('Please fill out all fields!'),
+                      ),
+                    );
                   }
                 },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide.none,
+                  )),
+                  backgroundColor: MaterialStateProperty.all<Color>(_orangeColor),
+                ),
               ),
-            ])),
-        Divider(),
-        TextFormField(
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter a phone number.';
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-            hintText: "Contact Info (Phone Number)",
-            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            ],
           ),
         ),
-        Divider(),
-        /// Creates a multi-select dialog field for searching and selecting admins.
-        MultiSelectDialogField(
-          buttonText: Text("Search Admins"),
-          items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
-          initialValue: users.where((user) => user.uid == currUserId).toList(),
-          onConfirm: (List<Object> values) {
-            selectedAdmins = values.map((value) => value as UserData).toSet();
-          },
-          searchable: true,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please choose at least one admin.';
-            }
-            return null;
-          },
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            border: Border.all(
-              color: Colors.grey,
-              width: 1.2,
-            ),
-          ),
-        ),
-        Divider(),
-        ElevatedButton(
-            child: Text('Create Club'),
-            onPressed: () {
-              if (_oFormKey.currentState!.validate()) {
-                submit();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Colors.green,
-                    content: Text('New club created successfully!'),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text('Please fill out all fields!'),
-                  ),
-                );
-              }
-            },
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide.none,
-                )),
-                backgroundColor: MaterialStateProperty.all<Color>(_orangeColor))),
       ]),
     );
   }
@@ -302,18 +327,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             role: responseData[i]["role"],
             myEvents: List<String>.from((responseData[i]['myEvents'] ?? [])
                 .map((event) => event.toString())),
-            likedEvents: List<String>.from(
-                (responseData[i]['likedEvents'] ?? [])
-                    .map((event) => event.toString())),
-            dislikedEvents: List<String>.from(
-                (responseData[i]['dislikedEvents'] ?? [])
-                    .map((event) => event.toString())),
+            likedEvents: List<String>.from((responseData[i]['likedEvents'] ?? [])
+                .map((event) => event.toString())),
+            dislikedEvents: List<String>.from((responseData[i]['dislikedEvents'] ?? [])
+                .map((event) => event.toString())),
             clubIds: List<String>.from((responseData[i]['clubIds'] ?? [])
                 .map((club) => club.toString())),
-            friendGroups: List<String>.from((responseData[i]['friendGroups'] ?? [])
-                .map((friend) => friend.toString())),
-            interestedTags: List<String>.from((responseData[i]['interestedTags'] ?? [])
-                .map((tag) => tag.toString())),
+            friendGroups: List<String>.from(
+                (responseData[i]['friendGroups'] ?? []).map((friend) => friend.toString())),
+            interestedTags: List<String>.from((responseData[i]['interestedTags'] ?? []).map((tag) => tag.toString())),
             downloadURL: responseData[i]["downloadURL"],
             classOf: responseData[i]["classOf"]);
         users.add(newUser);
@@ -322,7 +344,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       // Handle the error
       print('Request failed with status: ${response.statusCode}');
     }
-
   }
 }
 
