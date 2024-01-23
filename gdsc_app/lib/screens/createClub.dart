@@ -231,8 +231,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
         MultiSelectDialogField(
           buttonText: Text("Search Admins"),
           items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
-          onConfirm: (List<UserData> values) {
-            selectedAdmins = values.toSet();
+          initialValue: users.where((user) => user.uid == currUserId).toList(),
+          onConfirm: (List<Object> values) {
+            selectedAdmins = values.map((value) => value as UserData).toSet();
           },
           searchable: true,
           validator: (value) {
@@ -320,6 +321,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       // Handle the error
       print('Request failed with status: ${response.statusCode}');
     }
+
   }
 }
 
