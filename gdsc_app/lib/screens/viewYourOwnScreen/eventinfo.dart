@@ -597,6 +597,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       MaterialPageRoute(builder: (context) => UpdateEventScreen(event: widget.event!)),
     );
 
+    List<int> newImageBytes = result[7];
     final eventData = {
       "name": result[0],
       "description": result[1],
@@ -616,6 +617,8 @@ class _EventProfilePageState extends State<EventProfilePage>
       widget.event.time = result[5];
     });
 
+
+
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/api/events/updateEvent'),
@@ -634,6 +637,15 @@ class _EventProfilePageState extends State<EventProfilePage>
       print('Error: $error');
     }
 
+
+    final response = await http.post(
+      Uri.parse('$serverUrl/api/events/updateEventImage'),
+      headers: await getHeaders(),
+      body: jsonEncode(<String, dynamic>{
+        "image": result[7],
+        "id": result[6]
+      }),
+    );
 
   }
 

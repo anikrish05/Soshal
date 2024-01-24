@@ -1,13 +1,14 @@
 import 'dart:ffi';
+import 'dart:io' as i;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:gdsc_app/classes/club.dart';
@@ -40,6 +41,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   var eventName = TextEditingController();
   var eventDesc = TextEditingController();
+
+  List<int> newImageBytes = [];
+  bool chooseImage = false;
+  XFile? _image;
 
   LatLng? _selectedLatLng;
 
@@ -114,13 +119,41 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
+  FutureOr sendImageToServer(List<int> imageBytes, String id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/events/updateEventImage'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "image": imageBytes,
+          "id": id
+        }),
+      );
+
+      print(id);
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully');
+        setState(() {});
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error uploading image: $error');
+    }
+
+    setState(() {
+
+    });
+  }
+
   Future<void> postRequest() async {
     String timeStamp = format.format(DateTime.now());
     List<String> adminsAsList = selectedAdmins.map((club) => club.id).toList();
     if (!adminsAsList.contains(widget.club.id)) {
       adminsAsList.add(widget.club.id);
     }
-    await http.post(
+    final response = await http.post(
       Uri.parse('$serverUrl/api/events/createEvent'),
       headers: await getHeaders(),
       body: jsonEncode(<String, dynamic>{
@@ -134,6 +167,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         "tags": [],
       }),
     );
+
+    var responseData = json.decode(response.body);
+    await sendImageToServer(newImageBytes, responseData["message"].toString());
     Navigator.pop(context);
   }
 
@@ -182,13 +218,23 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: Image.asset(
-                      'assets/ex1.jpeg',
-                      height: 150,
-                      width: 150,
-                      fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: _image == null
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset('assets/ex1.jpeg',
+                          height: 150, width: 150, fit: BoxFit.cover),
+                    )
+                        : ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.file(
+                          i.File(_image!.path),
+                          width: 150.0,
+                          height: 150.0,
+                          fit: BoxFit.cover,
+
+                        )
                     ),
                   ),
                   VerticalDivider(),
@@ -491,4 +537,23 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       ),
     );
   }
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Read the image file as bytes
+      chooseImage = true;
+      newImageBytes = await pickedFile.readAsBytes();
+
+      setState(() {
+        _image = pickedFile;
+      });
+      // Send the bytes to the server
+
+    }
+
+    print("Succesfully chose picture");
+  }
+
 }

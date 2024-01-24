@@ -1,16 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io' as i;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:image_picker/image_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:gdsc_app/classes/club.dart';
+import '../app_config.dart';
 import '../utils.dart';
 import '../widgets/loader.dart';
 import '../classes/userData.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+
+
+final serverUrl = AppConfig.serverUrl;
+
 
 class CreateClubScreen extends StatefulWidget {
   late String currUserId;
@@ -30,6 +38,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   var category = TextEditingController();
 
+  List<int> newImageBytes = [];
+  bool chooseImage = false;
+  String selectedImage = 'assets/ex1.jpeg';
+  XFile? _image;
   Set<UserData> users = {};
   Set<UserData> selectedAdmins = {};
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
@@ -42,7 +54,27 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     this.currUserId = currUserId;
   }
 
-  void submit() {
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Read the image file as bytes
+      chooseImage = true;
+      newImageBytes = await pickedFile.readAsBytes();
+      setState(() {
+        _image = pickedFile;
+      });
+
+
+      // Send the bytes to the server
+
+    }
+
+    print("Succesfully chose picture");
+  }
+
+  void submit() async{
     Club club = Club();
     late String type;
     if (indexPubOrPriv == 1) {
@@ -50,16 +82,32 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     } else {
       type = "Private";
     }
+
+    if (chooseImage == false)
+      {
+        _showPopup(context);
+        return;
+      }
     List<String> adminsAsList = selectedAdmins.map((user) => user.uid).toList();
     if (!adminsAsList.contains(currUserId)) {
       adminsAsList.add(currUserId);
     }
-    club
-        .addClub(clubName.text, clubBio.text, location.text, category.text,
-            type, adminsAsList, []) //that last array is passing in empty tags list, populate please
-        .then((check) => {
-              if (check) {Navigator.of(context).pop()}
-            });
+
+    final response = await http.post(Uri.parse('$serverUrl/api/clubs/createClub'),
+    headers: await getHeaders(),
+    body: jsonEncode(<String, dynamic>{
+      "name": clubName.text,
+      "description": clubBio.text,
+      "type": type,
+      "category": category.text,
+      "admin": adminsAsList,
+      "tags": []
+    }));
+    var responseData = json.decode(response.body);
+    print("Test");
+    print(responseData["message"].toString());
+    await sendImageToServer(newImageBytes, responseData["message"].toString());
+    Navigator.pop(context, [clubName.text, clubBio.text, location.text, category.text,type, adminsAsList, [], newImageBytes]);
   }
 
   void toggleSelectedAdmin(UserData selection) {
@@ -110,10 +158,24 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset('assets/ex1.jpeg',
-                  height: 150, width: 150, fit: BoxFit.cover),
+              GestureDetector(
+              onTap: _pickImage,
+                  child: _image == null
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset('assets/ex1.jpeg',
+                        height: 150, width: 150, fit: BoxFit.cover),
+                  )
+                      : ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.file(
+                      i.File(_image!.path),
+                      width: 150.0,
+                      height: 150.0,
+                      fit: BoxFit.cover,
+
+                    )
+                  ),
             ),
             VerticalDivider(),
             Container(
@@ -326,7 +388,59 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     );
   }
 
-  Future<void> getAdmin() async {
+
+
+
+
+  FutureOr sendImageToServer(List<int> imageBytes, String id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/clubs/updateClubImage'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "image": imageBytes,
+          "id": id
+        }),
+      );
+
+      print(id);
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully');
+        setState(() {});
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error uploading image: $error');
+    }
+
+    setState(() {
+
+    });
+  }
+
+  void _showPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Choose an Image!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+    Future<void> getAdmin() async {
     users = {};
     final response = await http.get(
         Uri.parse('http://10.0.2.2:3000/api/users/getAllUsers'),
@@ -366,4 +480,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       print('Request failed with status: ${response.statusCode}');
     }
   }
+
+
 }

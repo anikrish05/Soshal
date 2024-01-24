@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '/../app_config.dart';
 import 'dart:convert';
 import '/../utils.dart';
+import 'dart:io' as i;
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -22,6 +23,11 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
   final clubCate = TextEditingController();
 
   int indexPubOrPriv = 1;
+
+  bool chooseImage = false;
+  List<int> newImageBytes = [];
+  XFile? _image;
+
   Color _orangeColor = Color(0xFFFF8050);
   final ButtonStyle style =
   ElevatedButton.styleFrom(
@@ -56,7 +62,14 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              profilePicture(),
+                              GestureDetector(
+                                child: _image == null
+                                    ? profilePicture()
+                                    : CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: FileImage(i.File(_image!.path)),
+                                ),
+                              ),
                               Positioned(
                                 right: 0,
                                 bottom: 0,
@@ -225,11 +238,16 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     if (pickedFile != null) {
       // Read the image file as bytes
-      List<int> imageBytes = await pickedFile.readAsBytes();
+      chooseImage = true;
+      newImageBytes = await pickedFile.readAsBytes();
 
-      // Send the bytes to the server
-      await sendImageToServer(imageBytes);
+      setState(() {
+        _image = pickedFile;
+      });
+
+      print("Succesful");
     }
+
   }
 
   Future<void> sendImageToServer(List<int> imageBytes) async {
@@ -300,9 +318,11 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
       newClubCate = clubCate.text;
     }
 
+
+
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName,newClubDesc,clubType,newClubCate,clubId]);
+    Navigator.pop(context, [newClubName,newClubDesc,clubType,newClubCate,clubId,newImageBytes]);
   }
 
 }

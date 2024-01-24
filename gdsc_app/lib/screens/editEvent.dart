@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:convert';
+import 'dart:io' as i;
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -35,7 +36,9 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   late DateTime selectedDateTime;
 
+  List<int> newImageBytes = [];
   bool chooseImage = false;
+  XFile? _image;
 
   bool chooseTime = false;
 
@@ -87,8 +90,15 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              profilePicture(),
-                              Positioned(
+                              GestureDetector(
+                                child: _image == null
+                                    ? profilePicture()
+                                    : CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: FileImage(i.File(_image!.path)),
+                                ),
+                              ),
+                                Positioned(
                                 right: 0,
                                 bottom: 0,
                                 child: GestureDetector(
@@ -285,7 +295,7 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
     );
   }
 
-  Widget profilePicture() {
+  Widget profilePicture(){
     if (widget.event.downloadURL != "") {
       return CircleAvatar(
         radius: 60,
@@ -308,14 +318,19 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
     if (pickedFile != null) {
       // Read the image file as bytes
       chooseImage = true;
-      List<int> imageBytes = await pickedFile.readAsBytes();
+      newImageBytes = await pickedFile.readAsBytes();
 
+      setState(() {
+        _image = pickedFile;
+      });
       // Send the bytes to the server
-      await sendImageToServer(imageBytes);
+
     }
+
+    print("Succesfully chose picture");
   }
 
-  Future<void> sendImageToServer(List<int> imageBytes) async {
+  void sendImageToServer(List<int> imageBytes) async {
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/api/events/updateEventImage'),
@@ -329,7 +344,7 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully');
-        setState(() {});
+
       } else {
         print('Failed to upload image. Status code: ${response.statusCode}');
       }
@@ -337,9 +352,6 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
       print('Error uploading image: $error');
     }
 
-    setState(() {
-
-    });
   }
 
   void submitEdit() async
@@ -396,6 +408,8 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
 
     String timeStamp = "";
 
+
+
     if (chooseTime)
       {
         timeStamp = format.format(DateTime.now());
@@ -408,7 +422,7 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
 
 
     Navigator.pop(context, [newEventName, newEventDesc, newLatitude, newLongitude,
-    repeatable,timeStamp,widget.event.id]);
+    repeatable,timeStamp,widget.event.id,newImageBytes]);
 
 
   }
