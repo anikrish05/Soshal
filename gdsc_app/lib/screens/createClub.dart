@@ -60,7 +60,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             clubName.text,
             clubBio.text,
             location.text,
-            category.text,
             type,
             adminsAsList,
             []) //that last array is passing in empty tags list, populate please

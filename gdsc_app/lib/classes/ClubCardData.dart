@@ -8,7 +8,6 @@ import '../utils.dart';
 final serverUrl = AppConfig.serverUrl;
 class ClubCardData {
   List<String> admin;
-  String category;
   String description;
   String downloadURL;
   List<String> events;
@@ -25,7 +24,6 @@ class ClubCardData {
   List<List<dynamic>> followerActionRequired = [];
   ClubCardData({
     required this.admin,
-    required this.category,
     required this.description,
     required this.downloadURL,
     required this.events,

@@ -163,7 +163,6 @@ class _SearchScreenState extends State<SearchScreen>
           ClubCardData(
               admin: List<String>.from((data['clubs'][i]['admin'] ?? [])
                   .map((admin) => admin.toString())),
-              category: data['clubs'][i]['category'],
               rating: data['clubs'][i]['avgRating'].toDouble(),
               description: data['clubs'][i]['description'],
               downloadURL: data['clubs'][i]['downloadURL'],

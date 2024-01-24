@@ -125,16 +125,6 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   fontSize: 15),
                             ),
                           ),
-                          TextField(
-                            controller: clubCate,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: widget.club.category,
-                              contentPadding: EdgeInsets.fromLTRB(
-                                  20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
                           Divider(),
                           Row(
                             children:[
@@ -272,7 +262,6 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String newClubName = "";
     String newClubDesc = "";
-    String newClubCate = "";
     if (newName.text == "")
       {
         newClubName = widget.club.name;
@@ -291,18 +280,11 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
         newClubDesc = newDesc.text;
       }
 
-    if (clubCate.text == "")
-    {
-      newClubCate = widget.club.category;
-    }
-    else
-    {
-      newClubCate = clubCate.text;
-    }
+
 
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName,newClubDesc,clubType,newClubCate,clubId]);
+    Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId]);
   }
 
 }

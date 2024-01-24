@@ -21,14 +21,13 @@ async function addUserToClub(userId, clubId) {
 const createClub = async (req, res) => {
   //hi
   if (await checkAuthorization(req, res)) {
-    const { name, description, type, category, admin, tags } = req.body;
+    const { name, description, type, admin, tags } = req.body;
 
     const data = {
       verified: false,
       name: name,
       description: description,
       type: type,
-      category: category,
       followers: {},
       events: [],
       admin: admin,
@@ -198,10 +197,10 @@ const getAllClubs = async (req, res) => {
 };
 
 const updateClub = async(req, res) => {
-  const {name, description, type, category, id} = req.body;
+  const {name, description, type, id} = req.body;
   await checkAuthorization(req, res);
   const clubDoc = doc(db, "clubs", id);
-    await setDoc(clubDoc, { name: name, description: description, type: type, category: category }, { merge: true });
+    await setDoc(clubDoc, { name: name, description: description, type: type }, { merge: true });
    res.status(200).send(JSON.stringify({'message':"success"}))
 }
 
