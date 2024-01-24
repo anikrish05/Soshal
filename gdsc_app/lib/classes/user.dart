@@ -73,7 +73,6 @@ class User {
             clubData.add(
               ClubCardData(
                 admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
-                category: clubDataResponse['category'],
                 description: clubDataResponse['description'],
                 downloadURL: clubDataResponse['downloadURL'],
                 events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),

@@ -290,10 +290,10 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
 
 
-
     String clubId = widget.club.id;
 
     Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId,newImageBytes]);
+
   }
 
 }

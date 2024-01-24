@@ -7,8 +7,8 @@ import '../app_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-
 final serverUrl = AppConfig.serverUrl;
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -74,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   void signUpRoute() {
     Navigator.pushNamed(context, '/sign');
   }
@@ -88,42 +87,54 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Image.asset('assets/image.png', height: 100),
             Padding(padding: EdgeInsets.only(bottom: 90)),
-            TextButton(
-              onPressed: () {
-                signUpRoute();
-              },
-              child: Center(
-                child: Text(
-                  "Create a New Account",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: "borel",
-                    color: Colors.black,
-                    fontSize: 18.3,
+            buildEmailField(),
+            Padding(padding: EdgeInsets.only(bottom: 8)),
+            buildPasswordField(),
+            SizedBox(height: 20),  // Add vertical space here
+            Padding(  // Add padding here
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Center(  // Center added here
+                child: SizedBox(
+                  width: 150, // This sets the width of the button
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: _color1,  // _color1 used here
+                      padding: EdgeInsets.all(8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50), // Set the border radius
+                      ),
+                    ),
+                    onPressed: () {
+                      login();
+                    },
+                    child: Text(
+                      'Log in',
+                      style: TextStyle(
+
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-            buildEmailField(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
-            buildPasswordField(),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-              ),
-              onPressed: () {
-                login();
-              },
-              child: Text(
-                'Log in',
-                style: TextStyle(
-                  fontFamily: "borel",
-                  decoration: TextDecoration.underline,
-                  fontSize: 18.3,
+            SizedBox(height: 20),  // Add vertical space here
+            Padding(  // Add padding here
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextButton(
+                onPressed: () {
+                  signUpRoute();
+                },
+                child: Text(
+                  "New? Click to create an account!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),
-
             // Display error message if there is one
             errorMessage.isNotEmpty
                 ? Padding(
@@ -166,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextFormField(
         obscureText: true,
         controller: passWordController,
-        obscuringCharacter: '*',
+        obscuringCharacter: '●',
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -181,3 +192,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

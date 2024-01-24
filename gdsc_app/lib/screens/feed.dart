@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
   User user = User();
   List<dynamic> eventData = [];
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
+  bool isDataInitialized = false;
 
   Map<MarkerId, dynamic> _markerEventMap = {};
 
@@ -44,7 +45,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initializeData() async {
-    await loadData(); // Wait for loadData to complete
+    await loadData();
+    setState(() {
+      isDataInitialized = true;
+    });// Wait for loadData to complete
   }
 
   // Added method to load data on demand
@@ -129,34 +133,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (!isDataInitialized) {
+      return Scaffold(
+        body: Center(
+          child: LoaderWidget(), // or any loading indicator
+        ),
+      );
+    }
     return MaterialApp(
       home: Scaffold(
         body: Column(
           children: [
             Expanded(
-              child: FutureBuilder(
-                future: getEventData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return LoaderWidget(); // You need to define the Loader widget
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  } else {
-                    return GoogleMap(
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller.complete(controller);
-                      },
-                      markers: Set.of(_markers),
-                      initialCameraPosition: CameraPosition(
-                        target: _center,
-                        zoom: 16.0,
-                      ),
-                    );
-                  }
+              child: GoogleMap(
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
                 },
-              ),
+                markers: Set.of(_markers),
+                initialCameraPosition: CameraPosition(
+                  target: _center,
+                  zoom: 16.0,
+                ),
+              )
             ),
             SlidingUpPanel(
               controller: panelController,
@@ -199,7 +197,6 @@ class _MyAppState extends State<MyApp> {
         ClubCardData(
           admin: List<String>.from((club['admin'] ?? [])
               .map((admin) => admin.toString())),
-          category: club['category'],
           rating: club['avgRating'].toDouble(),
           description: club['description'],
           downloadURL: club['downloadURL'],

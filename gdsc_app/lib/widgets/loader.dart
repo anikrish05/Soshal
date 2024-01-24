@@ -6,9 +6,9 @@ class LoaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-        child: LoadingAnimationWidget.waveDots(
+        child: LoadingAnimationWidget.fourRotatingDots(
         color: Color(0xFFFF8050),
-        size: 200,
+        size: 50,
     ),
     ),
     );

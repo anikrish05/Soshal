@@ -94,7 +94,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ClubCardData newClub = ClubCardData(
             admin: List<String>.from((responseData[i]['admin'] ?? [])
                 .map((event) => event.toString())),
-            category: responseData[i]["category"] ?? "",
             description: responseData[i]["description"] ?? "",
             downloadURL: responseData[i]["downloadURL"] ?? "",
             events: List<String>.from((responseData[i]['events'] ?? [])

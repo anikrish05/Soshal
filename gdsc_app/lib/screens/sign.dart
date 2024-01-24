@@ -143,26 +143,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
             buildPasswordWidget(),
             Padding(padding: EdgeInsets.only(bottom: 8)),
             buildClassOfWidget(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
+            Padding(padding: EdgeInsets.only(bottom: 20)),
+            Center(  // Center added here
+              child: SizedBox(
+                height: 45,
+                width: 200,
+                child:
+                Padding(  // Add padding here
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Center(  // Center added here
+                child: SizedBox(
+                  width: 150, // This sets the width of the button
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: _color1,  // _color1 used here
+                      padding: EdgeInsets.all(8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50), // Set the border radius
+                      ),
+                    ),
+                    onPressed: () {
+                      createAccount();
+                    },
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(
+
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(bottom: 12)),  // Add padding here
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
               ),
               onPressed: () {
-                createAccount();
+                Navigator.pushNamed(context, '/login');  // Navigate to login.dart page
               },
-              child: Text('Sign up',
+              child: Text('Back to Login',
                   style: TextStyle(
-                      fontFamily: "borel",
-                      decoration: TextDecoration.underline,
-                      color: Colors.black,
-                      fontSize: 18.3)),
+                      color: Colors.grey,
+                      fontSize: 14)),
             ),
           ],
         ),
       ),
     );
   }
+
 
   Widget buildNameWidget() {
     return SizedBox(
@@ -257,3 +291,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
 
 }
+

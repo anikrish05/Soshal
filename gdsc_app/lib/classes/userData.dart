@@ -43,7 +43,6 @@ class UserData {
             ClubCardData clubCardData = ClubCardData(
               rating: clubDataResponse['avgRating'].toDouble(),
               admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
-              category: clubDataResponse['category'],
               description: clubDataResponse['description'],
               downloadURL: clubDataResponse['downloadURL'],
               events: List<String>.from((clubDataResponse['events'] ?? []).map((admin) => admin.toString())),
@@ -85,7 +84,6 @@ class UserData {
               ClubCardData(
                 rating: clubDataResponse['avgRating'].toDouble(),
                   admin: List<String>.from((clubDataResponse['admin'] ?? []).map((event) => event.toString())),
-                  category: clubDataResponse['category'],
                   description: clubDataResponse['description'],
                   downloadURL: clubDataResponse['downloadURL'],
                   events: List<String>.from((clubDataResponse['events'] ?? []).map((event) => event.toString())),
