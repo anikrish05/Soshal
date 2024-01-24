@@ -36,7 +36,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   var location = TextEditingController();
 
-  var category = TextEditingController();
 
   List<int> newImageBytes = [];
   bool chooseImage = false;
@@ -99,7 +98,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       "name": clubName.text,
       "description": clubBio.text,
       "type": type,
-      "category": category.text,
       "admin": adminsAsList,
       "tags": []
     }));
@@ -107,7 +105,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     print("Test");
     print(responseData["message"].toString());
     await sendImageToServer(newImageBytes, responseData["message"].toString());
-    Navigator.pop(context, [clubName.text, clubBio.text, location.text, category.text,type, adminsAsList, [], newImageBytes]);
+    Navigator.pop(context, [clubName.text, clubBio.text, location.text,type, adminsAsList, [], newImageBytes]);
   }
 
   void toggleSelectedAdmin(UserData selection) {
@@ -231,27 +229,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
         Divider(),
         Container(
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              Expanded(
-                child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a category.';
-                    }
-                    return null;
-                  },
-                  controller: category,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    hintText: "Category",
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                  ),
-                ),
-              ),
-              VerticalDivider(),
               ToggleSwitch(
                 minWidth: 77.5,
                 cornerRadius: 20.0,

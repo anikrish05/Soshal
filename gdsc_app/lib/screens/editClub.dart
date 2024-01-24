@@ -20,7 +20,6 @@ class UpdateClubScreen extends StatefulWidget {
 class _CreateUserScreenState extends State<UpdateClubScreen> {
   final newName = TextEditingController();
   final newDesc = TextEditingController();
-  final clubCate = TextEditingController();
 
   int indexPubOrPriv = 1;
 
@@ -124,26 +123,6 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20.0)),
                               hintText: widget.club.description,
-                              contentPadding: EdgeInsets.fromLTRB(
-                                  20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
-                          Divider(),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Category',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
-                            ),
-                          ),
-                          TextField(
-                            controller: clubCate,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: widget.club.category,
                               contentPadding: EdgeInsets.fromLTRB(
                                   20.0, 10.0, 20.0, 10.0),
                             ),
@@ -290,7 +269,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String newClubName = "";
     String newClubDesc = "";
-    String newClubCate = "";
+
     if (newName.text == "")
       {
         newClubName = widget.club.name;
@@ -309,20 +288,12 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
         newClubDesc = newDesc.text;
       }
 
-    if (clubCate.text == "")
-    {
-      newClubCate = widget.club.category;
-    }
-    else
-    {
-      newClubCate = clubCate.text;
-    }
 
 
 
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName,newClubDesc,clubType,newClubCate,clubId,newImageBytes]);
+    Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId,newImageBytes]);
   }
 
 }
