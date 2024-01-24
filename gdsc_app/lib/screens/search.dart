@@ -131,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen>
         } else {
           return event.name.toLowerCase().contains(query.toLowerCase());
         }
-      }).toSet(); // gets all filtered clubs that also have selected tags
+      }).toSet(); // gets all filtered events that also have selected tags
 
       filteredFollowers = user!.followingClubData.where((club) {
         if (selectedTags.isNotEmpty) {

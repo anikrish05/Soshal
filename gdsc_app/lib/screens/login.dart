@@ -108,11 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       login();
                     },
                     child: Text(
-                      'Log in>',
+                      'Log in',
                       style: TextStyle(
-                        fontFamily: "borel",
-                        decoration: TextDecoration.underline,
-                        fontSize: 18.3,
+
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -127,13 +126,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   signUpRoute();
                 },
                 child: Text(
-                  "New? Create a Account>",
+                  "New? Click to create an account!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: "borel",
-                    color: Colors.black,
-                    fontSize: 18.3,
-                    decoration: TextDecoration.underline,  // Underline added here
+                    color: Colors.grey,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -180,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextFormField(
         obscureText: true,
         controller: passWordController,
-        obscuringCharacter: '*',
+        obscuringCharacter: '●',
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
