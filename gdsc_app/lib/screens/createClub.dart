@@ -32,6 +32,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   Set<UserData> users = {};
   Set<UserData> selectedAdmins = {};
+  List<String> selectedTags = [''];
+  List<String> sampleTags = ["Party", "Social", "Hackathon, Coding"];
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
   Color _orangeColor = Color(0xFFFF8050);
   late String currUserId;
@@ -173,7 +175,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 10),
           child: Column(
             children: [
               Divider(
@@ -184,25 +186,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a category.';
-                          }
-                          return null;
-                        },
-                        controller: category,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          hintText: "Category",
-                          contentPadding:
-                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                        ),
-                      ),
-                    ),
-                    VerticalDivider(),
                     ToggleSwitch(
                       minWidth: 77.5,
                       cornerRadius: 20.0,
@@ -271,7 +254,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                   ),
                 ),
               ),
-              Divider(),
+              Divider(),         
               ElevatedButton(
                 child: Text('Create Club'),
                 onPressed: () {

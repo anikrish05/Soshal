@@ -28,7 +28,7 @@ class Club{
         "type": type,
         "category": category,
         "admin": admin,
-          "tags": tags
+        "tags": tags
       }),
     );
     if(response.statusCode == 200){
