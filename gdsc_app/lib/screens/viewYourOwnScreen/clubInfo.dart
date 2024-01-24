@@ -596,7 +596,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       "name": result[0],
       "description": result[1],
       "type": result[2],
-      "id": result[4]
+      "id": result[3]
     };
       setState(() {
         club.name = result[0];
@@ -623,7 +623,23 @@ class _ClubProfilePageState extends State<ClubProfilePage>
     } catch (error) {
       print('Error: $error');
     }
+
+    final response = await http.post(
+      Uri.parse('$serverUrl/api/clubs/updateClubImage'),
+      headers: await getHeaders(),
+      body: jsonEncode(<String, dynamic>{
+        "image": result[4],
+        "id": result[3]
+      }),
+    );
+
+    setState(() {
+
+    });
+
   }
+
+
 
 
 }

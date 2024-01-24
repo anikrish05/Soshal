@@ -124,6 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
   }
 
+
   FutureOr onGoBack(dynamic value) {
     setState(() {});
   }
@@ -264,11 +265,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   );
 
   @override
-  void onCreateClub() {
+  void onCreateClub(){
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateClubScreen(user!.uid)),
     ).then(onGoBack);
+
+
   }
 
   void onUpdateProfile() async {

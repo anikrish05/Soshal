@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '/../app_config.dart';
 import 'dart:convert';
 import '/../utils.dart';
+import 'dart:io' as i;
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -19,9 +20,13 @@ class UpdateClubScreen extends StatefulWidget {
 class _CreateUserScreenState extends State<UpdateClubScreen> {
   final newName = TextEditingController();
   final newDesc = TextEditingController();
-  final clubCate = TextEditingController();
 
   int indexPubOrPriv = 1;
+
+  bool chooseImage = false;
+  List<int> newImageBytes = [];
+  XFile? _image;
+
   Color _orangeColor = Color(0xFFFF8050);
   final ButtonStyle style =
   ElevatedButton.styleFrom(
@@ -56,7 +61,14 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              profilePicture(),
+                              GestureDetector(
+                                child: _image == null
+                                    ? profilePicture()
+                                    : CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: FileImage(i.File(_image!.path)),
+                                ),
+                              ),
                               Positioned(
                                 right: 0,
                                 bottom: 0,
@@ -113,16 +125,6 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                               hintText: widget.club.description,
                               contentPadding: EdgeInsets.fromLTRB(
                                   20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
-                          Divider(),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Category',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
                             ),
                           ),
                           Divider(),
@@ -215,11 +217,16 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     if (pickedFile != null) {
       // Read the image file as bytes
-      List<int> imageBytes = await pickedFile.readAsBytes();
+      chooseImage = true;
+      newImageBytes = await pickedFile.readAsBytes();
 
-      // Send the bytes to the server
-      await sendImageToServer(imageBytes);
+      setState(() {
+        _image = pickedFile;
+      });
+
+      print("Succesful");
     }
+
   }
 
   Future<void> sendImageToServer(List<int> imageBytes) async {
@@ -262,6 +269,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String newClubName = "";
     String newClubDesc = "";
+
     if (newName.text == "")
       {
         newClubName = widget.club.name;
@@ -284,7 +292,8 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId]);
+    Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId,newImageBytes]);
+
   }
 
 }
