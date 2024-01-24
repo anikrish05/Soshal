@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:gdsc_app/screens/login.dart';
 import 'package:gdsc_app/screens/profile.dart';
 import 'package:gdsc_app/widgets/clubWidgets/clubCard.dart';
@@ -114,31 +115,32 @@ class _SearchScreenState extends State<SearchScreen>
   }
 
   void performSearch(String query) {
+    bool containsQuery (String name) => name.toLowerCase().contains(query.toLowerCase());
     setState(() {
       filteredItemsClubs = clubs.where((club) {
-        if (selectedTags.isNotEmpty) {
+        if (selectedTags.isNotEmpty && containsQuery(club.name)) {
           return selectedTags
               .any((selectedTag) => club.tags.contains(selectedTag));
         } else {
-          return club.name.toLowerCase().contains(query.toLowerCase());
+          return containsQuery(club.name);
         }
       }).toSet(); // gets all filtered clubs that also have selected tags
 
       filteredItemsEvents = events.where((event) {
-        if (selectedTags.isNotEmpty) {
+        if (selectedTags.isNotEmpty && containsQuery(event.name)) {
           return selectedTags
               .any((selectedTag) => event.tags.contains(selectedTag));
         } else {
-          return event.name.toLowerCase().contains(query.toLowerCase());
+          return containsQuery(event.name);
         }
       }).toSet(); // gets all filtered events that also have selected tags
 
       filteredFollowers = user!.followingClubData.where((club) {
-        if (selectedTags.isNotEmpty) {
+        if (selectedTags.isNotEmpty && containsQuery(club.name)) {
           return selectedTags
               .any((selectedTag) => club.tags.contains(selectedTag));
         } else {
-          return club.name.toLowerCase().contains(query.toLowerCase());
+          return containsQuery(club.name);
         }
       }).toSet();
     });
@@ -272,7 +274,7 @@ class _SearchScreenState extends State<SearchScreen>
             onConfirm: (List<String> values) {
               setState(() {
                 selectedTags = values.toSet();
-                performSearch('');
+                performSearch(searchController.text);
               });
             },
             searchable: true,
