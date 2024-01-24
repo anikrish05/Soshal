@@ -124,31 +124,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
   }
 
-  void sendImageToServerNewClub(List<int> imageBytes, newEventID) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$serverUrl/api/club/updateClubImage'),
-        headers: await getHeaders(),
-        body: jsonEncode(<String, dynamic>{
-          "image": imageBytes,
-          "id": newEventID
-        }),
-      );
-
-
-      if (response.statusCode == 200) {
-        print('Image uploaded successfully');
-      } else {
-        print('Failed to upload image. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error uploading image: $error');
-    }
-
-  }
 
   FutureOr onGoBack(dynamic value) {
-
     setState(() {});
   }
 
@@ -288,11 +265,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   );
 
   @override
-  void onCreateClub() async{
-    final result = await Navigator.push(
+  void onCreateClub(){
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateClubScreen(user!.uid)),
-    );
+    ).then(onGoBack);
 
 
   }
