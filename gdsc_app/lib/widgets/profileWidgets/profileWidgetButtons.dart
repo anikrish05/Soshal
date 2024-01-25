@@ -25,7 +25,7 @@ class CreateButtonsWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50), // Set the border radius
               ),
             ),
-            child: Text('Update Profile'),
+            child: Text(' Edit Profile '),
           ),
           SizedBox(width: 16),
           ElevatedButton(
