@@ -3,24 +3,31 @@ import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:http/http.dart' as http;
-import '/../app_config.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 import 'dart:convert';
+import '/../app_config.dart';
 import '/../utils.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 
 final serverUrl = AppConfig.serverUrl;
+final format = DateFormat("yyyy-MM-dd HH:mm");
 
 class UpdateClubScreen extends StatefulWidget {
   final ClubCardData club;
   UpdateClubScreen({required this.club});
   @override
-  _CreateUserScreenState createState() => _CreateUserScreenState();
+  _UpdateClubScreenState createState() => _UpdateClubScreenState();
 }
-// widget.user
-class _CreateUserScreenState extends State<UpdateClubScreen> {
+
+class _UpdateClubScreenState extends State<UpdateClubScreen> {
   final newName = TextEditingController();
   final newDesc = TextEditingController();
   final clubCate = TextEditingController();
-
+  String dateTimeString = 'Choose Date and Time';
+  late DateTime selectedDateTime;
   int indexPubOrPriv = 1;
   Color _orangeColor = Color(0xFFFF8050);
   final ButtonStyle style =
@@ -53,6 +60,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          SizedBox(height: 10.0), // Added spacing
                           Stack(
                             alignment: Alignment.center,
                             children: [
@@ -76,6 +84,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                               )
                             ],
                           ),
+                          SizedBox(height: 10.0), // Added spacing
                           RichText(
                             text: TextSpan(
                               text: 'Change Club Name',
@@ -95,7 +104,9 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   20.0, 10.0, 20.0, 10.0),
                             ),
                           ),
+                          SizedBox(height: 10.0), // Added spacing
                           Divider(),
+                          SizedBox(height: 10.0), // Added spacing
                           RichText(
                             text: TextSpan(
                               text: 'Change Club Description',
@@ -115,7 +126,9 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   20.0, 10.0, 20.0, 10.0),
                             ),
                           ),
+                          SizedBox(height: 10.0), // Added spacing
                           Divider(),
+                          SizedBox(height: 10.0), // Added spacing
                           RichText(
                             text: TextSpan(
                               text: 'Change Club Category',
@@ -135,46 +148,50 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   20.0, 10.0, 20.0, 10.0),
                             ),
                           ),
+                          SizedBox(height: 10.0), // Added spacing
                           Divider(),
+                          SizedBox(height: 10.0), // Added spacing
                           Row(
-                            children:[
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Change Club Type',
-                                  style: TextStyle(fontWeight: FontWeight.bold,
-                                      color: Colors.black.withOpacity(0.6),
-                                      fontFamily: 'Borel',
-                                      fontSize: 15),
+                              children:[
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Change Club Type',
+                                    style: TextStyle(fontWeight: FontWeight.bold,
+                                        color: Colors.black.withOpacity(0.6),
+                                        fontFamily: 'Borel',
+                                        fontSize: 15),
+                                  ),
                                 ),
-                              ),
-                              VerticalDivider(),
-                              ToggleSwitch(
-                                minWidth: 77.5,
-                                cornerRadius: 20.0,
-                                activeBgColors: [
-                                  [_orangeColor],
-                                  [_orangeColor]
-                                ],
-                                activeFgColor: Colors.white,
-                                inactiveBgColor: Colors.grey,
-                                inactiveFgColor: Colors.white,
-                                initialLabelIndex: 0,
-                                totalSwitches: 2,
-                                labels: ['Public', 'Private'],
-                                radiusStyle: true,
-                                onToggle: (index) {
-                                  if (index == 1) {
-                                    indexPubOrPriv = 0;
-                                    print("private");
-                                  } else if (index == 0) {
-                                    indexPubOrPriv = 1;
-                                    print("public");
-                                  }
-                                },
-                              ),
-                            ]
+                                VerticalDivider(),
+                                ToggleSwitch(
+                                  minWidth: 77.5,
+                                  cornerRadius: 20.0,
+                                  activeBgColors: [
+                                    [_orangeColor],
+                                    [_orangeColor]
+                                  ],
+                                  activeFgColor: Colors.white,
+                                  inactiveBgColor: Colors.grey,
+                                  inactiveFgColor: Colors.white,
+                                  initialLabelIndex: 0,
+                                  totalSwitches: 2,
+                                  labels: ['Public', 'Private'],
+                                  radiusStyle: true,
+                                  onToggle: (index) {
+                                    if (index == 1) {
+                                      indexPubOrPriv = 0;
+                                      print("private");
+                                    } else if (index == 0) {
+                                      indexPubOrPriv = 1;
+                                      print("public");
+                                    }
+                                  },
+                                ),
+                              ]
                           ),
+                          SizedBox(height: 10.0), // Added spacing
                           Divider(height: 15,),
+                          SizedBox(height: 10.0), // Added spacing
                           Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -274,22 +291,22 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
     String newClubDesc = "";
     String newClubCate = "";
     if (newName.text == "")
-      {
-        newClubName = widget.club.name;
-      }
+    {
+      newClubName = widget.club.name;
+    }
     else
-      {
-        newClubName = newName.text;
-      }
+    {
+      newClubName = newName.text;
+    }
 
     if (newDesc.text == "")
-      {
-        newClubDesc = widget.club.description;
-      }
+    {
+      newClubDesc = widget.club.description;
+    }
     else
-      {
-        newClubDesc = newDesc.text;
-      }
+    {
+      newClubDesc = newDesc.text;
+    }
 
     if (clubCate.text == "")
     {

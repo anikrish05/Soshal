@@ -397,6 +397,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       );
                     }
                   ),
+                  Divider(height: 25,),
                   AnimatedButton(
                     transitionType: TransitionType.LEFT_TO_RIGHT,
                     textStyle: TextStyle(
