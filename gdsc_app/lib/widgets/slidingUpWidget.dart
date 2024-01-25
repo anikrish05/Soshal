@@ -272,11 +272,6 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                 primary: isRSVP
                                     ? Color(0xFFFF8050)
                                     : Color(0xFFB2BEB5),
-                                textStyle: TextStyle(
-                                  fontFamily: 'Borel',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -434,9 +429,26 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
 
   Widget textRSVP() {
     if (isRSVP) {
-      return Text("rsvp'd");
-    } else {
-      return Text("rsvp");
+      return RichText(
+        text: TextSpan(
+          style: DefaultTextStyle.of(context).style,
+          children: <TextSpan>[
+            TextSpan(text: "rsvp'd", style: TextStyle(fontFamily: 'Borel', color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
     }
+    else {
+      return RichText(
+        text: TextSpan(
+          style: DefaultTextStyle.of(context).style,
+          children: <TextSpan>[
+            TextSpan(
+                text: 'rsvp',
+                style: TextStyle(fontFamily: 'Borel', color: Colors.white, fontWeight: FontWeight.bold))
+          ],
+        ),
+      );    }
   }
 }
+
