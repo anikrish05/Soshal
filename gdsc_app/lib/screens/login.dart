@@ -87,9 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Image.asset('assets/image.png', height: 100),
             Padding(padding: EdgeInsets.only(bottom: 90)),
-            buildEmailField(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
-            buildPasswordField(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildEmailField(),
+                Padding(padding: EdgeInsets.only(bottom: 8)),
+                buildPasswordField(),
+              ],
+            ),
             SizedBox(height: 20),  // Add vertical space here
             Padding(  // Add padding here
               padding: const EdgeInsets.symmetric(horizontal: 20.0),

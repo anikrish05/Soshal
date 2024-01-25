@@ -10,7 +10,13 @@ final serverUrl = AppConfig.serverUrl;
 
 int currYear = DateTime.now().year;
 
-List<int> list = <int>[currYear, currYear + 1,currYear + 2, currYear + 3, currYear + 4];
+List<int> list = <int>[
+  currYear,
+  currYear + 1,
+  currYear + 2,
+  currYear + 3,
+  currYear + 4
+];
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -31,14 +37,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isValidEmail(String input) {
     // Check if the email is a valid UCSC email
     bool isValidFormat = RegExp(
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(input);
 
     bool containsUCSCDomain = input.endsWith("@ucsc.edu");
 
     return isValidFormat && containsUCSCDomain;
   }
-
 
   void createAccount() async {
     // Check if the email is a valid UCSC email
@@ -104,9 +109,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {
@@ -136,67 +138,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(color: Colors.red),
                 ),
               ),
-            buildNameWidget(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
-            buildEmailWidget(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
-            buildPasswordWidget(),
-            Padding(padding: EdgeInsets.only(bottom: 8)),
-            buildClassOfWidget(),
-            Padding(padding: EdgeInsets.only(bottom: 20)),
-            Center(  // Center added here
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildNameWidget(),
+                Padding(padding: EdgeInsets.only(bottom: 8)),
+                buildEmailWidget(),
+                Padding(padding: EdgeInsets.only(bottom: 8)),
+                buildPasswordWidget(),
+                Padding(padding: EdgeInsets.only(bottom: 8)),
+                buildClassOfWidget(),
+                Padding(padding: EdgeInsets.only(bottom: 20)),
+              ],
+            ),
+            Center(
+              // Center added here
               child: SizedBox(
                 height: 45,
                 width: 200,
-                child:
-                Padding(  // Add padding here
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Center(  // Center added here
-                child: SizedBox(
-                  width: 150, // This sets the width of the button
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: _color1,  // _color1 used here
-                      padding: EdgeInsets.all(8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50), // Set the border radius
-                      ),
-                    ),
-                    onPressed: () {
-                      createAccount();
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(
-
-                        fontSize: 18,
+                child: Padding(
+                  // Add padding here
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Center(
+                    // Center added here
+                    child: SizedBox(
+                      width: 150, // This sets the width of the button
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: _color1, // _color1 used here
+                          padding: EdgeInsets.all(8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                50), // Set the border radius
+                          ),
+                        ),
+                        onPressed: () {
+                          createAccount();
+                        },
+                        child: Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(bottom: 12)),  // Add padding here
+            Padding(padding: EdgeInsets.only(bottom: 12)), // Add padding here
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.blue,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/login');  // Navigate to login.dart page
+                Navigator.pushNamed(
+                    context, '/login'); // Navigate to login.dart page
               },
               child: Text('Back to Login',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14)),
+                  style: TextStyle(color: Colors.grey, fontSize: 14)),
             ),
           ],
         ),
       ),
     );
   }
-
 
   Widget buildNameWidget() {
     return SizedBox(
@@ -256,19 +263,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget buildClassOfWidget()
-  {
+  Widget buildClassOfWidget() {
     return Container(
-        width: 175,
+        width: 350,
         padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50.0),
           color: Colors.grey[200], // Change the color as needed
         ),
-        child:DropdownButton<int>(
+        child: DropdownButton<int>(
           value: gradYear,
+          alignment: AlignmentDirectional.topStart,
           hint: Text('Select Graduation Year'),
           isExpanded: true,
+          borderRadius: BorderRadius.circular(20.0),
           elevation: 16,
           underline: SizedBox(),
           onChanged: (int? value) {
@@ -280,15 +288,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           items: list.map<DropdownMenuItem<int>>((int value) {
             return DropdownMenuItem<int>(
               value: value,
-              child: Text('Graduation Year: $value'),
+              child: Text('Graduation Year: $value', style: TextStyle(color: const Color.fromARGB(255, 104, 104, 104)),),
             );
           }).toList(),
-
-        )
-    );
+        ));
   }
-
-
-
 }
-
