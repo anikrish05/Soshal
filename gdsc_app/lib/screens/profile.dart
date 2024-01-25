@@ -293,9 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/api/users/updateProfile'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: await getHeaders(),
         body: jsonEncode(updateProfileData),
       );
 

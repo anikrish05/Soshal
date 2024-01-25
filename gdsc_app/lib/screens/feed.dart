@@ -178,11 +178,14 @@ class _MyAppState extends State<MyApp> {
             ),
           ],
         ),
+        /*
         floatingActionButton: FloatingActionButton(
           backgroundColor: _orangeColor, // Use the global variable here
           onPressed: loadData, // Trigger data loading on button press
           child: Icon(Icons.refresh),
         ),
+
+         */
       ),
     );
   }

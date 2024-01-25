@@ -266,8 +266,18 @@ class _SearchScreenState extends State<SearchScreen>
             ),
           ),
           MultiSelectDialogField(
-            buttonText: Text("Select Club/Event Tags"),
-            title: Text("Select Tags"),
+            buttonText: Text("Select Club/Event Tags",
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+              )
+            ),
+            title: Text("Select Tags",
+                style: TextStyle(
+                  color: Colors.grey,
+                )
+
+            ),
             initialValue: selectedTags.toList(),
             items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
             onConfirm: (List<String> values) {

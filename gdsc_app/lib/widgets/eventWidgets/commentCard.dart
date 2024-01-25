@@ -12,6 +12,7 @@ class CommentCard extends StatefulWidget {
 
 class _CommentCardState extends State<CommentCard> {
   bool isLiked = false;
+  Color _orangeColor = Color(0xFFFF8050);
 
   Widget _buildProfileImage() {
     Widget profileImage;
@@ -85,7 +86,7 @@ class _CommentCardState extends State<CommentCard> {
                       onTap: toggleLike,
                       child: Icon(
                         isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? Colors.orange : null,
+                        color: isLiked ? _orangeColor : null,
                       ),
                     ),
                   ],
