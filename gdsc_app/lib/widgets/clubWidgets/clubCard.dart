@@ -80,7 +80,13 @@ class ClubCardWidget extends StatelessWidget {
                                 Row(
                                   children: [
                                     Flexible(
-                                      child: Text(club.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          club.name,
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                     if (club.verified)
                                       Padding(

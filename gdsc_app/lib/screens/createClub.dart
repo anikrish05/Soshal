@@ -59,9 +59,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
         headers: await getHeaders(),
         body: jsonEncode(<String, dynamic>{"image": imageBytes, "id": id}),
       );
-
-      print(id);
-
       if (response.statusCode == 200) {
         print('Image uploaded successfully');
         setState(() {});

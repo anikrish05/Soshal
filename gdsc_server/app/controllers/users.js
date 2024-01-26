@@ -139,11 +139,11 @@ const deRSVP = async (req, res) => {
 
 
 const updateProfile = async(req, res) => {
-  const {displayName, classOf, uid} = req.body;
+  const {displayName, classOf, uid, interestedTags} = req.body;
   await checkAuthorization(req, res);
   const userDoc = doc(db, "users", uid);
     const userData = (await getDoc(userDoc)).data();
-    await setDoc(userDoc, { displayName: displayName, classOf: classOf }, { merge: true });
+    await setDoc(userDoc, { displayName: displayName, classOf: classOf, interestedTags: interestedTags }, { merge: true });
    res.status(200).send(JSON.stringify({'message':"success"}))
 
 }
