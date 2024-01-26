@@ -245,7 +245,7 @@ class _SearchScreenState extends State<SearchScreen>
   Widget buildText() => Column(
         children: [
           SizedBox(
-            width: 350,
+            width: 395,
             child: TextField(
               onSubmitted: (value) {
                 performSearch(searchController.text);
@@ -349,7 +349,7 @@ class _SearchScreenState extends State<SearchScreen>
               children: [
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.only(bottom: 8.0, left: 0, top: 8.0),
+                  padding: EdgeInsets.only(bottom: 6.0, left: 0, top: 8.0),
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(

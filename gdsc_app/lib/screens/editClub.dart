@@ -38,162 +38,183 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(leading: BackButton(
-            onPressed: () => Navigator.of(context).pop(),
-            color: Colors.orange),
-            centerTitle: true,
-            title: Text("Update Club Details",
-              style: TextStyle(
-                color: Color(0xFF88898C),
-              ),),
-            backgroundColor: Colors.white
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => Navigator.of(context).pop(),
+          color: _orangeColor,
         ),
-        body:
-        Padding(
-            padding: EdgeInsets.all(16.6),
-            child: ListView(
-              children: [
-                Container(
+        centerTitle: true,
+        title: Text(
+          "Update Club Details",
+          style: TextStyle(
+            color: Color(0xFF88898C),
+          ),
+        ),
+        backgroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.6),
+        child: ListView(
+          children: [
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      GestureDetector(
+                        child: _image == null
+                            ? profilePicture()
+                            : CircleAvatar(
+                          radius: 60,
+                          backgroundImage: FileImage(i.File(_image!.path)),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            _pickImage();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _orangeColor,
+                            ),
+                            child: Icon(Icons.edit, color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: 'Change Club Name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.6),
+                        fontFamily: 'Garret',
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    controller: newName,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      hintText: widget.club.name,
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    ),
+                  ),
+                  Divider(),
+                  RichText(
+                    text: TextSpan(
+                      text: 'Change Club Description',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.6),
+                        fontFamily: 'Garret',
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    controller: newDesc,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      hintText: widget.club.description,
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    ),
+                  ),
+                  Divider(),
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: 'Change Club Type',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black.withOpacity(0.6),
+                            fontFamily: 'Garret',
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      VerticalDivider(),
+                      ToggleSwitch(
+                        minWidth: 77.5,
+                        cornerRadius: 20.0,
+                        activeBgColors: [
+                          [_orangeColor],
+                          [_orangeColor]
+                        ],
+                        activeFgColor: Colors.white,
+                        inactiveBgColor: Colors.grey,
+                        inactiveFgColor: Colors.white,
+                        initialLabelIndex: 0,
+                        totalSwitches: 2,
+                        labels: ['Public', 'Private'],
+                        radiusStyle: true,
+                        onToggle: (index) {
+                          if (index == 1) {
+                            indexPubOrPriv = 0;
+                            print("private");
+                          } else if (index == 0) {
+                            indexPubOrPriv = 1;
+                            print("public");
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  Divider(height: 15,),
+                  Divider(height: 15,),
+                  Center(
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              GestureDetector(
-                                child: _image == null
-                                    ? profilePicture()
-                                    : CircleAvatar(
-                                  radius: 60,
-                                  backgroundImage: FileImage(i.File(_image!.path)),
-                                ),
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        SizedBox(height: 20), // Adjust the height to move the button down
+
+                        SizedBox(
+                          height: 50, // Adjust the height of the button
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(35.0),
+                                side: BorderSide.none,
                               ),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _pickImage();
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _orangeColor,
-                                    ),
-                                    child: Icon(Icons.edit, color: Colors.white),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Name',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
+                            ),
+                            onPressed: () {
+                              submitEdit();
+                            },
+                            child: Text(
+                              'Update',
+                              style: TextStyle(fontSize: 21), // Adjust the font size
                             ),
                           ),
-                          TextField(
-                            controller: newName,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: widget.club.name,
-                              contentPadding: EdgeInsets.fromLTRB(
-                                  20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
-                          Divider(),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Description',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
-                            ),
-                          ),
-                          TextField(
-                            controller: newDesc,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              hintText: widget.club.description,
-                              contentPadding: EdgeInsets.fromLTRB(
-                                  20.0, 10.0, 20.0, 10.0),
-                            ),
-                          ),
-                          Divider(),
-                          Row(
-                            children:[
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Change Club Type',
-                                  style: TextStyle(fontWeight: FontWeight.bold,
-                                      color: Colors.black.withOpacity(0.6),
-                                      fontFamily: 'Borel',
-                                      fontSize: 15),
-                                ),
-                              ),
-                              VerticalDivider(),
-                              ToggleSwitch(
-                                minWidth: 77.5,
-                                cornerRadius: 20.0,
-                                activeBgColors: [
-                                  [_orangeColor],
-                                  [_orangeColor]
-                                ],
-                                activeFgColor: Colors.white,
-                                inactiveBgColor: Colors.grey,
-                                inactiveFgColor: Colors.white,
-                                initialLabelIndex: 0,
-                                totalSwitches: 2,
-                                labels: ['Public', 'Private'],
-                                radiusStyle: true,
-                                onToggle: (index) {
-                                  if (index == 1) {
-                                    indexPubOrPriv = 0;
-                                    print("private");
-                                  } else if (index == 0) {
-                                    indexPubOrPriv = 1;
-                                    print("public");
-                                  }
-                                },
-                              ),
-                            ]
-                          ),
-                          Divider(height: 15,),
-                          Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 50,
-                                  width: 200,
-                                  child:
-                                  ElevatedButton(
-                                    style: style,
-                                    onPressed: () {
-                                      submitEdit();
-                                    },
-                                    child: const Text('Update'),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ]
-                    )
-                )
-              ],
-            )
-        )
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+
 
   Widget profilePicture() {
     if (widget.club.downloadURL != "") {

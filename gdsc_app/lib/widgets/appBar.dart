@@ -13,11 +13,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset(
-            'assets/image.png',
-            fit: BoxFit.fitWidth,
-            height: 150,
-            width: 150,
+          Padding( // Add padding to the top of the image
+            padding: EdgeInsets.only(top: 11.0), // Adjust this value as needed
+            child: Image.asset(
+              'assets/image.png',
+              fit: BoxFit.fitWidth,
+              height: 150,
+              width: 150,
+            ),
           ),
         ],
       ),

@@ -212,100 +212,101 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         padding: EdgeInsets.all(18),
         child: ListView(
           children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: _image == null
-                        ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset('assets/ex1.jpeg',
-                          height: 150, width: 150, fit: BoxFit.cover),
-                    )
-                        : ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(
-                          i.File(_image!.path),
-                          width: 150.0,
-                          height: 150.0,
-                          fit: BoxFit.cover,
-
-                        )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: _image == null
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset(
+                      'assets/emptyClubImage.png',
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.file(
+                      i.File(_image!.path),
+                      width: 150.0,
+                      height: 150.0,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  VerticalDivider(),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 35.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextFormField(
-                            style: TextStyle(
-                              fontFamily: 'Garret',
-                              color: Colors.black,
-                              fontSize: 15,
+                ),
+                VerticalDivider(),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 35.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          style: TextStyle(
+                            fontFamily: 'Garret',
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                          controller: eventName,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title.';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
-                            controller: eventName,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a title.';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              hintText: "Event Title",
-                              hintStyle: TextStyle(color: Colors.black),
-                              contentPadding: EdgeInsets.fromLTRB(
-                                20.0,
-                                10.0,
-                                20.0,
-                                10.0,
-                              ),
+                            hintText: "Event Title",
+                            hintStyle: TextStyle(color: Colors.black),
+                            contentPadding: EdgeInsets.fromLTRB(
+                              20.0,
+                              10.0,
+                              20.0,
+                              10.0,
                             ),
                           ),
-                          Divider(height: 25,),
-                          TextFormField(
-                            style: TextStyle(
-                              fontFamily: 'Garret',
-                              color: Colors.black,
-                              fontSize: 15,
-                            ),
-                            controller: eventDesc,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter text.';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              hintText: "Event Description",
-                              hintStyle: TextStyle(color: Colors.black),
-                              contentPadding: EdgeInsets.fromLTRB(
-                                20.0,
-                                10.0,
-                                20.0,
-                                10.0,
-                              ),
-                            ),
-                            maxLines: 3,
+                        ),
+                        Divider(height: 25,),
+                        TextFormField(
+                          style: TextStyle(
+                            fontFamily: 'Garret',
+                            color: Colors.black,
+                            fontSize: 15,
                           ),
-                        ],
-                      ),
+                          controller: eventDesc,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter text.';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            hintText: "Event Description",
+                            hintStyle: TextStyle(color: Colors.black),
+                            contentPadding: EdgeInsets.fromLTRB(
+                              20.0,
+                              10.0,
+                              20.0,
+                              10.0,
+                            ),
+                          ),
+                          maxLines: 3,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Divider(height: 25,),
             Container(
@@ -327,7 +328,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           borderRadius: BorderRadius.circular(20.0)),
                       hintText: "Search Admins",
                       contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                     ),
                   );
                 },
@@ -351,8 +352,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   } else {
                     return clubs
                         .where((admin) => admin.name
-                            .toLowerCase()
-                            .contains(search.toLowerCase()))
+                        .toLowerCase()
+                        .contains(search.toLowerCase()))
                         .toList();
                   }
                 },
@@ -365,7 +366,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 validator: (value) {
                   if (dateTimeString.compareTo('Choose Date and Time') == 0) {
                     return 'Please enter a date-time.';
-                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
+                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0) {
                     return "Please enter a future date-time.";
                   }
                   return null;
@@ -427,8 +428,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         style: ButtonStyle(
                           backgroundColor:
                           MaterialStateProperty.all<Color>(_orangeColor),
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                               side: BorderSide.none,
@@ -440,7 +440,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         },
                         child: const Text('Choose Location'),
                       );
-                    }
+                    },
                   ),
                   AnimatedButton(
                     transitionType: TransitionType.LEFT_TO_RIGHT,
@@ -470,12 +470,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
             ),
             Divider(height: 25,),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AnimatedButton(
+            Column( // Changed from Container to Column
+              children: [
+                Center(
+                  child: AnimatedButton(
                     transitionType: TransitionType.LEFT_TO_RIGHT,
                     textStyle: TextStyle(
                       color: Colors.white,
@@ -485,7 +483,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     text: "Repeatable",
                     selectedText: "Not Repeatable",
                     onPress: () {
-                      repeatable = !repeatable;
+                      setState(() {
+                        repeatable = !repeatable;
+                      });
                     },
                     selectedTextColor: Colors.black,
                     selectedBackgroundColor: Colors.grey,
@@ -495,47 +495,49 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     borderRadius: 20.0,
                     isReverse: true,
                   ),
-                  AnimatedButton(
-                    transitionType: TransitionType.CENTER_LR_OUT,
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Post",
-                    onPress: () {
-                      if (_oFormKey.currentState!.validate()) {
-                        postRequest();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.green,
-                            content: Text('New event created successfully!'),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text('Please fill out all fields!'),
-                          ),
-                        );
-                      }
-                    },
-                    selectedTextColor: Colors.white,
-                    selectedBackgroundColor: Colors.lightBlue,
-                    backgroundColor: Colors.green,
-                    borderRadius: 20.0,
-                    height: 45,
-                    width: 100,
+                ),
+                SizedBox(height: 16), // Add some space between the buttons
+                AnimatedButton(
+                  transitionType: TransitionType.CENTER_LR_OUT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
                   ),
-                ],
-              ),
+                  text: "Post",
+                  backgroundColor: _orangeColor, // This will set the button color to orange
+                  onPress: () {
+                    if (_oFormKey.currentState!.validate()) {
+                      postRequest();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.orange,
+                          content: Text('New event created successfully!'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text('Please fill out all fields!'),
+                        ),
+                      );
+                    }
+                  },
+                  selectedTextColor: Colors.white,
+                  selectedBackgroundColor: Colors.lightBlue,
+                  borderRadius: 20.0,
+                  height: 45,
+                  width: 100,
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+
   Future<void> _pickImage() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery);
