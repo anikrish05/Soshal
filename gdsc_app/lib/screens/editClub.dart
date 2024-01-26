@@ -223,7 +223,9 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   ElevatedButton(
                                     style: style,
                                     onPressed: () {
-                                      submitEdit();
+                                      setState(() {
+                                        submitEdit();
+                                      });
                                     },
                                     child: const Text('Update'),
                                   ),
@@ -338,6 +340,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
     String clubId = widget.club.id;
 
     Navigator.pop(context, [newClubName, newClubDesc, clubType, clubId, newImageBytes, selectedTags]);
+    
 
   }
 

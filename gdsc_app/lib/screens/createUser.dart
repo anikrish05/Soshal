@@ -18,7 +18,7 @@ class CreateUserScreen extends StatefulWidget {
 // widget.user
 class _CreateUserScreenState extends State<CreateUserScreen> {
   final newName = TextEditingController();
-  int gradYear = list.first;
+  late int gradYear = widget.user.classOf;
 
   final ButtonStyle style =
   ElevatedButton.styleFrom(
@@ -26,7 +26,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       shape: StadiumBorder(),
       textStyle: const TextStyle(fontSize: 18));
       
-  List<String> selectedTags = [];
+  late List<String> selectedTags = widget.user.interestedTags;
   List<String> sampleTags = ["Social", "Academic", "Professional", "Sports", "Music", "Art", "Food", "Gaming", "Other"];
   
 
@@ -117,7 +117,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                             buttonText: Text("Select Interested Tags"),
                             buttonIcon: Icon(Icons.tag_faces),
                             title: Text("Select Tags"),
-                            initialValue: selectedTags.toList(),
+                            initialValue: widget.user.interestedTags,
                             items: sampleTags
                                 .map((e) => MultiSelectItem(e, e))
                                 .toList(),
