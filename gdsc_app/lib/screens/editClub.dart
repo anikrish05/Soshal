@@ -190,7 +190,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                             buttonText: Text("Select Interested Tags"),
                             buttonIcon: Icon(Icons.tag_faces),
                             title: Text("Select Tags"),
-                            initialValue: selectedTags.toList(),
+                            initialValue: widget.club.tags,
                             items: sampleTags
                                 .map((e) => MultiSelectItem(e, e))
                                 .toList(),

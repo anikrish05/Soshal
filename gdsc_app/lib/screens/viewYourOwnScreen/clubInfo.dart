@@ -596,7 +596,8 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       "name": result[0],
       "description": result[1],
       "type": result[2],
-      "id": result[3]
+      "id": result[3],
+      "tags": result[5]
     };
       setState(() {
         club.name = result[0];
