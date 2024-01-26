@@ -188,7 +188,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                           width: 200,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.orange,
+                              primary: _orangeColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(35.0),
                                 side: BorderSide.none,
