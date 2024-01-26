@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 int currYear = DateTime.now().year;
 List<int> list = <int>[currYear, currYear + 1,currYear + 2, currYear + 3, currYear + 4];
@@ -23,7 +24,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   ElevatedButton.styleFrom(
       backgroundColor: Colors.orange,
       shape: StadiumBorder(),
-      textStyle: const TextStyle(fontFamily: 'Borel', fontSize: 30, color: Colors.grey ));
+      textStyle: const TextStyle(fontSize: 18));
+      
+  List<String> selectedTags = [];
+  List<String> sampleTags = ["Social", "Academic", "Professional", "Sports", "Music", "Art", "Food", "Gaming", "Other"];
+  
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +53,18 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Name',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 15),
+                          Text(
+                            'Change Name',
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                              decorationColor: Colors.black.withOpacity(0.6),
+                              decorationThickness: 2.0,
                             ),
                           ),
+                          Padding(padding: EdgeInsets.only(bottom: 8)),
                           TextField(
                             controller: newName,
                             decoration: InputDecoration(
@@ -63,14 +74,19 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                             ),
                           ),
                           Divider(),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Graduation Year',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.6),fontFamily: 'Borel', fontSize: 15),
+                          Text(
+                            'Change Graduation Year',
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                              decorationColor: Colors.black.withOpacity(0.6),
+                              decorationThickness: 2.0,
                             ),
                           ),
+                          Padding(padding: EdgeInsets.only(bottom: 8)),
                           Container(
-                              width: 175,
                               padding: EdgeInsets.symmetric(horizontal: 16),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50.0),
@@ -94,8 +110,33 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                     child: Text('$value'),
                                   );
                                 }).toList(),
-
-                              )
+                              ),
+                          ),
+                          Divider(),
+                          MultiSelectDialogField(
+                            buttonText: Text("Select Interested Tags"),
+                            buttonIcon: Icon(Icons.tag_faces),
+                            title: Text("Select Tags"),
+                            initialValue: selectedTags.toList(),
+                            items: sampleTags
+                                .map((e) => MultiSelectItem(e, e))
+                                .toList(),
+                            onConfirm: (List<String> values) {
+                              selectedTags = values;
+                            },
+                            searchable: true,
+                            validator: (value) {
+                              if (selectedTags.length == 0) {
+                                return 'Please choose at least one tag.';
+                              }
+                            },
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.2,
+                              ),
+                            ),
                           ),
                           Divider(),
                           Center(
@@ -133,7 +174,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       userName = widget.user.displayName;
     }
 
-    Navigator.pop(context, [graduation, userName,widget.user.uid]);
+    Navigator.pop(context, [graduation, userName, widget.user.uid, selectedTags]);
 
   }
 }

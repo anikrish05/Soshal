@@ -279,18 +279,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       context,
       MaterialPageRoute(builder: (context) => CreateUserScreen(user: user!)),
     );
-    newName = result[1];
-    newGradYr = result[0];
-    String userID = result[2];
-    print("New Name: $newName");
-    print("New Grad Year: $newGradYr");
-    final updateProfileData = {
-      'displayName': newName,
-      'classOf': newGradYr,
-      'uid': userID,
-    };
 
     try {
+      newGradYr = result[0];
+      newName = result[1];
+      String userID = result[2];
+      List<String> newTags = result[3];
+      print("New Name: $newName");
+      print("New Grad Year: $newGradYr");
+      final updateProfileData = {
+        'displayName': newName,
+        'classOf': newGradYr,
+        'uid': userID,
+        'interestedTags': newTags,
+      };
       final response = await http.post(
         Uri.parse('$serverUrl/api/users/updateProfile'),
         headers: await getHeaders(),

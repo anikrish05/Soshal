@@ -197,10 +197,10 @@ const getAllClubs = async (req, res) => {
 };
 
 const updateClub = async(req, res) => {
-  const {name, description, type, id} = req.body;
+  const {name, description, type, id, tags} = req.body;
   await checkAuthorization(req, res);
   const clubDoc = doc(db, "clubs", id);
-    await setDoc(clubDoc, { name: name, description: description, type: type }, { merge: true });
+    await setDoc(clubDoc, { name: name, description: description, type: type, tags: tags }, { merge: true });
    res.status(200).send(JSON.stringify({'message':"success"}))
 }
 

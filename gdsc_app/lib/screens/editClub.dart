@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:http/http.dart' as http;
 import '/../app_config.dart';
@@ -33,7 +34,11 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
       backgroundColor: Colors.orange,
       shape: StadiumBorder(),
       textStyle: const TextStyle(
-          fontFamily: 'Borel', fontSize: 30, color: Colors.grey));
+          fontSize: 18, color: Colors.grey));
+          
+  List<String> selectedTags = [];
+  List<String> sampleTags = ["Social", "Academic", "Professional", "Sports", "Music", "Art", "Food", "Gaming", "Other"];
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,43 +63,93 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Stack(
-                            alignment: Alignment.center,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              GestureDetector(
-                                child: _image == null
-                                    ? profilePicture()
-                                    : CircleAvatar(
-                                  radius: 60,
-                                  backgroundImage: FileImage(i.File(_image!.path)),
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _pickImage();
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _orangeColor,
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  GestureDetector(
+                                    child: _image == null
+                                        ? profilePicture()
+                                        : CircleAvatar(
+                                      radius: 60,
+                                      backgroundImage: FileImage(i.File(_image!.path)),
                                     ),
-                                    child: Icon(Icons.edit, color: Colors.white),
                                   ),
-                                ),
-                              )
+                                  Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        _pickImage();
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _orangeColor,
+                                        ),
+                                        child: Icon(Icons.edit, color: Colors.white),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children:[
+                                  Text(
+                                    'Change Club Type',
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                                      decorationColor: Colors.black.withOpacity(0.6),
+                                      decorationThickness: 2.0,
+                                    ),
+                                  ),
+                                Divider(),                         
+                                ToggleSwitch(
+                                    cornerRadius: 20.0,
+                                    activeBgColors: [
+                                      [_orangeColor],
+                                      [_orangeColor]
+                                    ],
+                                    activeFgColor: Colors.white,
+                                    inactiveBgColor: Colors.grey,
+                                    inactiveFgColor: Colors.white,
+                                    initialLabelIndex: 0,
+                                    totalSwitches: 2,
+                                    labels: ['Public', 'Private'],
+                                    radiusStyle: true,
+                                    onToggle: (index) {
+                                      if (index == 1) {
+                                        indexPubOrPriv = 0;
+                                        print("private");
+                                      } else if (index == 0) {
+                                        indexPubOrPriv = 1;
+                                        print("public");
+                                      }
+                                    },
+                                  ),
+                                ]
+                              ),
                             ],
                           ),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Name',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
+                          SizedBox(height: 20,),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                            child: Text(
+                              'Change Club Name',
+                              style: TextStyle(
+                                color: Colors.black.withOpacity(0.6),
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                                decorationColor: Colors.black.withOpacity(0.6),
+                                decorationThickness: 2.0,
+                              ),
                             ),
                           ),
                           TextField(
@@ -107,16 +162,19 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                                   20.0, 10.0, 20.0, 10.0),
                             ),
                           ),
-                          Divider(),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Change Club Description',
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
-                                  fontSize: 15),
+                          Divider(height: 40,),
+                          Text(
+                            'Change Club Description',
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                              decorationColor: Colors.black.withOpacity(0.6),
+                              decorationThickness: 2.0,
                             ),
                           ),
+                          Padding(padding: EdgeInsets.only(bottom: 8)),    
                           TextField(
                             controller: newDesc,
                             decoration: InputDecoration(
@@ -126,47 +184,34 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                               contentPadding: EdgeInsets.fromLTRB(
                                   20.0, 10.0, 20.0, 10.0),
                             ),
-                          ),
-                          Divider(),
-                          Row(
-                            children:[
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Change Club Type',
-                                  style: TextStyle(fontWeight: FontWeight.bold,
-                                      color: Colors.black.withOpacity(0.6),
-                                      fontFamily: 'Borel',
-                                      fontSize: 15),
-                                ),
+                          ),                    
+                          Divider(height: 40,),
+                          MultiSelectDialogField(
+                            buttonText: Text("Select Interested Tags"),
+                            buttonIcon: Icon(Icons.tag_faces),
+                            title: Text("Select Tags"),
+                            initialValue: selectedTags.toList(),
+                            items: sampleTags
+                                .map((e) => MultiSelectItem(e, e))
+                                .toList(),
+                            onConfirm: (List<String> values) {
+                              selectedTags = values;
+                            },
+                            searchable: true,
+                            validator: (value) {
+                              if (selectedTags.length == 0) {
+                                return 'Please choose at least one tag.';
+                              }
+                            },
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.2,
                               ),
-                              VerticalDivider(),
-                              ToggleSwitch(
-                                minWidth: 77.5,
-                                cornerRadius: 20.0,
-                                activeBgColors: [
-                                  [_orangeColor],
-                                  [_orangeColor]
-                                ],
-                                activeFgColor: Colors.white,
-                                inactiveBgColor: Colors.grey,
-                                inactiveFgColor: Colors.white,
-                                initialLabelIndex: 0,
-                                totalSwitches: 2,
-                                labels: ['Public', 'Private'],
-                                radiusStyle: true,
-                                onToggle: (index) {
-                                  if (index == 1) {
-                                    indexPubOrPriv = 0;
-                                    print("private");
-                                  } else if (index == 0) {
-                                    indexPubOrPriv = 1;
-                                    print("public");
-                                  }
-                                },
-                              ),
-                            ]
+                            ),
                           ),
-                          Divider(height: 15,),
+                          Divider(height: 40,),
                           Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -292,7 +337,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName,newClubDesc,clubType,clubId,newImageBytes]);
+    Navigator.pop(context, [newClubName, newClubDesc, clubType, clubId, newImageBytes, selectedTags]);
 
   }
 
