@@ -422,7 +422,7 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
 
 
     Navigator.pop(context, [newEventName, newEventDesc, newLatitude, newLongitude,
-    repeatable,timeStamp,widget.event.id,newImageBytes]);
+    repeatable,timeStamp,widget.event.id,newImageBytes, chooseImage]);
 
 
   }
