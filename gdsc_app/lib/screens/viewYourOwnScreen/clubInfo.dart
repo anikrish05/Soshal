@@ -625,15 +625,19 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       print('Error: $error');
     }
 
-    final response = await http.post(
-      Uri.parse('$serverUrl/api/clubs/updateClubImage'),
-      headers: await getHeaders(),
-      body: jsonEncode(<String, dynamic>{
-        "image": result[4],
-        "id": result[3]
-      }),
-    );
+    if (result[6] == true) {
+      final response = await http.post(
+        Uri.parse('$serverUrl/api/clubs/updateClubImage'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "image": result[4],
+          "id": result[3]
+        }),
+      );
+      print("Succesfully done");
+    }
 
+    print("No pictures");
     setState(() {
 
     });
