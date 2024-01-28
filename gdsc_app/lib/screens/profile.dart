@@ -39,18 +39,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   int newGradYr = 0;
 
   Future<void> getUser() async {
-    final response = await http.get(
-      Uri.parse('$serverUrl/api/users/signedIn'),
-      headers: await getHeaders(),
-    );
-    if ((jsonDecode(response.body))['message'] == false) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      );
-    } else {
       final response = await http.get(
         Uri.parse('$serverUrl/api/users/userData'),
         headers: await getHeaders(),
@@ -74,7 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
       );
       user = tempUser;
-    }
     await user!.getClubAndEventData();
   }
 

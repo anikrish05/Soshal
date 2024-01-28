@@ -74,18 +74,6 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> loadData() async {
     try {
-      final response = await get(
-        Uri.parse('$serverUrl/api/users/signedIn'),
-        headers: await getHeaders(),
-      );
-      if ((jsonDecode(response.body))['message'] == false) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginScreen(),
-          ),
-        );
-      } else {
         await user.initUserData();
         eventData = await getEventData();
         _markers.clear(); // Clear existing markers
@@ -108,7 +96,6 @@ class _MyAppState extends State<MyApp> {
         });
 
         setState(() {}); // Trigger rebuild with updated markers
-      }
     } catch (e) {
       print('Error loading data: $e');
     }

@@ -48,18 +48,6 @@ class _SearchScreenState extends State<SearchScreen>
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-    final response = await http.get(
-      Uri.parse('$serverUrl/api/users/signedIn'),
-      headers: await getHeaders(),
-    );
-    if ((jsonDecode(response.body))['message'] == false) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      );
-    } else {
       final response = await http.get(
         Uri.parse('$serverUrl/api/users/userData'),
         headers: await getHeaders(),
@@ -88,7 +76,6 @@ class _SearchScreenState extends State<SearchScreen>
             (data['interestedTags'] ?? []).map((tag) => tag.toString())),
       );
       user = tempUser;
-    }
     await user!.getFollowingData();
   }
 
