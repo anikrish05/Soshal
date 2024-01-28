@@ -45,7 +45,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
     return Scaffold(
         appBar: AppBar(leading: BackButton(
             onPressed: () => Navigator.of(context).pop(),
-            color: Colors.orange),
+            color: _orangeColor),
             centerTitle: true,
             title: Text("Update Club Details",
               style: TextStyle(

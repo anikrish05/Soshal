@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 buildPasswordField(),
               ],
             ),
-            SizedBox(height: 20),  // Add vertical space here
+            SizedBox(height: 40),  // Add vertical space here
             Padding(  // Add padding here
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Center(  // Center added here
@@ -123,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),  // Add vertical space here
             Padding(  // Add padding here
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextButton(
@@ -134,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "New? Click to create an account!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    decoration: TextDecoration.underline,
                     color: Colors.grey,
                     fontSize: 14,
                   ),

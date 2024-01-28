@@ -110,7 +110,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                           if (widget.club.verified)
                             Padding(
                               padding: const EdgeInsets.only(left: 4.0),
-                              child: Icon(Icons.verified, color: Colors.orange, size: 20.0),
+                              child: Icon(Icons.verified, color: _colorTab, size: 20.0),
                             ),
                         ],
                       ),
@@ -148,6 +148,11 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                       SizedBox(height: 12),
                       // Follow Button
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: _orangeColor,
+                            shape: StadiumBorder(), // <-- Radius
+                        ),
+
                         onPressed: () {
                           bool temp = !isFollowing;
                           setState(() {

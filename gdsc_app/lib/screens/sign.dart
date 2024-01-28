@@ -129,7 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           shrinkWrap: true,
           children: <Widget>[
             Image.asset('assets/image.png', height: 100),
-            Padding(padding: EdgeInsets.only(bottom: 90)),
+            Padding(padding: EdgeInsets.only(bottom: 80)),
             // Display error message
             if (errorMessage.isNotEmpty)
               Center(
@@ -151,6 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Padding(padding: EdgeInsets.only(bottom: 20)),
               ],
             ),
+            SizedBox(height: 18),
             Center(
               // Center added here
               child: SizedBox(
@@ -187,17 +188,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(bottom: 12)), // Add padding here
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(
-                    context, '/login'); // Navigate to login.dart page
-              },
-              child: Text('Back to Login',
-                  style: TextStyle(color: Colors.grey, fontSize: 14)),
+             // Add padding here
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,
+              children: [
+                Icon(
+                  Icons.arrow_back_rounded,
+                  color: _color1,
+
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        context, '/login'); // Navigate to login.dart page
+                  },
+                  child: Text('Back to Login',
+
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                      )
+                  ),
+                ),
+              ],
             ),
           ],
         ),
