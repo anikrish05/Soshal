@@ -287,7 +287,6 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
         }),
       );
 
-      print(widget.club.id);
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully');
@@ -339,7 +338,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
     String clubId = widget.club.id;
 
-    Navigator.pop(context, [newClubName, newClubDesc, clubType, clubId, newImageBytes, selectedTags]);
+    Navigator.pop(context, [newClubName, newClubDesc, clubType, clubId, newImageBytes, selectedTags,chooseImage]);
     
 
   }

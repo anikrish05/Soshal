@@ -637,7 +637,7 @@ class _EventProfilePageState extends State<EventProfilePage>
       print('Error: $error');
     }
 
-
+  if(result[8] == true) {
     final response = await http.post(
       Uri.parse('$serverUrl/api/events/updateEventImage'),
       headers: await getHeaders(),
@@ -646,7 +646,7 @@ class _EventProfilePageState extends State<EventProfilePage>
         "id": result[6]
       }),
     );
-
+  }
   }
 
 
