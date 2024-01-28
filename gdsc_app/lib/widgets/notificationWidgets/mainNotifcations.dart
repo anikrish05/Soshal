@@ -24,7 +24,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16.0),
-              _buildTitle('Old Activity')
+              _buildTitle('Coming soon!')
             ],
           ),
         ),

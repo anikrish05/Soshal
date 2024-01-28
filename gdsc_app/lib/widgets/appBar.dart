@@ -26,22 +26,26 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       automaticallyImplyLeading: false,
       actions: [
-        IconButton(
-          icon: Icon(
-            Icons.notifications,
-            size: 50,
-            color: Colors.grey[500],
+        Padding( // Add padding to the right of the icon
+          padding: EdgeInsets.only(right: 19.0), // Adjust this value as needed
+          child: IconButton(
+            icon: Icon(
+              Icons.notifications,
+              size: 50,
+              color: Colors.grey[500],
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
+              );
+            },
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationsPage()),
-            );
-          },
         ),
       ],
     );
   }
+
 
   void _showSettingsDialog(BuildContext context) {
     showDialog(
