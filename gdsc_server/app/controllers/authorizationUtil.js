@@ -11,7 +11,7 @@ const checkAuthorization = async (req, res) => {
     console.log(idToken)
     console.log(userToken)
     // Compare the user's ID token with the ID token provided in the request's authorization header
-    if (userToken !== idToken) {
+    if (userToken != idToken) {
       // If the tokens are different, the request is unauthorized
       console.log("token mismatch")
       res.status(401).send(JSON.stringify({ error: 'Unauthorized' }));
