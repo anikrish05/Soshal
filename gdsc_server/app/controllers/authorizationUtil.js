@@ -5,6 +5,8 @@ const checkAuthorization = async (req, res) => {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
+    console.log(decodedToken.uid)
+    console.log("success")
     // Handle success, you can use decodedToken.uid to get the user ID
     return true;
   } catch (error) {
