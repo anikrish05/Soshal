@@ -2,7 +2,6 @@ const { db, auth, storage, admin } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
 const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
-const admin = require('firebase-admin');
 const { checkAuthorization } = require('./authorizationUtil');
 
 const { ref, uploadBytes } = require('firebase/storage');
