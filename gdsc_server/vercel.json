@@ -6,6 +6,12 @@
 			"use":"@now/node"
 		}
 	],
+	"functions": {
+		"/api/**/**/**": {
+			"maxDuration": 60
+		}
+	},
+
 	"routes":[
 		{
 			"src":"/(.*)",
