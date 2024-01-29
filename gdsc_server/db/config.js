@@ -20,8 +20,6 @@ const FirebaseApp = initializeApp(config);
 const db = getFirestore(FirebaseApp);
 const auth = getAuth(FirebaseApp);
 const storage = getStorage(FirebaseApp);
-console.log("firebase init")
-console.log(auth)
 // Initialize Firebase Admin SDK
 const serviceAccount = require('./serviceAccountKey.json'); // Assuming it's in the same directory
 admin.initializeApp({
