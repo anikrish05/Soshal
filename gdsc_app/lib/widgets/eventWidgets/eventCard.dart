@@ -138,7 +138,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
                                 SizedBox(height: 8), // Add more spacing vertically
                                 Text('By: $clubs'), // Replace 'Club Name' with your club name
                                 SizedBox(height: 8),
-                                ThumbsUpWidget(likePercentage: 50),
+                                ThumbsUpWidget(likePercentage: 0),
                                 SizedBox(height: 8),
 
                                 Row(
@@ -179,7 +179,7 @@ class ThumbsUpWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isThumbsUp = likePercentage >= 50;
+    bool isThumbsUp = likePercentage >= 0;
     Color _greyColor = Color(0xFFD3D3D3);
     Color _orangeColor = Color(0xFFFF8050);
 
@@ -200,7 +200,7 @@ class ThumbsUpWidget extends StatelessWidget {
         ),
         SizedBox(width: 5),
         Text(
-          '$likePercentage%',
+          '$likePercentage% liked this',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
