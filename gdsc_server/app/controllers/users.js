@@ -1,7 +1,8 @@
-const { db, auth, storage, admin } = require('../../db/config')
+const { db, auth, storage } = require('../../db/config')
 const { getFirestore, collection, getDocs, doc, setDoc, getDoc} = require('firebase/firestore');
 const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} = require("firebase/auth");
 const { uploadString, getDownloadURL, getStorage  } = require("firebase/storage");
+const admin = require('firebase-admin');
 const { checkAuthorization } = require('./authorizationUtil');
 
 const { ref, uploadBytes } = require('firebase/storage');
@@ -105,10 +106,10 @@ const signout = async (req, res) => {
 const userData  = async (req, res) => {
   if (await checkAuthorization(req, res)) {
      const decodedToken = await admin.auth().verifyIdToken(idToken);
-      getDoc(doc(db, "users", decodedToken.uid)).then((data)=>{
-        console.log(data.data())
+         getDoc(doc(db, "users", user.uid)).then((data)=>{
           res.status(200).send(JSON.stringify({'message':data.data()}))
         })
+        }
 }
 
 const rsvp = async (req, res) => {
