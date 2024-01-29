@@ -1,14 +1,18 @@
-const { db, auth } = require('../../db/config')
+const { db, auth, admin} = require('../../db/config')
 
 const checkAuthorization = async (req, res) => {
-  auth.verifyIdToken(idToken)
-  .then((decodedToken) => {
-    return true
-  })
-  .catch((error) => {
-    return false
+  const idToken = req.headers['authorization'];
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    // Handle success, you can use decodedToken.uid to get the user ID
+    return true;
+  } catch (error) {
     // Handle error
-  });
+    console.error('Error verifying ID token:', error);
+    return false;
+  }
 };
 
 module.exports = { checkAuthorization };
+
