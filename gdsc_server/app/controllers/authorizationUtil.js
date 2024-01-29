@@ -1,9 +1,7 @@
 const { db, auth } = require('../../db/config')
 
 const checkAuthorization = async (req, res) => {
-  /*
   const idToken = req.headers['authorization'];
-  console.log(idToken)
   if(idToken!=null){
   try {
     // Get the current user's ID token from Firebase
@@ -29,7 +27,6 @@ const checkAuthorization = async (req, res) => {
 else{
     res.status(401).send(JSON.stringify({ error: 'Unauthorized' }));
 }
-*/
 };
 
 module.exports = { checkAuthorization };
