@@ -105,8 +105,10 @@ const signout = async (req, res) => {
 
 const userData  = async (req, res) => {
   if (await checkAuthorization(req, res)) {
+      const idToken = req.headers['authorization'];
+
      const decodedToken = await admin.auth().verifyIdToken(idToken);
-         getDoc(doc(db, "users", user.uid)).then((data)=>{
+         getDoc(doc(db, "users", decodedToken.uid)).then((data)=>{
           res.status(200).send(JSON.stringify({'message':data.data()}))
         })
         }
