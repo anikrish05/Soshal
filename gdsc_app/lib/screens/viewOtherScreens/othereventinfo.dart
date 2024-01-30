@@ -32,6 +32,8 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   late TextEditingController eventNameController;
   late TextEditingController eventDescController;
   final format = DateFormat("yyyy-MM-dd HH:mm");
+  bool thumbsUpSelected = false;
+  bool thumbsDownSelected = false;
 
   double latitude = 0.0;
   double longitude = 0.0;
@@ -107,6 +109,7 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   }
 
   Color _orangeColor = Color(0xFFFF8050);
+  Color _greyColor = Color(0xFFD3D3D3);
   bool repeatable = false;
 
   @override
@@ -198,7 +201,60 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                                 ),
                               ],
                             ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Toggle thumbs up state
+                                    setState(() {
+                                      thumbsUpSelected = !thumbsUpSelected;
 
+                                      // If thumbs up is selected, make thumbs down unselected
+                                      if (thumbsUpSelected) {
+                                        thumbsDownSelected = false;
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: thumbsUpSelected ? _orangeColor : _greyColor,
+                                    ),
+                                    padding: EdgeInsets.all(8), // Adjust padding as needed
+                                    child: Icon(
+                                      Icons.thumb_up,
+                                      color: thumbsUpSelected ? Colors.white : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    // Toggle thumbs down state
+                                    setState(() {
+                                      thumbsDownSelected = !thumbsDownSelected;
+
+                                      // If thumbs down is selected, make thumbs up unselected
+                                      if (thumbsDownSelected) {
+                                        thumbsUpSelected = false;
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: thumbsDownSelected ? _orangeColor : _greyColor,
+                                    ),
+                                    padding: EdgeInsets.all(8), // Adjust padding as needed
+                                    child: Icon(
+                                      Icons.thumb_down,
+                                      color: thumbsDownSelected ? Colors.white : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       )
