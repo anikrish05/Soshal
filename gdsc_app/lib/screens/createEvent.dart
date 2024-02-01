@@ -438,56 +438,32 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AnimatedButton(
-                  transitionType: TransitionType.LEFT_TO_RIGHT,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Garret',
-                    fontSize: 15,
-                  ),
-                  text: "Private",
-                  selectedText: "Public",
-                  onPress: () {
-                    if (indexPubOrPriv == 1) {
-                      indexPubOrPriv = 0;
-                    } else if (indexPubOrPriv == 0) {
-                      indexPubOrPriv = 1;
-                    }
+                Text("Private"),
+                Switch(
+                  value: indexPubOrPriv == 1, // true for Public, false for Private
+                  onChanged: (value) {
+                    setState(() {
+                      indexPubOrPriv = value ? 1 : 0;
+                    });
                   },
-                  selectedTextColor: Colors.white,
-                  selectedBackgroundColor: _orangeColor,
-                  backgroundColor: Colors.grey,
-                  width: 120,
-                  height: 40,
-                  borderRadius: 20.0,
-                  isReverse: true,
                 ),
+                Text("Public"),
               ],
             ),
             SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AnimatedButton(
-                  transitionType: TransitionType.LEFT_TO_RIGHT,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Garret',
-                    fontSize: 15,
-                  ),
-                  text: "Repeatable",
-                  selectedText: "Not Repeatable",
-                  onPress: () {
-                    repeatable = !repeatable;
+                Text("Not Repeatable"),
+                Switch(
+                  value: repeatable, // true for Repeatable, false for Not Repeatable
+                  onChanged: (value) {
+                    setState(() {
+                      repeatable = value;
+                    });
                   },
-                  selectedTextColor: Colors.black,
-                  selectedBackgroundColor: Colors.grey,
-                  backgroundColor: _orangeColor,
-                  height: 45,
-                  width: 200,
-                  borderRadius: 20.0,
-                  isReverse: true,
                 ),
+                Text("Repeatable"),
               ],
             ),
             SizedBox(height: 25),
