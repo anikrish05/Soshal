@@ -34,13 +34,18 @@ class _MyAppState extends State<MyApp> {
   List<dynamic> eventData = [];
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
   bool isDataInitialized = false;
-
+  late BitmapDescriptor myIcon;
   Map<MarkerId, dynamic> _markerEventMap = {};
 
 
   @override
   void initState() {
     super.initState();
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(size: Size(10000000, 10000000)), 'assets/feedIcon.png')
+        .then((onValue) {
+      myIcon = onValue;
+    });
     initializeData(); // Call a new method to handle the sequential flow
   }
 
@@ -89,6 +94,7 @@ class _MyAppState extends State<MyApp> {
               onTap: () {
                 handleMarkerTap(markerId);
               },
+              icon: myIcon
             ),
           );
 
@@ -108,7 +114,7 @@ class _MyAppState extends State<MyApp> {
       selectedMarkerData = getMarkerData(event);
       panelController.isPanelOpen
           ? panelController.close()
-          : panelController.open();
+          : panelController.animatePanelToSnapPoint();
       setState(() {});
     }
   }
@@ -127,9 +133,12 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
+
+    double panelMinHeight = selectedMarkerData != null ? 240 : 0; // 25% of 450
+
     return MaterialApp(
       home: Scaffold(
-        body: Column(
+        body: Stack(
           children: [
             Expanded(
               child: GoogleMap(
@@ -141,12 +150,17 @@ class _MyAppState extends State<MyApp> {
                   target: _center,
                   zoom: 16.0,
                 ),
-              )
+              ),
             ),
             SlidingUpPanel(
               controller: panelController,
               minHeight: 0,
-              maxHeight: 450,
+              maxHeight: MediaQuery.of(context).size.height*(2/3),
+              snapPoint: .4,
+            borderRadius:  BorderRadius.only(
+    topRight: Radius.circular(40),
+              topLeft: Radius.circular(40),
+    ),
               panel: selectedMarkerData != null
                   ? SlidingUpWidget(
                 markerData: selectedMarkerData!,
@@ -154,6 +168,7 @@ class _MyAppState extends State<MyApp> {
                 onClose: () {
                   panelController.close();
                 },
+
                 resetStateCallback: () {
                   setState(() {
                     // Reset the state variables in MyApp
@@ -163,19 +178,13 @@ class _MyAppState extends State<MyApp> {
               )
                   : Container(),
             ),
+
           ],
         ),
-        /*
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: _orangeColor, // Use the global variable here
-          onPressed: loadData, // Trigger data loading on button press
-          child: Icon(Icons.refresh),
-        ),
-
-         */
       ),
     );
   }
+
 
   MarkerData getMarkerData(dynamic event) {
 
