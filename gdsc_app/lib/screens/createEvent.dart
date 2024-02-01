@@ -469,33 +469,32 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ],
               ),
             ),
-            Divider(height: 25,),
-            Column( // Changed from Container to Column
-              children: [
-                Center(
-                  child: AnimatedButton(
-                    transitionType: TransitionType.LEFT_TO_RIGHT,
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Repeatable",
-                    selectedText: "Not Repeatable",
-                    onPress: () {
-                      setState(() {
-                        repeatable = !repeatable;
-                      });
-                    },
-                    selectedTextColor: Colors.black,
-                    selectedBackgroundColor: Colors.grey,
-                    backgroundColor: _orangeColor,
-                    height: 45,
-                    width: 200,
-                    borderRadius: 20.0,
-                    isReverse: true,
-                  ),
+          Divider(height: 25,),
+          Container(
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AnimatedButton(
+                transitionType: TransitionType.LEFT_TO_RIGHT,
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Garret',
+                  fontSize: 15,
                 ),
+                text: "Repeatable",
+                selectedText: "Not Repeatable",
+                onPress: () {
+                  repeatable = !repeatable;
+                },
+                selectedTextColor: Colors.black,
+                selectedBackgroundColor: Colors.grey,
+                backgroundColor: _orangeColor,
+                height: 45,
+                width: 200,
+                borderRadius: 20.0,
+                isReverse: true,
+              ),
                 SizedBox(height: 16), // Add some space between the buttons
                 AnimatedButton(
                   transitionType: TransitionType.CENTER_LR_OUT,
