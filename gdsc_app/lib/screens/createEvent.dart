@@ -209,106 +209,108 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Form(
       key: _oFormKey,
       child: Padding(
-        padding: EdgeInsets.all(18),
+        padding: const EdgeInsets.all(18),
         child: ListView(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _image == null
-                      ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      'assets/emptyClubImage.png',
-                      height: 150,
-                      width: 150,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                      : ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.file(
-                      i.File(_image!.path),
-                      width: 150.0,
-                      height: 150.0,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                VerticalDivider(),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 35.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextFormField(
-                          style: TextStyle(
-                            fontFamily: 'Garret',
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
-                          controller: eventName,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a title.';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            hintText: "Event Title",
-                            hintStyle: TextStyle(color: Colors.black),
-                            contentPadding: EdgeInsets.fromLTRB(
-                              20.0,
-                              10.0,
-                              20.0,
-                              10.0,
-                            ),
-                          ),
-                        ),
-                        Divider(height: 25,),
-                        TextFormField(
-                          style: TextStyle(
-                            fontFamily: 'Garret',
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
-                          controller: eventDesc,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter text.';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            hintText: "Event Description",
-                            hintStyle: TextStyle(color: Colors.black),
-                            contentPadding: EdgeInsets.fromLTRB(
-                              20.0,
-                              10.0,
-                              20.0,
-                              10.0,
-                            ),
-                          ),
-                          maxLines: 3,
-                        ),
-                      ],
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: _image == null
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset(
+                        'assets/ex1.jpeg',
+                        height: 150,
+                        width: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        i.File(_image!.path),
+                        width: 150.0,
+                        height: 150.0,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  VerticalDivider(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 35.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            controller: eventName,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a title.';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              hintText: "Event Title",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
+                              ),
+                            ),
+                          ),
+                          Divider(height: 25),
+                          TextFormField(
+                            style: TextStyle(
+                              fontFamily: 'Garret',
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            controller: eventDesc,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter text.';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              hintText: "Event Description",
+                              hintStyle: TextStyle(color: Colors.black),
+                              contentPadding: EdgeInsets.fromLTRB(
+                                20.0,
+                                10.0,
+                                20.0,
+                                10.0,
+                              ),
+                            ),
+                            maxLines: 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Divider(height: 25,),
+            Divider(height: 25),
             Container(
               width: 295.0,
               child: TypeAheadField<ClubCardData>(
@@ -359,7 +361,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-            Divider(height: 25.0,),
+            Divider(height: 25.0),
             Container(
               width: 295.0,
               child: DateTimeField(
@@ -410,92 +412,88 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-            Divider(height: 25,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FormField(
-                    validator: (value) {
-                      if (latitude == 0 || longitude == 0) {
-                        return 'Please choose a location.';
-                      }
-                      return null;
-                    },
-                    builder: (FormFieldState state) {
-                      return ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(_orangeColor),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide.none,
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          onGetLocation();
-                        },
-                        child: const Text('Choose Location'),
-                      );
-                    },
-                  ),
-                  AnimatedButton(
-                    transitionType: TransitionType.LEFT_TO_RIGHT,
-                    textStyle: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Private",
-                    selectedText: "Public",
-                    onPress: () {
-                      if (indexPubOrPriv == 1) {
-                        indexPubOrPriv = 0;
-                      } else if (indexPubOrPriv == 0) {
-                        indexPubOrPriv = 1;
-                      }
-                    },
-                    selectedTextColor: Colors.white,
-                    selectedBackgroundColor: _orangeColor,
-                    backgroundColor: Colors.grey,
-                    width: 120,
-                    height: 40,
-                    borderRadius: 20.0,
-                    isReverse: true,
-                  ),
-                ],
+            Divider(height: 25),
+            Container(
+              width: 295.0,
+              child: TextFormField(
+                validator: (value) {
+                  if (latitude == 0 || longitude == 0) {
+                    return 'Please choose a location.';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.location_on),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: "Choose Location",
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                ),
+                onTap: () {
+                  onGetLocation();
+                },
               ),
             ),
-          Divider(height: 25,),
-          Container(
-            child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              AnimatedButton(
-                transitionType: TransitionType.LEFT_TO_RIGHT,
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Garret',
-                  fontSize: 15,
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedButton(
+                  transitionType: TransitionType.LEFT_TO_RIGHT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
+                  ),
+                  text: "Private",
+                  selectedText: "Public",
+                  onPress: () {
+                    if (indexPubOrPriv == 1) {
+                      indexPubOrPriv = 0;
+                    } else if (indexPubOrPriv == 0) {
+                      indexPubOrPriv = 1;
+                    }
+                  },
+                  selectedTextColor: Colors.white,
+                  selectedBackgroundColor: _orangeColor,
+                  backgroundColor: Colors.grey,
+                  width: 120,
+                  height: 40,
+                  borderRadius: 20.0,
+                  isReverse: true,
                 ),
-                text: "Repeatable",
-                selectedText: "Not Repeatable",
-                onPress: () {
-                  repeatable = !repeatable;
-                },
-                selectedTextColor: Colors.black,
-                selectedBackgroundColor: Colors.grey,
-                backgroundColor: _orangeColor,
-                height: 45,
-                width: 200,
-                borderRadius: 20.0,
-                isReverse: true,
-              ),
-                SizedBox(height: 16), // Add some space between the buttons
+              ],
+            ),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedButton(
+                  transitionType: TransitionType.LEFT_TO_RIGHT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
+                  ),
+                  text: "Repeatable",
+                  selectedText: "Not Repeatable",
+                  onPress: () {
+                    repeatable = !repeatable;
+                  },
+                  selectedTextColor: Colors.black,
+                  selectedBackgroundColor: Colors.grey,
+                  backgroundColor: _orangeColor,
+                  height: 45,
+                  width: 200,
+                  borderRadius: 20.0,
+                  isReverse: true,
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 AnimatedButton(
                   transitionType: TransitionType.CENTER_LR_OUT,
                   textStyle: TextStyle(
@@ -504,13 +502,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     fontSize: 15,
                   ),
                   text: "Post",
-                  backgroundColor: _orangeColor, // This will set the button color to orange
                   onPress: () {
                     if (_oFormKey.currentState!.validate()) {
                       postRequest();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Colors.green,
                           content: Text('New event created successfully!'),
                         ),
                       );
@@ -525,6 +522,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   },
                   selectedTextColor: Colors.white,
                   selectedBackgroundColor: Colors.lightBlue,
+                  backgroundColor: _orangeColor,
                   borderRadius: 20.0,
                   height: 45,
                   width: 100,
@@ -536,6 +534,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       ),
     );
   }
+
+
+
 
   Future<void> _pickImage() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
