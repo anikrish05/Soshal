@@ -44,38 +44,39 @@ class _SearchScreenState extends State<SearchScreen>
   ]; // will need to replace this with master tag list
   UserData? user;
 
+  bool isLoaded = false;
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
   Future<void> getUser() async {
-      final response = await http.get(
-        Uri.parse('$serverUrl/api/users/userData'),
-        headers: await getHeaders(),
-      );
-      var data = jsonDecode(response.body)['message'];
-      print(data);
-      UserData tempUser = UserData(
-        classOf: data['classOf'],
-        uid: data['uid'],
-        displayName: data['displayName'],
-        email: data['email'],
-        following: data['following'],
-        role: data['role'],
-        myEvents: List<String>.from(
-            (data['myEvents'] ?? []).map((event) => event.toString())),
-        clubIds: List<String>.from(
-            (data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
-        downloadURL: data['downloadURL'],
-        likedEvents: List<String>.from(
-            (data['likedEvents'] ?? []).map((event) => event.toString())),
-        dislikedEvents: List<String>.from(
-            (data['dislikedEvents'] ?? []).map((event) => event.toString())),
-        friendGroups: List<String>.from(
-            (data['friendGroups'] ?? []).map((friend) => friend.toString())),
-        interestedTags: List<String>.from(
-            (data['interestedTags'] ?? []).map((tag) => tag.toString())),
-      );
-      user = tempUser;
+    final response = await http.get(
+      Uri.parse('$serverUrl/api/users/userData'),
+      headers: await getHeaders(),
+    );
+    var data = jsonDecode(response.body)['message'];
+    print(data);
+    UserData tempUser = UserData(
+      classOf: data['classOf'],
+      uid: data['uid'],
+      displayName: data['displayName'],
+      email: data['email'],
+      following: data['following'],
+      role: data['role'],
+      myEvents: List<String>.from(
+          (data['myEvents'] ?? []).map((event) => event.toString())),
+      clubIds: List<String>.from(
+          (data['clubsOwned'] ?? []).map((clubID) => clubID.toString())),
+      downloadURL: data['downloadURL'],
+      likedEvents: List<String>.from(
+          (data['likedEvents'] ?? []).map((event) => event.toString())),
+      dislikedEvents: List<String>.from(
+          (data['dislikedEvents'] ?? []).map((event) => event.toString())),
+      friendGroups: List<String>.from(
+          (data['friendGroups'] ?? []).map((friend) => friend.toString())),
+      interestedTags: List<String>.from(
+          (data['interestedTags'] ?? []).map((tag) => tag.toString())),
+    );
+    user = tempUser;
     await user!.getFollowingData();
   }
 
@@ -87,15 +88,23 @@ class _SearchScreenState extends State<SearchScreen>
     if (user != null) {
       await fetchClubs();
     }
+  }
+
+  Future<void> fetchInitialData() async {
+    await fetchData();
     filteredFollowers = user!.followingClubData.toSet();
     filteredItemsClubs = clubs.toSet();
     filteredItemsEvents = events.toSet();
+    setState(() {
+      isLoaded = true;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    fetchInitialData();
   }
 
   @override
@@ -105,7 +114,8 @@ class _SearchScreenState extends State<SearchScreen>
   }
 
   void performSearch(String query) {
-    bool containsQuery (String name) => name.toLowerCase().contains(query.toLowerCase());
+    bool containsQuery(String name) =>
+        name.toLowerCase().contains(query.toLowerCase());
     setState(() {
       filteredItemsClubs = clubs.where((club) {
         if (selectedTags.isNotEmpty && containsQuery(club.name)) {
@@ -201,35 +211,26 @@ class _SearchScreenState extends State<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<void>(
-        future: fetchData(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return (LoaderWidget());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return ListView(
-              padding: const EdgeInsets.all(8),
-              children: <Widget>[
-                buildText(),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                ),
-                buildTabBar(),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                ),
-                buildSearchResultList(),
-              ],
-            );
-          }
-        },
-      ),
-    );
+    if (isLoaded == false) {
+      return LoaderWidget();
+    } else {
+      return Scaffold(
+        body: ListView(
+          padding: const EdgeInsets.all(8),
+          children: <Widget>[
+            buildText(),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+            ),
+            buildTabBar(),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+            ),
+            buildSearchResultList(),
+          ],
+        ),
+      );
+    }
   }
 
   Widget buildText() => Column(
@@ -257,17 +258,14 @@ class _SearchScreenState extends State<SearchScreen>
           ),
           MultiSelectDialogField(
             buttonText: Text("Select Club/Event Tags",
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              )
-            ),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                )),
             title: Text("Select Tags",
                 style: TextStyle(
                   color: Colors.grey,
-                )
-
-            ),
+                )),
             initialValue: selectedTags.toList(),
             items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
             onConfirm: (List<String> values) {
@@ -357,7 +355,9 @@ class _SearchScreenState extends State<SearchScreen>
                 SizedBox(height: 16.0),
                 // Conditionally display club widgets or 'No organizations found' text
                 if (clubWidgets != null && clubWidgets.isNotEmpty)
-                  SizedBox(height: 100, child: ListView(children: clubWidgets.toList()))
+                  SizedBox(
+                      height: 100,
+                      child: ListView(children: clubWidgets.toList()))
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -397,8 +397,8 @@ class _SearchScreenState extends State<SearchScreen>
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
                         itemBuilder: (context, index) {
-                          return eventWidgets.toList()[
-                              index]; // Your event widget item here
+                          return eventWidgets
+                              .toList()[index]; // Your event widget item here
                         },
                       ),
                     ),
@@ -451,8 +451,8 @@ class _SearchScreenState extends State<SearchScreen>
                         child: ListView.builder(
                           itemCount: followerWidgets.length,
                           itemBuilder: (context, index) {
-                            return followerWidgets.toList()[
-                                index]; // Your event widget item here
+                            return followerWidgets
+                                .toList()[index]; // Your event widget item here
                           },
                         ),
                       ),
