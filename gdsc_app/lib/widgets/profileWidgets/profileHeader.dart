@@ -69,8 +69,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
               // Profile Info Positioned Relative to Profile Picture
               Positioned(
-                left: widget.imageSize + 40, // Adjust left position based on imageSize
-                top: widget.imageSize / 4, // Adjust top position based on imageSize
+                left: 150, // Set a constant value for left
+                top: 50, // Set a constant value for top
                 child: buildProfileInfo(),
               ),
             ],
