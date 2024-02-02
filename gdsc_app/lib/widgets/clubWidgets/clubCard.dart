@@ -83,7 +83,7 @@ class ClubCardWidget extends StatelessWidget {
                                       child: FittedBox(
                                         fit: BoxFit.scaleDown,
                                         child: Text(
-                                          club.name,
+                                          club.name.length > 4 ? '${club.name.substring(0, 4)}...' : club.name,
                                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                         ),
                                       ),

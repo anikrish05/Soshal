@@ -308,59 +308,57 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         return AlertDialog(
           title: Center(
             child: Text(
-
               "Settings",
-
               style: TextStyle(
-              color: _orangeColor,
+                color: _orangeColor,
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
-          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20), // Adjust the border radius as needed
+            borderRadius: BorderRadius.circular(20),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          contentPadding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), // Adjust the vertical padding to change the size
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            SizedBox(height: 1),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the current page
-
-                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-              },
-
-
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white, // Set the background color to white
-                onPrimary: _orangeColor, // Set the text color to orange
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  side: BorderSide(color: _orangeColor, width: 1), // Add a thin orange border
+              SizedBox(height: 6),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,
+                  onPrimary: _orangeColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: _orangeColor, width: 1),
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                textStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
+                  child: Text("Sign out"),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: Text("Sign out"),
-              ),
-            ),
-            SizedBox(height: 1),
+              SizedBox(height: 2),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.pushNamed(context, '/sign');
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.white, // Set the background color to white
-                  onPrimary: _orangeColor, // Set the text color to orange
+                  primary: Colors.white,
+                  onPrimary: _orangeColor,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: _orangeColor, width: 1), // Add a thin orange border
+                    side: BorderSide(color: _orangeColor, width: 1),
                   ),
                   textStyle: TextStyle(
                     fontSize: 18,
@@ -372,16 +370,23 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                   child: Text("Delete Account"),
                 ),
               ),
+              SizedBox(height: 5), // Added extra space
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "Close",
-                style: TextStyle(color: _orangeColor),
+            Align(
+              alignment: Alignment.centerRight, // Align the button to the center right
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Close",
+                  style: TextStyle(
+                    color: _orangeColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
             ),
           ],
@@ -389,8 +394,5 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
       },
     );
   }
-
-
-
 
 }
