@@ -87,6 +87,9 @@ class _SearchScreenState extends State<SearchScreen>
     if (user != null) {
       await fetchClubs();
     }
+    filteredFollowers = user!.followingClubData.toSet();
+    filteredItemsClubs = clubs.toSet();
+    filteredItemsEvents = events.toSet();
   }
 
   @override
@@ -320,8 +323,6 @@ class _SearchScreenState extends State<SearchScreen>
               currUser: user!,
             ))
         .toSet();
-
-    ScrollController _scrollController = ScrollController();
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,

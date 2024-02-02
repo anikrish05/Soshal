@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:map_location_picker/generated/l10n.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,7 @@ import '../app_config.dart';
 import '../utils.dart';
 import '../widgets/loader.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
+import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -46,8 +48,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   bool chooseImage = false;
   XFile? _image;
 
-  LatLng? _selectedLatLng;
-
   Color _orangeColor = Color(0xFFFF8050);
 
   final ButtonStyle style = ElevatedButton.styleFrom(
@@ -68,6 +68,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
     latitude = result.latitude;
     longitude = result.longitude;
+  }
+
+  Future<List> retrieveAutocomplete(String input) async {
+    try {
+      final places = FlutterGooglePlacesSdk("AIzaSyAWwQQQ-Wj3Tb-7huiw8CdoI9krTsNF4UA");
+      final predictions = await places.findAutocompletePredictions(input);
+      List<AutocompletePrediction> predictionsList = predictions.predictions;
+      return predictionsList;
+    } on Exception catch (e) {
+      print(e);
+      return ["John Lewis College", "Porter College", "Kresge College", "Cowell College", "Stevenson College", "Oakes College", "Merrill College", "Crown College"];
+    }
   }
 
   void toggleSelectedAdmin(ClubCardData selection) {
@@ -310,52 +322,41 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             Divider(height: 25,),
             Container(
               width: 295.0,
-              child: TypeAheadField<ClubCardData>(
-                builder: (context, controller, focusNode) {
-                  return TextFormField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    validator: (value) {
-                      if (selectedAdmins.isEmpty) {
-                        return 'Please select at least one admin.';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      hintText: "Search Admins",
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    ),
-                  );
+              child: MultiSelectDialogField(
+                buttonText: Text("Search Admins"),
+                buttonIcon: Icon(Icons.search),
+                items: clubs.map((e) => MultiSelectItem(e, e.name)).toList(),
+                initialValue:
+                    selectedAdmins.toList(),
+                onConfirm: (List<dynamic> values) {
+                  selectedAdmins = values.cast<ClubCardData>().toSet();
+                  print("SELECTED ADMINS: $selectedAdmins");
                 },
-                itemBuilder: (context, suggestion) {
-                  return ListTile(
-                    title: Text(suggestion.name),
-                    trailing: Icon(selectedAdmins.contains(suggestion)
-                        ? Icons.check_circle
-                        : Icons.check_circle_outline),
-                  );
-                },
-                onSelected: (suggestion) {
-                  toggleSelectedAdmin(suggestion);
-                  _controller1.selection =
-                      TextSelection.collapsed(offset: 0); // Reset cursor
-                  _controller1.clear(); // Clear the field
-                },
-                suggestionsCallback: (String search) {
-                  if (search == "" && selectedAdmins.isNotEmpty) {
-                    return selectedAdmins.toList();
-                  } else {
-                    return clubs
-                        .where((admin) => admin.name
-                            .toLowerCase()
-                            .contains(search.toLowerCase()))
-                        .toList();
+                validator: (value) {
+                  if (selectedAdmins.isEmpty) {
+                    return 'Please choose at least one admin.';
                   }
+                  return null;
                 },
+                searchable: true,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1.2,
+                  ),
+                ),
+                chipDisplay: MultiSelectChipDisplay<ClubCardData>(
+                  onTap: (value) {
+                    setState(() {
+                      selectedAdmins.remove(value);
+                    });
+                  },
+                  items: selectedAdmins.map((e) => MultiSelectItem(e, e.name)).toList(),
+                  scroll: true,
+                  chipColor: _orangeColor,
+                  textStyle: TextStyle(color: Colors.grey[800]),
+                ),
               ),
             ),
             Divider(height: 25.0,),
@@ -475,6 +476,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  ElevatedButton(
+                    onPressed: () => {
+                      retrieveAutocomplete("Santa Cruz")
+                    }, 
+                    child: const Text("Google Places Test")
+                  ),
                   AnimatedButton(
                     transitionType: TransitionType.LEFT_TO_RIGHT,
                     textStyle: TextStyle(
@@ -555,4 +562,60 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     print("Succesfully chose picture");
   }
 
+}
+
+class StatefulMultiSelect extends StatefulWidget{
+  final List<ClubCardData> clubs;
+  final Set<ClubCardData> selectedAdmins;
+  final Function toggleSelectedAdmin;
+  StatefulMultiSelect(
+      {required this.clubs,
+      required this.selectedAdmins,
+      required this.toggleSelectedAdmin});
+
+  @override
+  _StatefulMultiSelectState createState() => _StatefulMultiSelectState();
+}
+
+class _StatefulMultiSelectState extends State<StatefulMultiSelect> {
+  late Set<ClubCardData> selectedAdmins;
+  @override
+  Widget build(BuildContext context) {
+    return MultiSelectDialogField(
+      buttonText: Text("Search Admins"),
+      buttonIcon: Icon(Icons.search),
+      items: widget.clubs.map((e) => MultiSelectItem(e, e.name)).toList(),
+      initialValue:
+          selectedAdmins.toList(),
+      onConfirm: (List<dynamic> values) {
+        selectedAdmins = values.cast<ClubCardData>().toSet();
+        print("SELECTED ADMINS: ${selectedAdmins}");
+      },
+      validator: (value) {
+        if (selectedAdmins.isEmpty) {
+          return 'Please choose at least one admin.';
+        }
+        return null;
+      },
+      searchable: true,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        border: Border.all(
+          color: Colors.grey,
+          width: 1.2,
+        ),
+      ),
+      chipDisplay: MultiSelectChipDisplay<ClubCardData>(
+        onTap: (value) {
+          setState(() {
+            selectedAdmins.remove(value);
+          });
+        },
+        items: selectedAdmins.map((e) => MultiSelectItem(e, e.name)).toList(),
+        scroll: true,
+        chipColor: Colors.orange,
+        textStyle: TextStyle(color: Colors.grey[800]),
+      ),
+    );
+  }
 }
