@@ -68,12 +68,15 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         jsonDecode(response.body)['message'];
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
+            print("jhdfjekdfkjewqhd");
+            print(data['timestamp']);
             return Comment(
               commentID: data['commentID'],
               isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
               eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
+              timestamp: data['timestamp'],
               user: UserData(
                 classOf: data['userData']['classOf'],
                 uid: data['userData']['uid'],
@@ -223,6 +226,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           ],
                         ),
                         SizedBox(height: 8),
+                        /*
                         Row(
                           children: [
                             Row(
@@ -238,6 +242,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           ],
                         ),
                         SizedBox(height: 8),
+                        */
                         Row(
                           children: [
                             Icon(Icons.location_on),
@@ -344,12 +349,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 ],
               ),
             ),
-            Divider(
-              color: Colors.grey,
-              thickness: 1,
-              indent: 50,
-              endIndent: 50,
-            ),
+
             // Text field for adding comments
             Padding(
               padding: const EdgeInsets.only(right: 40, left: 40),
@@ -365,10 +365,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                       filled: true,
                       fillColor: Color(0xFFB2BEB5),
                       hintStyle: TextStyle(
-                        fontFamily: 'Borel',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(.9),
                       ),
                       contentPadding:
                       EdgeInsets.symmetric(vertical: -5, horizontal: 10),
@@ -392,6 +390,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
               ),
             ),
             // Comment section with scrollbar
+
             KeyedSubtree(
               key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
               child: FutureBuilder<void>(
@@ -438,6 +437,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         isLiked: false,
         comment: text,
         likedBy: [],
+        timestamp: DateTime.now().millisecondsSinceEpoch,
         eventID: widget.markerData.eventID,
         user: UserData(
           classOf: widget.currUser.classOf,

@@ -14,6 +14,7 @@ class Comment {
   final String eventID;
   bool isLiked;
   String commentID;// Updated to use UserData class
+  int timestamp;
 
   Comment({
     required this.user,
@@ -21,7 +22,8 @@ class Comment {
     required this.likedBy,
     required this.eventID,
     required this.isLiked,
-    required this.commentID
+    required this.commentID,
+    required this.timestamp
   });
 
   Future<String> add() async{

@@ -156,7 +156,7 @@ class _MyAppState extends State<MyApp> {
               controller: panelController,
               minHeight: 0,
               maxHeight: MediaQuery.of(context).size.height*(2/3),
-              snapPoint: .4,
+              snapPoint: .37,
             borderRadius:  BorderRadius.only(
     topRight: Radius.circular(40),
               topLeft: Radius.circular(40),
