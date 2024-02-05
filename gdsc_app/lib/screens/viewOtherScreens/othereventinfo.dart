@@ -34,6 +34,7 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool thumbsUpSelected = false;
   bool thumbsDownSelected = false;
+  bool isLoaded = false;
 
   double latitude = 0.0;
   double longitude = 0.0;
@@ -44,6 +45,14 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     super.dispose();
   }
 
+  Future<void> loadRSVPs() async {
+    await widget.event.getRSVPData();
+    if (isLoaded == false) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
+  }
   Future<void> postRequest() async {
     print("post request");
     String timeStamp = format.format(DateTime.now());
@@ -79,13 +88,13 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     super.initState();
     print("event info.dart, initstate");
     locationText = "Loading...";
-    print(widget.event.rsvpUserData);
     tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
 
     // Fetch location information asynchronously
     loadStreetName();
+    loadRSVPs();
   }
 
   Future<void> loadStreetName() async {
@@ -273,7 +282,7 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        '➤➤➤ RSVP List ➤➤➤',
+                        'RSVP List',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -293,45 +302,29 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   }
 
   Widget buildTabContent() {
-    return FutureBuilder<void>(
-      future: widget.event.getRSVPData(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        print("CALLING FUNC");
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoaderWidget(); // or any loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          print("hello");
-          print(widget.event.rsvpUserData);
-
-          // Display RSVP data
-          if (widget.event.rsvpUserData.isNotEmpty) {
-            print("HII");
-            return SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: (
-                  ListView.builder(
-                    itemCount: widget.event.rsvpUserData.length,
-                    itemBuilder: (context, index) {
-                      return RsvpCard(
-                          user: widget.event.rsvpUserData[index]
-                      );
-                    },
-                  )),
-            );
-          } else {
-            // Display a message when there is no RSVP data
-            return Center(
-              child: Text('No RSVPs yet.'),
-            );
-          }
-        }
-      },
-    );
+    if (isLoaded == false) {
+      return LoaderWidget();
+    } else {
+      if (widget.event.rsvpUserData.isNotEmpty) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: (
+              ListView.builder(
+                itemCount: widget.event.rsvpUserData.length,
+                itemBuilder: (context, index) {
+                  return RsvpCard(
+                      user: widget.event.rsvpUserData[index]
+                  );
+                },
+              )),
+        );
+      } else {
+        // Display a message when there is no RSVP data
+        return Center(
+          child: Text('No RSVPs yet.'),
+        );
+      }
+    }
   }
 
 
