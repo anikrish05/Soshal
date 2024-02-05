@@ -48,6 +48,7 @@ class _SearchScreenState extends State<SearchScreen>
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
+
   Future<void> getUser() async {
     final response = await http.get(
       Uri.parse('$serverUrl/api/users/userData'),
@@ -233,7 +234,8 @@ class _SearchScreenState extends State<SearchScreen>
     }
   }
 
-  Widget buildText() => Column(
+  Widget buildText() =>
+      Column(
         children: [
           SizedBox(
             width: 350,
@@ -285,7 +287,8 @@ class _SearchScreenState extends State<SearchScreen>
         ],
       );
 
-  Widget buildTabBar() => TabBar(
+  Widget buildTabBar() =>
+      TabBar(
         unselectedLabelColor: _colorTab,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
@@ -302,12 +305,15 @@ class _SearchScreenState extends State<SearchScreen>
       );
 
   Widget buildSearchResultList() {
+    ScrollController _scrollController = ScrollController();
+
     Set<Widget> clubWidgets = filteredItemsClubs
-        .map((club) => ClubCardWidget(
-              club: club,
-              isOwner: user!.clubIds.contains(club.id),
-              currUser: user!,
-            ))
+        .map((club) =>
+        ClubCardWidget(
+          club: club,
+          isOwner: user!.clubIds.contains(club.id),
+          currUser: user!,
+        ))
         .toSet();
 
     Set<Widget> eventWidgets = filteredItemsEvents
@@ -315,21 +321,27 @@ class _SearchScreenState extends State<SearchScreen>
         .toSet();
 
     Set<Widget> followerWidgets = filteredFollowers
-        .map((club) => ClubCardWidget(
-              club: club,
-              isOwner: user!.clubIds.contains(club.id),
-              currUser: user!,
-            ))
+        .map((club) =>
+        ClubCardWidget(
+          club: club,
+          isOwner: user!.clubIds.contains(club.id),
+          currUser: user!,
+        ))
         .toSet();
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height,
+      height: MediaQuery
+          .of(context)
+          .size
+          .height,
       child: TabBarView(
         controller: tabController,
         children: [
           Container(
-            width:
-                MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.9,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -339,7 +351,10 @@ class _SearchScreenState extends State<SearchScreen>
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        width: MediaQuery.of(context).size.width * 0.002,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.002,
                         color: Colors.grey.withOpacity(0.2),
                       ),
                     ),
@@ -353,11 +368,33 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                 ),
                 SizedBox(height: 16.0),
-                // Conditionally display club widgets or 'No organizations found' text
                 if (clubWidgets != null && clubWidgets.isNotEmpty)
-                  SizedBox(
-                      height: 100,
-                      child: ListView(children: clubWidgets.toList()))
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        child: ListView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.horizontal,
+                          children: clubWidgets.toList(),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0, // Adjust this value to move the arrow more to the right
+                        bottom: 32, // Adjust this value to move the arrow down
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_right_alt), // Arrow with a tail
+                          onPressed: () {
+                            _scrollController.animateTo(
+                              _scrollController.offset + 200,
+                              curve: Curves.linear,
+                              duration: Duration(milliseconds: 500),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  )
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -373,7 +410,10 @@ class _SearchScreenState extends State<SearchScreen>
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        width: MediaQuery.of(context).size.width * 0.002,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.002,
                         color: Colors.grey.withOpacity(0.2),
                       ),
                     ),
@@ -387,12 +427,14 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                 ),
                 SizedBox(height: 15.0),
-                // Display event cards or 'No results found' text based on eventWidgets list
                 if (eventWidgets != null && eventWidgets.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height *
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height *
                           0.6, // Adjust the height accordingly
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
@@ -415,7 +457,10 @@ class _SearchScreenState extends State<SearchScreen>
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.9,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -425,7 +470,10 @@ class _SearchScreenState extends State<SearchScreen>
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        width: MediaQuery.of(context).size.width * 0.002,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.002,
                         color: Colors.grey.withOpacity(0.2),
                       ),
                     ),
@@ -446,7 +494,10 @@ class _SearchScreenState extends State<SearchScreen>
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Center(
                       child: SizedBox(
-                        height: MediaQuery.of(context).size.height *
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height *
                             0.6, // Adjust the height accordingly
                         child: ListView.builder(
                           itemCount: followerWidgets.length,

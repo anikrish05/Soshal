@@ -24,6 +24,7 @@ class SlidingUpWidget extends StatefulWidget {
   final ResetStateCallback resetStateCallback;
 
 
+
   SlidingUpWidget(
       {required this.markerData, required this.onClose, required this.currUser, required this.resetStateCallback,
       });
@@ -37,6 +38,10 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   List<Comment> comments = [];
   bool isRSVP = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
+  bool thumbsUpSelected = false;
+  bool thumbsDownSelected = false;
+  Color _orangeColor = Color(0xFFFF8050);
+  Color _greyColor = Color(0xFFD3D3D3);
 
   String locationText = "Loading...";
   // Controller for the comment text field
@@ -63,12 +68,15 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         jsonDecode(response.body)['message'];
         if (responseData != null) {
           List<Comment> newComments = responseData.map((data) {
+            print("jhdfjekdfkjewqhd");
+            print(data['timestamp']);
             return Comment(
               commentID: data['commentID'],
               isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
               eventID: widget.markerData.eventID,
               likedBy: List<String>.from(data['likedBy']),
+              timestamp: data['timestamp'],
               user: UserData(
                 classOf: data['userData']['classOf'],
                 uid: data['userData']['uid'],
@@ -218,6 +226,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           ],
                         ),
                         SizedBox(height: 8),
+                        /*
                         Row(
                           children: [
                             Row(
@@ -233,6 +242,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           ],
                         ),
                         SizedBox(height: 8),
+                        */
                         Row(
                           children: [
                             Icon(Icons.location_on),
@@ -253,31 +263,84 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           alignment: Alignment.centerRight,
                           child: Container(
                             margin: EdgeInsets.only(bottom: 2, right: 40),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                bool temp = !isRSVP;
-                                setState(() {
-                                  isRSVP = temp;
-                                });
-                                if (temp) {
-                                  print(temp);
-                                  widget.markerData.rsvp();
-                                } else {
-                                  print(temp);
-                                  widget.markerData.unRsvp();
-                                }
-                                // Add RSVP button logic
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: isRSVP
-                                    ? Color(0xFFFF8050)
-                                    : Color(0xFFB2BEB5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: textRSVP(),
-                            ),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      // Toggle thumbs up state
+                                      setState(() {
+                                        thumbsUpSelected = !thumbsUpSelected;
+
+                                        // If thumbs up is selected, make thumbs down unselected
+                                        if (thumbsUpSelected) {
+                                          thumbsDownSelected = false;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: thumbsUpSelected ? _orangeColor : _greyColor,
+                                      ),
+                                      padding: EdgeInsets.all(8), // Adjust padding as needed
+                                      child: Icon(
+                                        Icons.thumb_up,
+                                        color: thumbsUpSelected ? Colors.white : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10), // Adjust spacing as needed
+                                  GestureDetector(
+                                    onTap: () {
+                                      // Toggle thumbs down state
+                                      setState(() {
+                                        thumbsDownSelected = !thumbsDownSelected;
+
+                                        // If thumbs down is selected, make thumbs up unselected
+                                        if (thumbsDownSelected) {
+                                          thumbsUpSelected = false;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: thumbsDownSelected ? _orangeColor : _greyColor,
+                                      ),
+                                      padding: EdgeInsets.all(8), // Adjust padding as needed
+                                      child: Icon(
+                                        Icons.thumb_down,
+                                        color: thumbsDownSelected ? Colors.white : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10), // Adjust spacing as needed
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      bool temp = !isRSVP;
+                                      setState(() {
+                                        isRSVP = temp;
+                                      });
+                                      if (temp) {
+                                        print(temp);
+                                        widget.markerData.rsvp();
+                                      } else {
+                                        print(temp);
+                                        widget.markerData.unRsvp();
+                                      }
+                                      // Add RSVP button logic
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: isRSVP ? Colors.white : _orangeColor, // Set primary color based on isRSVP
+                                      side: BorderSide(color: isRSVP ? _orangeColor : Colors.transparent, width: 2), // Add orange outline if isRSVP is true
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                    ),
+                                    child: textRSVP(),
+                                  ),
+                                ],
+                              )
                           ),
                         ),
                       ],
@@ -286,12 +349,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                 ],
               ),
             ),
-            Divider(
-              color: Colors.grey,
-              thickness: 1,
-              indent: 50,
-              endIndent: 50,
-            ),
+
             // Text field for adding comments
             Padding(
               padding: const EdgeInsets.only(right: 40, left: 40),
@@ -307,10 +365,8 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                       filled: true,
                       fillColor: Color(0xFFB2BEB5),
                       hintStyle: TextStyle(
-                        fontFamily: 'Borel',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(.9),
                       ),
                       contentPadding:
                       EdgeInsets.symmetric(vertical: -5, horizontal: 10),
@@ -334,6 +390,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
               ),
             ),
             // Comment section with scrollbar
+
             KeyedSubtree(
               key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
               child: FutureBuilder<void>(
@@ -380,6 +437,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         isLiked: false,
         comment: text,
         likedBy: [],
+        timestamp: DateTime.now().millisecondsSinceEpoch,
         eventID: widget.markerData.eventID,
         user: UserData(
           classOf: widget.currUser.classOf,
@@ -433,7 +491,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         text: TextSpan(
           style: DefaultTextStyle.of(context).style,
           children: <TextSpan>[
-            TextSpan(text: "rsvp'd", style: TextStyle(fontFamily: 'Borel', color: Colors.white, fontWeight: FontWeight.bold)),
+            TextSpan(text: "rsvp'd", style: TextStyle(fontFamily: 'Borel', color: _orangeColor, fontWeight: FontWeight.bold)),
           ],
         ),
       );
