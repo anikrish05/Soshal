@@ -45,6 +45,7 @@ const addComment = async (req, res) => {
 
         let data = JSON.parse(commentData)
         data.likedBy = []
+        data.timestamp = Date.now();
         const myCollection = collection(db, 'comments');
         const newDocRef = await addDoc(myCollection, data);
         associatedEventCommentAdd(newDocRef.id, eventID)

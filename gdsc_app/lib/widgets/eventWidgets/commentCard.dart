@@ -13,7 +13,7 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   bool isLiked = false;
   Color _orangeColor = Color(0xFFFF8050);
-
+  String timestamp = "";
   Widget _buildProfileImage() {
     Widget profileImage;
 
@@ -41,8 +41,27 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   void initState() {
+    int timestampInMilliseconds = widget.comment.timestamp;
+    DateTime nodeDateTime = DateTime.fromMillisecondsSinceEpoch(timestampInMilliseconds);
+    DateTime currentDateTime = DateTime.now();
+    Duration difference = currentDateTime.difference(nodeDateTime);
+    String tempString = "";
+    if (difference.inDays > 0) {
+      setState(() {
+        tempString = "${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago";
+      });
+    } else if (difference.inHours > 0) {
+      setState(() {
+        tempString = "${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago";
+      });
+    } else {
+      setState(() {
+        tempString = "${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago";
+      });
+    }
     setState(() {
       isLiked = widget.comment.isLiked;
+      timestamp = tempString;
     });
   }
 
@@ -94,6 +113,10 @@ class _CommentCardState extends State<CommentCard> {
                 SizedBox(height: 8),
                 Text(
                   widget.comment.comment,
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+                Text(
+                  "$timestamp",
                   style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
               ],
