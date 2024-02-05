@@ -44,6 +44,7 @@ class _SearchScreenState extends State<SearchScreen>
   ]; // will need to replace this with master tag list
   UserData? user;
 
+  bool isLoaded = false;
   bool isSearchingClubs = false;
   List<ClubCardData> clubs = [];
   List<EventCardData> events = [];
@@ -90,10 +91,21 @@ class _SearchScreenState extends State<SearchScreen>
     }
   }
 
+  Future<void> fetchInitialData() async {
+    await fetchData();
+    filteredFollowers = user!.followingClubData.toSet();
+    filteredItemsClubs = clubs.toSet();
+    filteredItemsEvents = events.toSet();
+    setState(() {
+      isLoaded = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    fetchInitialData();
   }
 
   @override
@@ -200,35 +212,26 @@ class _SearchScreenState extends State<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<void>(
-        future: fetchData(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return (LoaderWidget());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return ListView(
-              padding: const EdgeInsets.all(8),
-              children: <Widget>[
-                buildText(),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                ),
-                buildTabBar(),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                ),
-                buildSearchResultList(),
-              ],
-            );
-          }
-        },
-      ),
-    );
+    if (isLoaded == false) {
+      return LoaderWidget();
+    } else {
+      return Scaffold(
+        body: ListView(
+          padding: const EdgeInsets.all(8),
+          children: <Widget>[
+            buildText(),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+            ),
+            buildTabBar(),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+            ),
+            buildSearchResultList(),
+          ],
+        ),
+      );
+    }
   }
 
   Widget buildText() =>
@@ -260,14 +263,11 @@ class _SearchScreenState extends State<SearchScreen>
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
-                )
-            ),
+                )),
             title: Text("Select Tags",
                 style: TextStyle(
                   color: Colors.grey,
-                )
-
-            ),
+                )),
             initialValue: selectedTags.toList(),
             items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
             onConfirm: (List<String> values) {
@@ -439,8 +439,8 @@ class _SearchScreenState extends State<SearchScreen>
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
                         itemBuilder: (context, index) {
-                          return eventWidgets.toList()[
-                          index]; // Your event widget item here
+                          return eventWidgets
+                              .toList()[index]; // Your event widget item here
                         },
                       ),
                     ),
@@ -502,8 +502,8 @@ class _SearchScreenState extends State<SearchScreen>
                         child: ListView.builder(
                           itemCount: followerWidgets.length,
                           itemBuilder: (context, index) {
-                            return followerWidgets.toList()[
-                            index]; // Your event widget item here
+                            return followerWidgets
+                                .toList()[index]; // Your event widget item here
                           },
                         ),
                       ),

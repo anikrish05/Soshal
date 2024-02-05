@@ -39,7 +39,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   String selectedImage = 'assets/ex1.jpeg';
   XFile? _image;
   Set<UserData> users = {};
-  Set<UserData> selectedAdmins = {};
+  List<UserData> selectedAdmins = [];
   List<String> selectedTags = [];
   List<String> sampleTags = ["Party", "Social", "Hackathon, Coding"];
   GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
@@ -124,7 +124,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             classOf: responseData[i]["classOf"]);
         users.add(newUser);
       }
-      selectedAdmins = users.where((user) => user.uid == currUserId).toSet();
+      selectedAdmins = users.where((user) => user.uid == currUserId).toList();
     } 
     else {
       // Handle the error
@@ -191,16 +191,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       selectedTags,
       newImageBytes
     ]);
-  }
-
-  void toggleSelectedAdmin(UserData selection) {
-    if (selectedAdmins.contains(selection)) {
-      selectedAdmins.remove(selection);
-      debugPrint("$selection removed from admin list.");
-    } else {
-      selectedAdmins.add(selection);
-      debugPrint("$selection added as admin.");
-    }
   }
 
   @override
@@ -330,14 +320,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                       items: sampleTags
                           .map((e) => MultiSelectItem(e, e))
                           .toList(),
-                      onConfirm: (List<String> values) {
-                        selectedTags = values;
+                      onConfirm: (List<dynamic> values) {
+                        selectedTags = values.cast<String>();
                       },
                       searchable: true,
                       validator: (value) {
                         if (selectedTags.length == 0) {
                           return 'Please choose at least one tag.';
                         }
+                        return null;
                       },
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -346,8 +337,17 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                           width: 1.2,
                         ),
                       ),
+                      chipDisplay: MultiSelectChipDisplay<String>(
+                        onTap: (value) {
+                          setState(() {
+                            selectedTags.remove(value);
+                          });
+                        },
+                        chipColor: _orangeColor,
+                        textStyle: TextStyle(color: Colors.grey[800]),
+                      ),
                     ),
-                  ),
+                  ),              
                   VerticalDivider(),
                   ToggleSwitch(
                     minWidth: 67.5,
@@ -382,8 +382,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
               initialValue:
                   selectedAdmins.toList(),
-              onConfirm: (List<Object> values) {
-                selectedAdmins = values.map((value) => value as UserData).toSet();
+              onConfirm: (List<dynamic> values) {
+                selectedAdmins = values.cast<UserData>();
               },
               validator: (value) {
                 if (selectedAdmins.isEmpty) {
@@ -398,6 +398,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                   color: Colors.grey,
                   width: 1.2,
                 ),
+              ),
+              chipDisplay: MultiSelectChipDisplay<UserData>(
+                onTap: (value) {
+                  setState(() {
+                    selectedAdmins.remove(value);
+                  });
+                },
+                chipColor: _orangeColor,
+                textStyle: TextStyle(color: Colors.grey[800]),
               ),
             ),
             Divider(),
