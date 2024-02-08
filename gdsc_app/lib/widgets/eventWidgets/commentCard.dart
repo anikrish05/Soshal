@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/classes/Comment.dart';
+import 'package:gdsc_app/classes/comment.dart';
 
 class CommentCard extends StatefulWidget {
   final Comment comment;

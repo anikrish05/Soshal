@@ -317,7 +317,7 @@ class _SearchScreenState extends State<SearchScreen>
         .toSet();
 
     Set<Widget> eventWidgets = filteredItemsEvents
-        .map((event) => EventCardWidget(event: event, isOwner: false))
+        .map((event) => EventCardWidget(event: event, isOwner: false, user:user!))
         .toSet();
 
     Set<Widget> followerWidgets = filteredFollowers

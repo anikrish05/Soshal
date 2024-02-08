@@ -279,6 +279,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                         return EventCardWidget(
                           event: upcommingEvents[index],
                           isOwner: true,
+                          user: widget.currUser
                         );
                       },
                     ),
@@ -290,6 +291,7 @@ class _OtherClubProfilePageState extends State<OtherClubProfilePage> with Single
                         return EventCardWidget(
                           event: finishedEvents[index],
                           isOwner: true,
+                          user: widget.currUser
                         );
                       },
                     ),

@@ -351,127 +351,13 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
             ),
 
             // Text field for adding comments
-            Padding(
-              padding: const EdgeInsets.only(right: 40, left: 40),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  height: 40,
-                  child: TextField(
-                    controller: commentController,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'add comments',
-                      filled: true,
-                      fillColor: Color(0xFFB2BEB5),
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(.9),
-                      ),
-                      contentPadding:
-                      EdgeInsets.symmetric(vertical: -5, horizontal: 10),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          //addComment(); // Function to add the comment
-                          addComment();
-                        },
-                        icon: Icon(Icons.send, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Comment section with scrollbar
-
-            KeyedSubtree(
-              key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
-              child: FutureBuilder<void>(
-                future: commentsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return Expanded(
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          reverse: true,
-                          child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              return CommentCard(comment: comments[index]);
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> addComment() async {
-    print(widget.currUser.uid);
-    String text = commentController.text.trim();
-
-    if (text.isNotEmpty) {
-      Comment newComment = Comment(
-        commentID: "temporary",
-        isLiked: false,
-        comment: text,
-        likedBy: [],
-        timestamp: DateTime.now().millisecondsSinceEpoch,
-        eventID: widget.markerData.eventID,
-        user: UserData(
-          classOf: widget.currUser.classOf,
-          uid: widget.currUser.uid,
-          displayName: widget.currUser.displayName,
-          email: widget.currUser.email,
-          following: widget.currUser.following,
-          role: widget.currUser.role,
-          downloadURL: widget.currUser.downloadURL,
-          myEvents: widget.currUser.myEvents,
-          clubIds: widget.currUser.clubIds,
-          likedEvents: widget.currUser.likedEvents,
-          dislikedEvents: widget.currUser.dislikedEvents,
-          friendGroups: widget.currUser.friendGroups,
-            interestedTags: widget.currUser.friendGroups
-        ),
-      );
-
-      try {
-        // Add the comment to Firestore
-        String commentID = await newComment.add();
-
-        // Update the commentID and add to the UI
-        setState(() {
-          widget.markerData.comments.add(commentID);
-          newComment.commentID = commentID;
-          comments.add(newComment);
-          commentController.clear();
-        });
-      } catch (error) {
-        print('Error adding comment: $error');
-      }
-    }
-  }
+  
 
   Widget clubText() {
     String text = "By: ";

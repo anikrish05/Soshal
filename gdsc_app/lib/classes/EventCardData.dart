@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import '../app_config.dart';
 import '../utils.dart';
+import 'package:gdsc_app/classes/comment.dart';
 
 final serverUrl = AppConfig.serverUrl;
 class EventCardData {
@@ -23,7 +24,7 @@ class EventCardData {
   List<ClubCardData> clubInfo = [];
   String time;
   List<UserData> rsvpUserData = [];
-
+  List<Comment> commentData = [];
   EventCardData({
     required this.rsvpList,
     required this.name,
@@ -122,4 +123,94 @@ class EventCardData {
       print("rsvpList is null");
     }
   }
+    Future<void> getComments() async {
+    try {
+      final response = await post(
+        Uri.parse(
+            '$serverUrl/api/comments/getCommentDataForEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "comments": comments, // Ensure comments is not null
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("response code");
+        print(jsonDecode(response.body)['message']);
+        // Parse the response and update the comments list
+        List<dynamic>? responseData =
+        jsonDecode(response.body)['message'];
+        if (responseData != null) {
+          commentData= responseData.map((data) {
+            print("jhdfjekdfkjewqhd");
+            print(data['timestamp']);
+            return Comment(
+              commentID: data['commentID'],
+              isLiked: data['likedBy'].contains(""),//TODO: Replace with user's uid
+              comment: data['comment'],
+              eventID: id,
+              likedBy: List<String>.from(data['likedBy']),
+              timestamp: data['timestamp'],
+              user: UserData(
+                classOf: data['userData']['classOf'],
+                uid: data['userData']['uid'],
+                displayName: data['userData']['displayName'],
+                email: data['userData']['email'],
+                following:
+                data['userData']['following'],
+                role: data['userData']['role'],
+                downloadURL: data['userData']['downloadURL'],
+                myEvents:
+                List<String>.from(data['userData']['myEvents']),
+                clubIds:
+                List<String>.from(data['userData']['clubsOwned']),
+                likedEvents:
+                List<String>.from(data['userData']['likedEvents']),
+                dislikedEvents:
+                List<String>.from(data['userData']['dislikedEvents']),
+                friendGroups:
+                List<String>.from(data['userData']['friendGroups']),
+                interestedTags:
+                List<String>.from(data['userData']['interestedTags']),
+              ),
+            );
+          }).toList();
+        } else {
+          print('Response data is null');
+        }
+      } else {
+        print('Failed to fetch comments: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching comments: $e');
+    }
+  }
+
+  Future<Comment?> addComment(UserData currUser, String text) async {
+    if (text.isNotEmpty) {
+      Comment newComment = Comment(
+        commentID: "temporary",
+        isLiked: false,
+        comment: text,
+        likedBy: [],
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        eventID: id,
+        user: currUser
+      );
+
+      try {
+        // Add the comment to Firestore
+        String commentID = await newComment.add();
+        newComment.commentID = commentID;
+        return newComment;
+        // Update the commentID and add to the UI
+
+      } catch (error) {
+        print('Error adding comment: $error');
+        return null;
+      }
+    }
+    return null;
+  }
+
 }

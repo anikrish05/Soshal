@@ -9,6 +9,7 @@ import 'package:gdsc_app/screens/createEvent.dart';
 import 'package:http/http.dart' as http;
 import 'package:gdsc_app/screens/editClub.dart';
 import 'package:intl/intl.dart';
+import '../../classes/userData.dart';
 import '../../utils.dart';
 import '../../widgets/eventWidgets/eventCard.dart';
 import '../../widgets/loader.dart';
@@ -480,6 +481,20 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                       return EventCardWidget(
                         event: upcommingEvents[index],
                         isOwner: true,
+                          user: UserData(
+                              uid: user.uid,
+                              displayName: user.displayName,
+                              email: user.email,
+                              following: user.following,
+                              role: user.role,
+                              myEvents: user.myEvents,
+                              clubIds: user.clubIds,
+                              downloadURL: user.downloadURL,
+                              classOf: user.classOf,
+                              likedEvents: user.likedEvents,
+                              dislikedEvents: user.dislikedEvents,
+                              friendGroups: user.friendGroups,
+                              interestedTags: user.interestedTags)
                       );
                     },
                   ),
@@ -491,6 +506,20 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                       return EventCardWidget(
                         event: finishedEvents[index],
                         isOwner: true,
+                        user: UserData(
+                            uid: user.uid,
+                            displayName: user.displayName,
+                            email: user.email,
+                            following: user.following,
+                            role: user.role,
+                            myEvents: user.myEvents,
+                            clubIds: user.clubIds,
+                            downloadURL: user.downloadURL,
+                            classOf: user.classOf,
+                            likedEvents: user.likedEvents,
+                            dislikedEvents: user.dislikedEvents,
+                            friendGroups: user.friendGroups,
+                            interestedTags: user.interestedTags)
                       );
                     },
                   ),

@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             itemCount: user!.eventData.length,
             itemBuilder: (context, index) {
               //I currently put isOwner true as temporary, change it afterwards
-              return EventCardWidget(event: user!.eventData[index], isOwner: false);
+              return EventCardWidget(event: user!.eventData[index], isOwner: false, user: user!);
             }),
         ListView.builder(
           itemCount: user!.clubData.length ~/ 2 + (user!.clubData.length % 2),

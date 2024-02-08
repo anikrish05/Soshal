@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:gdsc_app/screens/editEvent.dart';
 import '../../app_config.dart';
+import '../../classes/comment.dart';
 import '../../utils.dart';
+import '../../widgets/eventWidgets/commentCard.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/profileWidgets/rsvpCard.dart';
 
@@ -18,8 +20,9 @@ final serverUrl = AppConfig.serverUrl;
 
 class EventProfilePage extends StatefulWidget {
   final EventCardData event;
-
-  EventProfilePage({required this.event});
+  final UserData user;
+  
+  EventProfilePage({required this.event, required this.user});
 
   @override
   State<EventProfilePage> createState() => _EventProfilePageState();
@@ -29,7 +32,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     with SingleTickerProviderStateMixin {
   late DateTime selectedDateTime;
   Color _colorTab = Color(0xFFFF8050);
-
+  List<Comment> comments = [];
   String locationText = "Loading...";
   bool isEditing = false;
   late TabController tabController;
@@ -39,6 +42,8 @@ class _EventProfilePageState extends State<EventProfilePage>
 
   double latitude = 0.0;
   double longitude = 0.0;
+
+  TextEditingController commentController = TextEditingController();
 
 
 
@@ -264,7 +269,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                   ),
                 ),
               ),
-              buildTabContent(),
+              //buildTabContent(),
             ],
           ),
           if (isEditing)
@@ -527,7 +532,7 @@ class _EventProfilePageState extends State<EventProfilePage>
     );
   }
 
-  Widget buildTabContent() {
+  Widget buildRSVP() {
     return FutureBuilder<void>(
       future: widget.event.getRSVPData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -569,6 +574,83 @@ class _EventProfilePageState extends State<EventProfilePage>
     );
   }
 
+  Widget CommentTab() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 40, left: 40),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              height: 40,
+              child: TextField(
+                controller: commentController,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'add comments',
+                  filled: true,
+                  fillColor: Color(0xFFB2BEB5),
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(.9),
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: -5, horizontal: 10),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  border: InputBorder.none,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      //addComment(); // Function to add the comment
+                      addComment();
+                    },
+                    icon: Icon(Icons.send, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        // Comment section with scrollbar
+        /*
+        KeyedSubtree(
+          key: UniqueKey(), // Use UniqueKey to force a rebuild when the key changes
+          child: FutureBuilder<void>(
+            future: commentsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Expanded(
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      reverse: true,
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          return CommentCard(comment: comments[index]);
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        ), */
+      ],
+    );
+  }
+
 
 
 
@@ -589,6 +671,14 @@ class _EventProfilePageState extends State<EventProfilePage>
     }
   }
 
+  Future<void> addComment() async {
+    String text = commentController.text.trim();
+    Comment? newComment = await widget.event.addComment(widget.user, text) ?? null;
+    setState(() {
+          comments.add(newComment!);
+          commentController.clear();
+        });
+  }
 
   void onUpdateEvent() async
   {

@@ -12,8 +12,9 @@ import '../../screens/viewOtherScreens/othereventinfo.dart';
 class EventCardWidget extends StatefulWidget {
   final EventCardData event;
   final bool isOwner;
+  final UserData user;
 
-  EventCardWidget({required this.event, required this.isOwner});
+  EventCardWidget({required this.event, required this.isOwner, required this.user});
 
   @override
   State<EventCardWidget> createState() => _EventCardWidgetState();
@@ -89,7 +90,7 @@ class _EventCardWidgetState extends State<EventCardWidget> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventProfilePage(event: widget.event),
+                  builder: (context) => EventProfilePage(event: widget.event, user: widget.user),
                 ),
               );
             } else {
