@@ -89,11 +89,12 @@ class _EventProfilePageState extends State<EventProfilePage>
     print("event info.dart, initstate");
     locationText = "Loading...";
     print(widget.event.rsvpUserData);
-    tabController = TabController(length: 1, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
 
     // Fetch location information asynchronously
+    widget.event.getComments();
     loadStreetName();
   }
 
@@ -246,7 +247,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                     ],
                   )
               ),
-              Padding(
+              /* Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -258,7 +259,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        '➤➤➤  RSVP List  ➤➤➤',
+                        '  RSVP List  ',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -268,8 +269,8 @@ class _EventProfilePageState extends State<EventProfilePage>
                     ),
                   ),
                 ),
-              ),
-              //buildTabContent(),
+              ), */
+              buildTabContent(),
             ],
           ),
           if (isEditing)
@@ -532,6 +533,37 @@ class _EventProfilePageState extends State<EventProfilePage>
     );
   }
 
+  Widget buildTabContent() {
+    return Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          indicatorColor: _colorTab,
+          labelColor: _colorTab,
+          unselectedLabelColor: Colors.grey,
+          tabs: [
+            Tab(
+              text: 'RSVPs',
+            ),
+            Tab(
+              text: 'Comments',
+            ),
+          ],
+        ),
+        Container(
+          height: 500,
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              buildRSVP(),
+              CommentTab(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
   Widget buildRSVP() {
     return FutureBuilder<void>(
       future: widget.event.getRSVPData(),
@@ -553,15 +585,14 @@ class _EventProfilePageState extends State<EventProfilePage>
             print("HII");
             return SizedBox(
               height: MediaQuery.of(context).size.height,
-              child: (
-                  ListView.builder(
-                    itemCount: widget.event.rsvpUserData.length,
-                    itemBuilder: (context, index) {
-                      return RsvpCard(
-                          user: widget.event.rsvpUserData[index]
-                      );
-                    },
-                  )),
+              child: ListView.builder(
+                itemCount: widget.event.rsvpUserData.length,
+                itemBuilder: (context, index) {
+                  return RsvpCard(
+                      user: widget.event.rsvpUserData[index]
+                  );
+                },
+              ),
             );
           } else {
             // Display a message when there is no RSVP data
