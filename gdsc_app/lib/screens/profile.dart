@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createUser.dart';
 import 'package:gdsc_app/screens/login.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utils.dart';
 import '../widgets/profileWidgets/profileHeader.dart';
@@ -83,7 +84,32 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     if (pickedFile != null) {
       // Read the image file as bytes
       List<int> imageBytes = await pickedFile.readAsBytes();
-
+      /*
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+       */
       // Send the bytes to the server
       await sendImageToServer(imageBytes);
     }

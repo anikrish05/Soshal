@@ -38,7 +38,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   List<Comment> comments = [];
   bool isRSVP = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
-  bool thumbsUpSelected = false;
+  bool thumbsUpSelected = widget;
   bool thumbsDownSelected = false;
   Color _orangeColor = Color(0xFFFF8050);
   Color _greyColor = Color(0xFFD3D3D3);
