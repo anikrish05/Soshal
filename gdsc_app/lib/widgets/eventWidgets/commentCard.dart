@@ -93,7 +93,7 @@ class _CommentCardState extends State<CommentCard> {
                 Row(
                   children: [
                     Text(
-                      '${widget.comment.user.displayName}:',
+                      '${widget.comment.user.displayName}',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
@@ -101,16 +101,28 @@ class _CommentCardState extends State<CommentCard> {
                       ),
                     ),
                     SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: toggleLike,
-                      child: Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? _orangeColor : null,
+                    Spacer(),
+                    Center(
+                      child: Container(
+                        child: Center(
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: toggleLike,
+                                child: Icon(
+                                  isLiked ? Icons.favorite : Icons.favorite_border,
+                                  color: isLiked ? _orangeColor : null,
+                                ),
+                              ),
+                              Text("433")
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 4),
                 Text(
                   widget.comment.comment,
                   style: TextStyle(color: Colors.grey, fontSize: 16),
