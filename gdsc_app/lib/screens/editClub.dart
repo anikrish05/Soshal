@@ -29,12 +29,7 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
   XFile? _image;
 
   Color _orangeColor = Color(0xFFFF8050);
-  final ButtonStyle style =
-  ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: StadiumBorder(),
-      textStyle: const TextStyle(
-          fontSize: 18, color: Colors.grey));
+
           
   List<String> selectedTags = [];
   List<String> sampleTags = ["Social", "Academic", "Professional", "Sports", "Music", "Art", "Food", "Gaming", "Other"];
@@ -42,6 +37,12 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ButtonStyle style =
+    ElevatedButton.styleFrom(
+        backgroundColor: _orangeColor,
+        shape: StadiumBorder(),
+        textStyle: const TextStyle(
+            fontSize: 18, color: Colors.grey));
     return Scaffold(
         appBar: AppBar(leading: BackButton(
             onPressed: () => Navigator.of(context).pop(),

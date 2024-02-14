@@ -3,7 +3,7 @@ import 'package:gdsc_app/widgets/notificationWidgets/mainNotifcations.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => const Size.fromHeight(65);
+  Size get preferredSize => const Size.fromHeight(70);
 
   @override
   Widget build(BuildContext context) {
@@ -13,32 +13,39 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset(
-            'assets/image.png',
-            fit: BoxFit.fitWidth,
-            height: 150,
-            width: 150,
+          Padding( // Add padding to the top of the image
+            padding: EdgeInsets.only(top: 11.0), // Adjust this value as needed
+            child: Image.asset(
+              'assets/image.png',
+              fit: BoxFit.fitWidth,
+              height: 150,
+              width: 150,
+            ),
           ),
         ],
       ),
       automaticallyImplyLeading: false,
       actions: [
-        IconButton(
-          icon: Icon(
-            Icons.notifications,
-            size: 50,
-            color: Colors.grey[500],
+        Padding( // Add padding to the right of the icon
+          padding: EdgeInsets.only(right: 19.0), // Adjust this value as needed
+          child: IconButton(
+            icon: Icon(
+              Icons.notifications,
+              size: 50,
+              color: Colors.grey[500],
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
+              );
+            },
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationsPage()),
-            );
-          },
         ),
       ],
     );
   }
+
 
   void _showSettingsDialog(BuildContext context) {
     showDialog(
@@ -61,3 +68,4 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
