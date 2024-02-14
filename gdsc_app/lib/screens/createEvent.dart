@@ -221,7 +221,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Form(
       key: _oFormKey,
       child: Padding(
-        padding: EdgeInsets.all(18),
+        padding: const EdgeInsets.all(18),
         child: ListView(
           children: [
             Container(
@@ -238,20 +238,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           height: 150, width: 150, fit: BoxFit.cover),
                     )
                         : ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(
-                          i.File(_image!.path),
-                          width: 150.0,
-                          height: 150.0,
-                          fit: BoxFit.cover,
-
-                        )
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        i.File(_image!.path),
+                        width: 150.0,
+                        height: 150.0,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   VerticalDivider(),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 35.0),
+                      padding: const EdgeInsets.only(left: 35.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -283,7 +282,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                               ),
                             ),
                           ),
-                          Divider(height: 25,),
+                          Divider(height: 25),
                           TextFormField(
                             style: TextStyle(
                               fontFamily: 'Garret',
@@ -319,54 +318,65 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ],
               ),
             ),
-            Divider(height: 25,),
+            Divider(height: 25),
             Container(
               width: 295.0,
-              child: MultiSelectDialogField(
-                buttonText: Text("Search Admins"),
-                buttonIcon: Icon(Icons.search),
-                items: clubs.map((e) => MultiSelectItem(e, e.name)).toList(),
-                initialValue:
-                    selectedAdmins.toList(),
-                onConfirm: (List<dynamic> values) {
-                  selectedAdmins = values.cast<ClubCardData>().toSet();
-                  print("SELECTED ADMINS: $selectedAdmins");
+              child: TypeAheadField<ClubCardData>(
+                builder: (context, controller, focusNode) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    validator: (value) {
+                      if (selectedAdmins.isEmpty) {
+                        return 'Please select at least one admin.';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      hintText: "Search Admins",
+                      contentPadding:
+                      EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    ),
+                  );
                 },
-                validator: (value) {
-                  if (selectedAdmins.isEmpty) {
-                    return 'Please choose at least one admin.';
+                itemBuilder: (context, suggestion) {
+                  return ListTile(
+                    title: Text(suggestion.name),
+                    trailing: Icon(selectedAdmins.contains(suggestion)
+                        ? Icons.check_circle
+                        : Icons.check_circle_outline),
+                  );
+                },
+                onSelected: (suggestion) {
+                  toggleSelectedAdmin(suggestion);
+                  _controller1.selection =
+                      TextSelection.collapsed(offset: 0); // Reset cursor
+                  _controller1.clear(); // Clear the field
+                },
+                suggestionsCallback: (String search) {
+                  if (search == "" && selectedAdmins.isNotEmpty) {
+                    return selectedAdmins.toList();
+                  } else {
+                    return clubs
+                        .where((admin) => admin.name
+                        .toLowerCase()
+                        .contains(search.toLowerCase()))
+                        .toList();
                   }
-                  return null;
                 },
-                searchable: true,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1.2,
-                  ),
-                ),
-                chipDisplay: MultiSelectChipDisplay<ClubCardData>(
-                  onTap: (value) {
-                    setState(() {
-                      selectedAdmins.remove(value);
-                    });
-                  },
-                  items: selectedAdmins.map((e) => MultiSelectItem(e, e.name)).toList(),
-                  scroll: true,
-                  chipColor: _orangeColor,
-                  textStyle: TextStyle(color: Colors.grey[800]),
-                ),
               ),
             ),
-            Divider(height: 25.0,),
+            Divider(height: 25.0),
             Container(
               width: 295.0,
               child: DateTimeField(
                 validator: (value) {
                   if (dateTimeString.compareTo('Choose Date and Time') == 0) {
                     return 'Please enter a date-time.';
-                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
+                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0) {
                     return "Please enter a future date-time.";
                   }
                   return null;
@@ -410,139 +420,105 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-            Divider(height: 25,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FormField(
-                    validator: (value) {
-                      if (latitude == 0 || longitude == 0) {
-                        return 'Please choose a location.';
-                      }
-                      return null;
-                    },
-                    builder: (FormFieldState state) {
-                      return ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(_orangeColor),
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide.none,
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          onGetLocation();
-                        },
-                        child: const Text('Choose Location'),
-                      );
-                    }
-                  ),
-                  AnimatedButton(
-                    transitionType: TransitionType.LEFT_TO_RIGHT,
-                    textStyle: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Private",
-                    selectedText: "Public",
-                    onPress: () {
-                      if (indexPubOrPriv == 1) {
-                        indexPubOrPriv = 0;
-                      } else if (indexPubOrPriv == 0) {
-                        indexPubOrPriv = 1;
-                      }
-                    },
-                    selectedTextColor: Colors.white,
-                    selectedBackgroundColor: _orangeColor,
-                    backgroundColor: Colors.grey,
-                    width: 120,
-                    height: 40,
-                    borderRadius: 20.0,
-                    isReverse: true,
-                  ),
-                ],
+            Divider(height: 25),
+            Container(
+              width: 295.0,
+              child: TextFormField(
+                validator: (value) {
+                  if (latitude == 0 || longitude == 0) {
+                    return 'Please choose a location.';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.location_on),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: "Choose Location",
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                ),
+                onTap: () {
+                  onGetLocation();
+                },
               ),
             ),
-            Divider(height: 25,),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => {
-                      retrieveAutocomplete("Santa Cruz")
-                    }, 
-                    child: const Text("Google Places Test")
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Private"),
+                Switch(
+                  value: indexPubOrPriv == 1, // true for Public, false for Private
+                  onChanged: (value) {
+                    setState(() {
+                      indexPubOrPriv = value ? 1 : 0;
+                    });
+                  },
+                ),
+                Text("Public"),
+              ],
+            ),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Not Repeatable"),
+                Switch(
+                  value: repeatable, // true for Repeatable, false for Not Repeatable
+                  onChanged: (value) {
+                    setState(() {
+                      repeatable = value;
+                    });
+                  },
+                ),
+                Text("Repeatable"),
+              ],
+            ),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedButton(
+                  transitionType: TransitionType.CENTER_LR_OUT,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Garret',
+                    fontSize: 15,
                   ),
-                  AnimatedButton(
-                    transitionType: TransitionType.LEFT_TO_RIGHT,
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Repeatable",
-                    selectedText: "Not Repeatable",
-                    onPress: () {
-                      repeatable = !repeatable;
-                    },
-                    selectedTextColor: Colors.black,
-                    selectedBackgroundColor: Colors.grey,
-                    backgroundColor: _orangeColor,
-                    height: 45,
-                    width: 200,
-                    borderRadius: 20.0,
-                    isReverse: true,
-                  ),
-                  AnimatedButton(
-                    transitionType: TransitionType.CENTER_LR_OUT,
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Garret',
-                      fontSize: 15,
-                    ),
-                    text: "Post",
-                    onPress: () {
-                      if (_oFormKey.currentState!.validate()) {
-                        postRequest();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.green,
-                            content: Text('New event created successfully!'),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text('Please fill out all fields!'),
-                          ),
-                        );
-                      }
-                    },
-                    selectedTextColor: Colors.white,
-                    selectedBackgroundColor: Colors.lightBlue,
-                    backgroundColor: Colors.green,
-                    borderRadius: 20.0,
-                    height: 45,
-                    width: 100,
-                  ),
-                ],
-              ),
+                  text: "Post",
+                  onPress: () {
+                    if (_oFormKey.currentState!.validate()) {
+                      postRequest();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text('New event created successfully!'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text('Please fill out all fields!'),
+                        ),
+                      );
+                    }
+                  },
+                  selectedTextColor: Colors.white,
+                  selectedBackgroundColor: Colors.lightBlue,
+                  backgroundColor: _orangeColor,
+                  borderRadius: 20.0,
+                  height: 45,
+                  width: 100,
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+
   Future<void> _pickImage() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery);
