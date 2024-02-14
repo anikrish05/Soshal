@@ -111,21 +111,26 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             role: responseData[i]["role"],
             myEvents: List<String>.from((responseData[i]['myEvents'] ?? [])
                 .map((event) => event.toString())),
-            likedEvents: List<String>.from((responseData[i]['likedEvents'] ?? [])
-                .map((event) => event.toString())),
-            dislikedEvents: List<String>.from((responseData[i]['dislikedEvents'] ?? [])
-                .map((event) => event.toString())),
+            likedEvents: List<String>.from(
+                (responseData[i]['likedEvents'] ?? [])
+                    .map((event) => event.toString())),
+            dislikedEvents: List<String>.from(
+                (responseData[i]['dislikedEvents'] ?? [])
+                    .map((event) => event.toString())),
             clubIds: List<String>.from((responseData[i]['clubIds'] ?? [])
                 .map((club) => club.toString())),
             friendGroups: List<String>.from(
-                (responseData[i]['friendGroups'] ?? []).map((friend) => friend.toString())),
-            interestedTags: List<String>.from((responseData[i]['interestedTags'] ?? []).map((tag) => tag.toString())),
+                (responseData[i]['friendGroups'] ?? []).map((friend) =>
+                    friend.toString())),
+            interestedTags: List<String>.from(
+                (responseData[i]['interestedTags'] ?? []).map((tag) =>
+                    tag.toString())),
             downloadURL: responseData[i]["downloadURL"],
             classOf: responseData[i]["classOf"]);
         users.add(newUser);
       }
       selectedAdmins = users.where((user) => user.uid == currUserId).toList();
-    } 
+    }
     else {
       // Handle the error
       print('Request failed with status: ${response.statusCode}');
@@ -134,7 +139,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   Future<void> _pickImage() async {
     final XFile? pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       // Read the image file as bytes
@@ -169,15 +174,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     }
 
     final response =
-        await http.post(Uri.parse('$serverUrl/api/clubs/createClub'),
-            headers: await getHeaders(),
-            body: jsonEncode(<String, dynamic>{
-              "name": clubName.text,
-              "description": clubBio.text,
-              "type": type,
-              "admin": adminsAsList,
-              "tags": selectedTags,
-            }));
+    await http.post(Uri.parse('$serverUrl/api/clubs/createClub'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "name": clubName.text,
+          "description": clubBio.text,
+          "type": type,
+          "admin": adminsAsList,
+          "tags": selectedTags,
+        }));
     var responseData = json.decode(response.body);
     print("Test");
     print(responseData["message"].toString());
@@ -228,20 +233,24 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: ListView(
           children: [
+            SizedBox(height: 50),
+            // Add this line to create space at the top
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: _image == null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.asset('assets/ex1.jpeg',
-                                height: 150, width: 150, fit: BoxFit.cover),
-                          )
-                        : ClipRRect(
+                  Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: _image == null
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset('assets/emptyImage.png',
+                              height: 150, width: 150, fit: BoxFit.cover),
+                        )
+                            : ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.file(
                               i.File(_image!.path),
@@ -249,6 +258,17 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                               height: 150.0,
                               fit: BoxFit.cover,
                             )),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.edit),
+                          color: Colors.white,
+                          onPressed: _pickImage,
+                        ),
+                      ),
+                    ],
                   ),
                   VerticalDivider(),
                   Container(
@@ -271,7 +291,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                                   borderRadius: BorderRadius.circular(20.0)),
                               hintText: "Club Name",
                               contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                             ),
                           ),
                         ),
@@ -292,7 +312,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                                   borderRadius: BorderRadius.circular(20.0)),
                               hintText: "Add Club Bio",
                               contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                              EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                             ),
                             maxLines: 3,
                           ),
@@ -306,6 +326,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             Divider(
               height: 40,
             ),
+            SizedBox(height: 20),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -347,7 +368,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                         textStyle: TextStyle(color: Colors.grey[800]),
                       ),
                     ),
-                  ),              
+                  ),
                   VerticalDivider(),
                   ToggleSwitch(
                     minWidth: 67.5,
@@ -374,14 +395,17 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 20),
             Divider(height: 40),
+
             /// Creates a multi-select dialog field for searching and selecting admins.
             MultiSelectDialogField(
               buttonText: Text("Search Admins"),
               buttonIcon: Icon(Icons.search),
-              items: users.map((e) => MultiSelectItem(e, e.displayName)).toList(),
+              items: users.map((e) => MultiSelectItem(e, e.displayName))
+                  .toList(),
               initialValue:
-                  selectedAdmins.toList(),
+              selectedAdmins.toList(),
               onConfirm: (List<dynamic> values) {
                 selectedAdmins = values.cast<UserData>();
               },
@@ -410,6 +434,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               ),
             ),
             Divider(),
+            SizedBox(height: 30),
             ElevatedButton(
               child: Text('Create Club'),
               onPressed: () {
@@ -433,9 +458,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide.none,
-                )),
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide.none,
+                    )),
                 backgroundColor: MaterialStateProperty.all<Color>(_orangeColor),
               ),
             ),

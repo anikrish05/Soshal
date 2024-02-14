@@ -234,12 +234,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     child: _image == null
                         ? ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset(
-                        'assets/ex1.jpeg',
-                        height: 150,
-                        width: 150,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset('assets/emptyImage.png',
+                          height: 150, width: 150, fit: BoxFit.cover),
                     )
                         : ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
