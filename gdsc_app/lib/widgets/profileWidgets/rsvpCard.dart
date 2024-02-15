@@ -15,6 +15,8 @@ class RsvpCard extends StatelessWidget {
 
 class _RsvpCard extends StatelessWidget {
   final UserData user;
+  Color _orangeColor = Color(0xFFFF8050);
+
 
   _RsvpCard({required this.user});
 
@@ -45,23 +47,33 @@ class _RsvpCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Card(
+        elevation: 4.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.orange, width: 2.0), // Set border color and width
+          side: BorderSide(color: Colors.orange, width: 2.0),
         ),
         child: ListTile(
+          contentPadding: EdgeInsets.all(12.0),
           leading: CircleAvatar(
-            radius: 25, // Increased radius
-            backgroundColor: Colors.white, // Set background color to white
+            radius: 30,
+            backgroundColor: _orangeColor,
             child: _buildProfileImage(),
           ),
           title: Text(
-            '${user.displayName}', // Keep the same text
+            '${user.displayName}',
             style: TextStyle(
-              fontWeight: FontWeight.bold, // Keep the same style
-              color: _orangeColor, // Set text color to orange
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+              color: Colors.black87,
+            ),
+          ),
+          subtitle: Text(
+            '${user.classOf}',
+            style: TextStyle(
+              fontSize: 14.0,
+              color: Colors.black87,
             ),
           ),
         ),
