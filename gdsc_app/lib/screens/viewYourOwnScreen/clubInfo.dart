@@ -46,6 +46,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
   List<EventCardData> upcommingEvents = [];
   List<EventCardData> finishedEvents = [];
   bool isFollowerDataLoaded = false;
+  int notificationCount = 0;
 
   Future<void> getTabContent() async {
     await club.getALlEventsForClub();
@@ -129,7 +130,7 @@ class _ClubProfilePageState extends State<ClubProfilePage>
                       color: Colors.red, // You can customize the color
                     ),
                     child: Text(
-                      "3", // Replace this with the actual count of notifications
+                      notificationCount.toString(), // Replace this with the actual count of notifications
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -584,6 +585,12 @@ class _ClubProfilePageState extends State<ClubProfilePage>
       },
     );
   }
+  void updateNotificationCount(int count) {
+    setState(() {
+      notificationCount = count;
+    });
+  }
+
 
   void onUpdateClub() async
   {

@@ -65,12 +65,13 @@ class _UserFollowingState extends State<UserFollowing> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 18.0), // Adjusted padding
           leading: _buildProfileImage(),
           title: RichText(
             text: TextSpan(
