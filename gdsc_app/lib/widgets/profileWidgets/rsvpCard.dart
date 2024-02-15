@@ -45,33 +45,27 @@ class _RsvpCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0),
+      padding: const EdgeInsets.all(18.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          side: BorderSide(color: Colors.orange, width: 2.0), // Set border color and width
+        ),
+        child: ListTile(
+          leading: CircleAvatar(
+            radius: 25, // Increased radius
+            backgroundColor: Colors.white, // Set background color to white
+            child: _buildProfileImage(),
           ),
-          color: Colors.orange,
-          child: ListTile(
-            contentPadding: EdgeInsets.all(0), // Removes default padding
-            title: Row(
-              children: [
-                CircleAvatar(
-                  radius: 25, // Increased radius
-                  backgroundColor: Colors.grey, // Set background color to gray
-                  child: _buildProfileImage(),
-                ),
-                SizedBox(width: 20), // Increased spacing between the image and text
-                Text(
-                  '${user.displayName}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18, // Increased font size
-                    color: Colors.black, // Set text color to gray
-                  ),
-                ),
-              ],
+          title: Text(
+            '${user.displayName}', // Keep the same text
+            style: TextStyle(
+              fontWeight: FontWeight.bold, // Keep the same style
+              color: _orangeColor, // Set text color to orange
             ),
           ),
-        )
+        ),
+      ),
     );
   }
 }
