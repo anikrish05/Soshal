@@ -83,6 +83,7 @@ class _CommentCardState extends State<CommentCard> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildProfileImage(),
           SizedBox(width: 12),
@@ -91,45 +92,46 @@ class _CommentCardState extends State<CommentCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '${widget.comment.user.displayName}',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.black87,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Spacer(),
-                    Center(
-                      child: Container(
-                        child: Center(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: toggleLike,
-                                child: Icon(
-                                  isLiked ? Icons.favorite : Icons.favorite_border,
-                                  color: isLiked ? _orangeColor : null,
-                                ),
-                              ),
-                              Text("433")
-                            ],
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: toggleLike,
+                          child: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.redAccent : Colors.grey,
                           ),
                         ),
-                      ),
+                        SizedBox(width: 4),
+                        Text(
+                          "433", // Change this to the actual like count
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 SizedBox(height: 4),
                 Text(
                   widget.comment.comment,
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: TextStyle(color: Colors.black87, fontSize: 16),
                 ),
+                SizedBox(height: 8),
                 Text(
                   "$timestamp",
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ],
             ),
@@ -138,4 +140,5 @@ class _CommentCardState extends State<CommentCard> {
       ),
     );
   }
+
 }
