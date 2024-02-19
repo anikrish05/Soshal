@@ -563,6 +563,14 @@ class _StatefulMultiSelectState extends State<StatefulMultiSelect> {
       items: widget.clubs.map((e) => MultiSelectItem(e, e.name)).toList(),
       initialValue:
           selectedAdmins.toList(),
+      dialogHeight: () {
+        double? height = widget.clubs.length * 50.0 + 50.0;
+        if (height > 500.0) {
+          return 550.0;
+        } else {
+          return height;
+        }
+      }(),
       onConfirm: (List<dynamic> values) {
         selectedAdmins = values.cast<ClubCardData>().toSet();
         print("SELECTED ADMINS: ${selectedAdmins}");

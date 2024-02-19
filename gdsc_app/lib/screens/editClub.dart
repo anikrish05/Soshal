@@ -209,6 +209,14 @@ class _CreateUserScreenState extends State<UpdateClubScreen> {
                             items: sampleTags
                                 .map((e) => MultiSelectItem(e, e))
                                 .toList(),
+                            dialogHeight: () {
+                              double? height = widget.club.tags.length * 50.0 + 50.0;
+                              if (height > 500.0) {
+                                return 550.0;
+                              } else {
+                                return height;
+                              }
+                            }(),
                             onConfirm: (List<String> values) {
                               selectedTags = values;
                             },
