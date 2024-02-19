@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:gdsc_app/classes/EventCardData.dart';
 import 'package:gdsc_app/screens/login.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -7,7 +8,6 @@ import 'package:gdsc_app/widgets/slidingUpWidget.dart';
 import 'package:gdsc_app/widgets/loader.dart';
 import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/classes/ClubCardData.dart';
-import 'package:gdsc_app/classes/MarkerData.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../utils.dart';
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   Completer<GoogleMapController> _controller = Completer();
   PanelController panelController = PanelController();
   List<Marker> _markers = [];
-  MarkerData? selectedMarkerData; // Track selected marker data
+  EventCardData? selectedEventData; // Track selected marker data
   User user = User();
   List<dynamic> eventData = [];
   final LatLng _center = const LatLng(36.9907207008804, -122.05845686120782);
@@ -110,8 +110,7 @@ class _MyAppState extends State<MyApp> {
   void handleMarkerTap(MarkerId markerId) {
     Map<String, dynamic> event = Map.from(_markerEventMap[markerId]);
     if (event != null) {
-      print("Marker Tapped: ${event['eventID'].toString()}");
-      selectedMarkerData = getMarkerData(event);
+      selectedEventData = getSelectedData(event);
       panelController.isPanelOpen
           ? panelController.close()
           : panelController.animatePanelToSnapPoint();
@@ -133,9 +132,6 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
-
-    double panelMinHeight = selectedMarkerData != null ? 240 : 0; // 25% of 450
-
     return MaterialApp(
       home: Scaffold(
         body: Stack(
@@ -157,13 +153,13 @@ class _MyAppState extends State<MyApp> {
               minHeight: 0,
               maxHeight: MediaQuery.of(context).size.height*(2/3),
               snapPoint: .37,
-            borderRadius:  BorderRadius.only(
-    topRight: Radius.circular(40),
-              topLeft: Radius.circular(40),
-    ),
-              panel: selectedMarkerData != null
+              borderRadius:  BorderRadius.only(
+                topRight: Radius.circular(40),
+                topLeft: Radius.circular(40),
+              ),
+              panel: selectedEventData != null
                   ? SlidingUpWidget(
-                markerData: selectedMarkerData!,
+                eventData: selectedEventData!,
                 currUser: user,
                 onClose: () {
                   panelController.close();
@@ -172,7 +168,7 @@ class _MyAppState extends State<MyApp> {
                 resetStateCallback: () {
                   setState(() {
                     // Reset the state variables in MyApp
-                    selectedMarkerData = null;
+                    selectedEventData = null;
                   });
                 },
               )
@@ -186,7 +182,7 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  MarkerData getMarkerData(dynamic event) {
+  EventCardData getSelectedData(dynamic event) {
 
     // Create a copy of the event data to avoid potential modifications
     Map<String, dynamic> eventDataCopy = Map.from(event);
@@ -213,18 +209,26 @@ class _MyAppState extends State<MyApp> {
     });
 
     // Use the copied eventDataCopy instead of the original event for certain properties
-    return MarkerData(
-      user: user,
-      clubs: clubs,
-      isRSVP: user.myEvents.contains(eventDataCopy['eventID']),
-      eventID: eventDataCopy['eventID'],
-      title: eventDataCopy['name'],
+    return EventCardData(
+      id: eventDataCopy['eventID'],
+      name: eventDataCopy['name'],
       description: eventDataCopy['description'],
       longitude: eventDataCopy['longitude'],
       latitude: eventDataCopy['latitude'],
       time: eventDataCopy['timestamp'],
-      comments: eventDataCopy['comments'],
-      image: eventDataCopy['downloadURL'] ==
+      comments: List<String>.from((eventDataCopy['comments'] ?? [])
+        .map((comments) => comments.toString())),
+      admin: List<String>.from((eventDataCopy['admin'] ?? [])
+        .map((admin) => admin.toString())),
+      likedBy: List<String>.from((eventDataCopy['likedBy'] ?? [])
+        .map((likedBy) => likedBy.toString())),
+      disLikedBy: List<String>.from((eventDataCopy['disLikedBy'] ?? [])
+        .map((disLikedBy) => disLikedBy.toString())),
+      tags: List<String>.from((eventDataCopy['tags'] ?? [])
+        .map((tag) => tag.toString())),
+      rsvpList: List<String>.from((eventDataCopy['rsvpList'] ?? [])
+        .map((rsvp) => rsvp.toString())),
+      downloadURL: eventDataCopy['downloadURL'] ==
           ""
           ? 'https://cdn.shopify.com/s/files/1/0982/0722/files/6-1-2016_5-49-53_PM_1024x1024.jpg?7174960393118038727'
           : eventDataCopy['downloadURL'],
