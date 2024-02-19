@@ -411,7 +411,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                             shrinkWrap: true,
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              return CommentCard(comment: comments[index]);
+                              return CommentCard(comment: comments[index],currUserID: widget.currUser.uid,);
                             },
                           ),
                         ),

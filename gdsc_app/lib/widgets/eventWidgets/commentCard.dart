@@ -1,10 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gdsc_app/classes/Comment.dart';
+import '../../app_config.dart';
+import 'package:http/http.dart' as http;
+
+import '../../utils.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class CommentCard extends StatefulWidget {
   final Comment comment;
-
-  CommentCard({required this.comment});
+  final String currUserID;
+  CommentCard({required this.comment, required this.currUserID});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -13,7 +21,10 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   bool isLiked = false;
   Color _orangeColor = Color(0xFFFF8050);
+  int amountOfLikes = 0;
+  String likesDisplayed = "";
   String timestamp = "";
+
   Widget _buildProfileImage() {
     Widget profileImage;
 
@@ -45,6 +56,7 @@ class _CommentCardState extends State<CommentCard> {
     DateTime nodeDateTime = DateTime.fromMillisecondsSinceEpoch(timestampInMilliseconds);
     DateTime currentDateTime = DateTime.now();
     Duration difference = currentDateTime.difference(nodeDateTime);
+    int likeAmount = widget.comment.likedBy.length;
     String tempString = "";
     if (difference.inDays > 0) {
       setState(() {
@@ -62,20 +74,79 @@ class _CommentCardState extends State<CommentCard> {
     setState(() {
       isLiked = widget.comment.isLiked;
       timestamp = tempString;
+      amountOfLikes = likeAmount;
+
+      if (amountOfLikes != 0)
+        {
+          likesDisplayed = amountOfLikes.toString();
+
+        }
+      else
+        {
+          likesDisplayed = "";
+        }
     });
   }
 
-  void toggleLike() {
+  void toggleLike() async{
     bool temp = !isLiked;
     setState(() {
       isLiked = temp;
+
+      if (isLiked)
+        {
+          amountOfLikes++;
+        }
+      else
+        {
+          amountOfLikes--;
+        }
+
+
+      if (amountOfLikes != 0)
+      {
+        likesDisplayed = amountOfLikes.toString();
+
+      }
+      else
+      {
+        likesDisplayed = "";
+      }
     });
     if(temp){
+      print("Liked!");
       widget.comment.like();
+      await http.post(Uri.parse('$serverUrl/api/comments/likeComment'),
+      headers: await getHeaders(),
+      body: jsonEncode(<String, dynamic>{
+        "uid": widget.currUserID,
+        "commentID": widget.comment.commentID
+      }));
     }
     else{
+      print("DisLiked");
       widget.comment.disLike();
+      await http.post(Uri.parse('$serverUrl/api/comments/disLikeComment'),
+          headers: await getHeaders(),
+          body: jsonEncode(<String, dynamic>{
+            "uid": widget.currUserID,
+            "commentID": widget.comment.commentID
+          }));
+      setState(() {
+        amountOfLikes = widget.comment.likedBy.length;
+        if (amountOfLikes != 0)
+        {
+          likesDisplayed = amountOfLikes.toString();
+
+        }
+        else
+        {
+          likesDisplayed = "";
+        }
+      });
     }
+
+
   }
 
   @override
@@ -113,7 +184,7 @@ class _CommentCardState extends State<CommentCard> {
                         ),
                         SizedBox(width: 4),
                         Text(
-                          "433", // Change this to the actual like count
+                          likesDisplayed, // Change this to the actual like count
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
