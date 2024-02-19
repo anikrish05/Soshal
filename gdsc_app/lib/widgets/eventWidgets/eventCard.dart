@@ -84,7 +84,6 @@ class _EventCardWidgetState extends State<EventCardWidget> {
       child: SingleChildScrollView(
         child: GestureDetector(
           onTap: () {
-            print(widget.isOwner);
             if (widget.isOwner) {
               Navigator.push(
                 context,
@@ -180,7 +179,6 @@ class ThumbsUpWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isThumbsUp = likePercentage >= 0;
-    Color _greyColor = Color(0xFFD3D3D3);
     Color _orangeColor = Color(0xFFFF8050);
 
     return Row(

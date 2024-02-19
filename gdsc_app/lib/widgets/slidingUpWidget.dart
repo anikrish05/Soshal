@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gdsc_app/classes/MarkerData.dart';
 import 'package:gdsc_app/classes/Comment.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/classes/user.dart';
@@ -12,13 +11,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../app_config.dart';
+import '../classes/EventCardData.dart';
+import '../screens/viewOtherScreens/othereventinfo.dart';
+import '../screens/viewYourOwnScreen/eventinfo.dart';
 import '../utils.dart';
 
 final serverUrl = AppConfig.serverUrl;
 typedef ResetStateCallback = void Function();
 
 class SlidingUpWidget extends StatefulWidget {
-  final MarkerData markerData;
+  final EventCardData eventData;
   final VoidCallback onClose;
   final User currUser; // Callback to be called when the panel is closed
   final ResetStateCallback resetStateCallback;
@@ -26,7 +28,7 @@ class SlidingUpWidget extends StatefulWidget {
 
 
   SlidingUpWidget(
-      {required this.markerData, required this.onClose, required this.currUser, required this.resetStateCallback,
+      {required this.eventData, required this.onClose, required this.currUser, required this.resetStateCallback,
       });
 
   @override
@@ -56,7 +58,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
             '$serverUrl/api/comments/getCommentDataForEvent'),
         headers: await getHeaders(),
         body: jsonEncode(<String, dynamic>{
-          "comments": widget.markerData.comments ?? [], // Ensure comments is not null
+          "comments": widget.eventData.comments, // Ensure comments is not null
         }),
       );
 
@@ -74,7 +76,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
               commentID: data['commentID'],
               isLiked: data['likedBy'].contains(widget.currUser.uid),
               comment: data['comment'],
-              eventID: widget.markerData.eventID,
+              eventID: widget.eventData.id,
               likedBy: List<String>.from(data['likedBy']),
               timestamp: data['timestamp'],
               user: UserData(
@@ -120,8 +122,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   void initState() {
     super.initState();
     print("IN INIT STATE");
-    print(widget.markerData.isRSVP);
-    isRSVP = widget.markerData.isRSVP;
+    isRSVP = widget.eventData.rsvpList.contains(widget.currUser.uid);
     comments = [];
     commentsFuture = getComments();
     getStreetName();
@@ -132,9 +133,9 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   @override
   void didUpdateWidget(covariant SlidingUpWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.markerData.eventID != oldWidget.markerData.eventID) {
+    if (widget.eventData.id != oldWidget.eventData.id) {
       // Marker data has changed, update the state
-      isRSVP = widget.markerData.isRSVP;
+      isRSVP = widget.eventData.rsvpList.contains(widget.currUser.uid);
       comments = [];
       commentsFuture = getComments();
       getStreetName();
@@ -150,7 +151,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   Future<void> getStreetName() async {
     print("in get street name");
     List<Placemark> placemarks = await placemarkFromCoordinates(
-        widget.markerData.latitude, widget.markerData.longitude);
+        widget.eventData.latitude, widget.eventData.longitude);
     Placemark place = placemarks[0];
     String tempText = "${place.street}";
     setState(() {
@@ -195,7 +196,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        widget.markerData.image,
+                        widget.eventData.downloadURL,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -209,9 +210,34 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         Row(
                           children: [
                             Text(
-                              widget.markerData.title,
+                              widget.eventData.name,
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            VerticalDivider(width: 5,),
+                            GestureDetector(
+                              onTap: () {
+                                if (widget.currUser.eventData.contains(widget.eventData)) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EventProfilePage(event: widget.eventData),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OtherEventProfilePage(event: widget.eventData),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Icon(
+                                Icons.info,
+                                size: 17.5,
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
@@ -219,7 +245,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         Row(
                           children: [
                             Text(
-                              widget.markerData.description,
+                              widget.eventData.description,
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.normal),
                             ),
@@ -255,7 +281,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                           children: [
                             Icon(Icons.access_time),
                             Padding(padding: EdgeInsets.only(right: 4)),
-                            Text(getFormattedDateTime(widget.markerData.time)),
+                            Text(getFormattedDateTime(widget.eventData.time)),
                           ],
                         ),
                         SizedBox(height: 8),
@@ -323,10 +349,10 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                       });
                                       if (temp) {
                                         print(temp);
-                                        widget.markerData.rsvp();
+                                        widget.eventData.rsvpList.add(widget.currUser.uid);
                                       } else {
                                         print(temp);
-                                        widget.markerData.unRsvp();
+                                        widget.eventData.rsvpList.remove(widget.currUser.uid);
                                       }
                                       // Add RSVP button logic
                                     },
@@ -438,7 +464,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         comment: text,
         likedBy: [],
         timestamp: DateTime.now().millisecondsSinceEpoch,
-        eventID: widget.markerData.eventID,
+        eventID: widget.eventData.id,
         user: UserData(
           classOf: widget.currUser.classOf,
           uid: widget.currUser.uid,
@@ -462,7 +488,7 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
 
         // Update the commentID and add to the UI
         setState(() {
-          widget.markerData.comments.add(commentID);
+          widget.eventData.comments.add(commentID);
           newComment.commentID = commentID;
           comments.add(newComment);
           commentController.clear();
@@ -475,11 +501,11 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
 
   Widget clubText() {
     String text = "By: ";
-    for (int i = 0; i < widget.markerData.clubs.length; i++) {
-      if (i == widget.markerData.clubs.length - 1) {
-        text += " ${widget.markerData.clubs[i].name}";
+    for (int i = 0; i < widget.eventData.clubInfo.length; i++) {
+      if (i == widget.eventData.clubInfo.length - 1) {
+        text += " ${widget.eventData.clubInfo[i].name}";
       } else {
-        text += "${widget.markerData.clubs[i].name}, ";
+        text += "${widget.eventData.clubInfo[i].name}, ";
       }
     }
     return (Text(text));
