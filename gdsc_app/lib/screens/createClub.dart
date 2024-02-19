@@ -338,6 +338,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                       buttonIcon: Icon(Icons.tag_faces),
                       title: Text("Select Tags"),
                       initialValue: selectedTags.toList(),
+                      dialogHeight: () {
+                        double? height = sampleTags.length * 50.0 + 50.0;
+                        if (height > 500.0) {
+                          return 550.0;
+                        } else {
+                          return height;
+                        }
+                      }(),
                       items: sampleTags
                           .map((e) => MultiSelectItem(e, e))
                           .toList(),
@@ -404,8 +412,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               buttonIcon: Icon(Icons.search),
               items: users.map((e) => MultiSelectItem(e, e.displayName))
                   .toList(),
-              initialValue:
-              selectedAdmins.toList(),
+              initialValue: selectedAdmins.toList(),
+              dialogHeight: () {
+                double? height = users.length * 50.0 + 50.0;
+                if (height > 500.0) {
+                  return 550.0;
+                } else {
+                  return height;
+                }
+              }(),
               onConfirm: (List<dynamic> values) {
                 selectedAdmins = values.cast<UserData>();
               },
