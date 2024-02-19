@@ -179,7 +179,7 @@ class _CommentCardState extends State<CommentCard> {
                           onTap: toggleLike,
                           child: Icon(
                             isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: isLiked ? Colors.redAccent : Colors.grey,
+                            color: isLiked ? _orangeColor : Colors.grey,
                           ),
                         ),
                         SizedBox(width: 4),

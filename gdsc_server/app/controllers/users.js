@@ -322,8 +322,69 @@ const updateProfileImage = async (req, res) => {
 };
 
 
+const likeEvent = async (req, res) => {
+  try {
+    if (await checkAuthorization(req, res)) {
+      const { uid, eventID } = req.body;
 
+      // Remove user from club's followers
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDoc);
+      const userData = userDoc.data();
 
+      const updatedLikeEvents = userData.likedEvents ? [...userData.likedEvents, eventID] : [eventID];
+
+      await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
+
+      // Remove club from user's following
+      const eventDocRef = doc(db, "events", eventID);
+      const eventDoc = await getDoc(userDocRef);
+      const eventData = eventDoc.data();
+
+      // Assuming userData.following is a map
+      const updatedLikedBy = eventData.likedBy ? [...eventData.likedBy, eventID] : [uid];
+
+      await setDoc(userDocRef, { likedBy: updatedLikedBy }, { merge: true });
+
+      res.status(200).send(JSON.stringify({ "message": "Success" }));
+    }
+  } catch (error) {
+    console.error("Error liking event:", error);
+    res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+  }
+};
+
+const likeEvent = async (req, res) => {
+  try {
+    if (await checkAuthorization(req, res)) {
+      const { uid, eventID } = req.body;
+
+      // Remove user from club's followers
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDoc);
+      const userData = userDoc.data();
+
+      const updatedLikeEvents = userData.likedEvents ? [...userData.likedEvents, eventID] : [eventID];
+
+      await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
+
+      // Remove club from user's following
+      const eventDocRef = doc(db, "events", eventID);
+      const eventDoc = await getDoc(userDocRef);
+      const eventData = eventDoc.data();
+
+      // Assuming userData.following is a map
+      const updatedLikedBy = eventData.likedBy ? [...eventData.likedBy, eventID] : [uid];
+
+      await setDoc(userDocRef, { likedBy: updatedLikedBy }, { merge: true });
+
+      res.status(200).send(JSON.stringify({ "message": "Success" }));
+    }
+  } catch (error) {
+    console.error("Error liking event:", error);
+    res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+  }
+};
 
 module.exports = {
   signup,
@@ -339,5 +400,7 @@ module.exports = {
   followPublicClub,
   followPrivateClub,
   unfollowClub,
-  updateProfileImage
+  updateProfileImage,
+  likeEvent,
+  dislikeEvent
 };
