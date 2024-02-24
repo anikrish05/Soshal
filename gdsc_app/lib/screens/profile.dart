@@ -221,30 +221,37 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     height: MediaQuery.of(context).size.height,
     child: TabBarView(
       children: [
-        ListView.builder(
-            itemCount: user!.eventData.length,
-            itemBuilder: (context, index) {
-              //I currently put isOwner true as temporary, change it afterwards
-              return EventCardWidget(event: user!.eventData[index], isOwner: false);
-            }),
-        ListView.builder(
-          itemCount: user!.clubData.length ~/ 2 + (user!.clubData.length % 2),
-          itemBuilder: (BuildContext context, int index) {
-            int firstIndex = index * 2;
-            int secondIndex = firstIndex + 1;
+        SingleChildScrollView(
+          child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: user!.eventData.length,
+              itemBuilder: (context, index) {
+                return EventCardWidget(event: user!.eventData[index], isOwner: false);
+              }),
+        ),
+        SingleChildScrollView(
+          child: ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: user!.clubData.length ~/ 2 + (user!.clubData.length % 2),
+            itemBuilder: (BuildContext context, int index) {
+              int firstIndex = index * 2;
+              int secondIndex = firstIndex + 1;
 
-            return index == user!.clubData.length ~/ 2
-                ? Center(
-              child: ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true, currUser: user!),
-            )
-                : Row(
-              children: <Widget>[
-                ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true, currUser: user!),
-                if (secondIndex < user!.clubData.length)
-                  ClubCardWidget(club: user!.clubData[secondIndex], isOwner: true, currUser: user!),
-              ],
-            );
-          },
+              return index == user!.clubData.length ~/ 2
+                  ? Center(
+                child: ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true, currUser: user!),
+              )
+                  : Row(
+                children: <Widget>[
+                  ClubCardWidget(club: user!.clubData[firstIndex], isOwner: true, currUser: user!),
+                  if (secondIndex < user!.clubData.length)
+                    ClubCardWidget(club: user!.clubData[secondIndex], isOwner: true, currUser: user!),
+                ],
+              );
+            },
+          ),
         ),
       ],
       controller: tabController,
