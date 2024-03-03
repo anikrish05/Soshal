@@ -19,7 +19,6 @@ import '../app_config.dart';
 import '../utils.dart';
 import '../widgets/loader.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -68,18 +67,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
     latitude = result.latitude;
     longitude = result.longitude;
-  }
-
-  Future<List> retrieveAutocomplete(String input) async {
-    try {
-      final places = FlutterGooglePlacesSdk("AIzaSyAWwQQQ-Wj3Tb-7huiw8CdoI9krTsNF4UA");
-      final predictions = await places.findAutocompletePredictions(input);
-      List<AutocompletePrediction> predictionsList = predictions.predictions;
-      return predictionsList;
-    } on Exception catch (e) {
-      print(e);
-      return ["John Lewis College", "Porter College", "Kresge College", "Cowell College", "Stevenson College", "Oakes College", "Merrill College", "Crown College"];
-    }
   }
 
   void toggleSelectedAdmin(ClubCardData selection) {
