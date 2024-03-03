@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initializeData() async {
     await loadData();
+    print("HELLLO");
     setState(() {
       isDataInitialized = true;
     });// Wait for loadData to complete
