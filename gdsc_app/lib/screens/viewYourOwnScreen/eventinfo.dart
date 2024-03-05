@@ -13,6 +13,7 @@ import '../../app_config.dart';
 import '../../utils.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/profileWidgets/rsvpCard.dart';
+import 'package:gdsc_app/widgets/loader.dart';
 
 final serverUrl = AppConfig.serverUrl;
 
@@ -39,7 +40,7 @@ class _EventProfilePageState extends State<EventProfilePage>
 
   double latitude = 0.0;
   double longitude = 0.0;
-
+  bool isLoaded = false;
 
 
   @override
@@ -87,9 +88,9 @@ class _EventProfilePageState extends State<EventProfilePage>
     tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
-
-    // Fetch location information asynchronously
-    loadStreetName();
+    if(!isLoaded){
+      loadData();
+    }
   }
 
   Future<void> loadStreetName() async {
@@ -102,16 +103,15 @@ class _EventProfilePageState extends State<EventProfilePage>
       locationText = tempText;
     });
     // Trigger a rebuild after setting the location text
-    rebuild();
   }
 
-  // Function to trigger a rebuild
-  void rebuild() {
-    if (mounted) {
-      setState(() {});
-    }
+  Future<void> loadData() async{
+    await loadStreetName();
+    await widget.event.getRSVPData();
+    setState(() {
+      isLoaded = true;
+    });
   }
-
   Color _orangeColor = Color(0xFFFF8050);
   bool repeatable = false;
 
@@ -178,19 +178,19 @@ class _EventProfilePageState extends State<EventProfilePage>
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
-                            // SizedBox(height: 5),
-                            //     Row(
-                            //       children: [
-                            //         Icon(Icons.location_on),
-                            // Text(
-                            //   locationText,
-                            //   style: TextStyle(
-                            //     fontSize: 15,
-                            //     fontWeight: FontWeight.normal,
-                            //   ),
-                            // )
-                            //       ],
-                            //     ),
+                            SizedBox(height: 5),
+                               Row(
+                                 children: [
+                                    Icon(Icons.location_on),
+                            Text(
+                               locationText,
+                               style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal,
+                               ),
+                             )
+                                   ],
+                                 ),
                             SizedBox(height: 8),
                             Row(
                               children: [
@@ -253,7 +253,7 @@ class _EventProfilePageState extends State<EventProfilePage>
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        '➤➤➤  RSVP List  ➤➤➤',
+                        '  RSVP List  ',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -528,23 +528,8 @@ class _EventProfilePageState extends State<EventProfilePage>
   }
 
   Widget buildTabContent() {
-    return FutureBuilder<void>(
-      future: widget.event.getRSVPData(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        print("CALLING FUNC");
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoaderWidget(); // or any loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          print("hello");
-          print(widget.event.rsvpUserData);
-
-          // Display RSVP data
-          if (widget.event.rsvpUserData.isNotEmpty) {
+    if(isLoaded){
+                if (widget.event.rsvpUserData.isNotEmpty) {
             print("HII");
             return SizedBox(
               height: MediaQuery.of(context).size.height,
@@ -564,9 +549,10 @@ class _EventProfilePageState extends State<EventProfilePage>
               child: Text('No RSVPs yet.'),
             );
           }
-        }
-      },
-    );
+    }
+    else{
+      return(Text("Loading"));
+    }
   }
 
 
