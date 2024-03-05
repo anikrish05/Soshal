@@ -551,7 +551,7 @@ class _EventProfilePageState extends State<EventProfilePage>
           }
     }
     else{
-      return(Text("Loading"));
+      return(Text("Loading ..."));
     }
   }
 
