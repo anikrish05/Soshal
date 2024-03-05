@@ -87,7 +87,9 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
-
+    if(!isLoaded){
+      loadData();
+    }
   }
 
   Future<void> loadStreetName() async {
@@ -102,11 +104,12 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     // Trigger a rebuild after setting the location text
   }
 
-  // Function to trigger a rebuild
-  void rebuild() {
-    if (mounted) {
-      setState(() {});
-    }
+  Future<void> loadData() async{
+    await loadStreetName();
+    await widget.event.getRSVPData();
+    setState(() {
+      isLoaded = true;
+    });
   }
 
   Color _orangeColor = Color(0xFFFF8050);
@@ -176,19 +179,19 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
-                            // SizedBox(height: 5),
-                            //     Row(
-                            //       children: [
-                            //         Icon(Icons.location_on),
-                            // Text(
-                            //   locationText,
-                            //   style: TextStyle(
-                            //     fontSize: 15,
-                            //     fontWeight: FontWeight.normal,
-                            //   ),
-                            // )
-                            //       ],
-                            //     ),
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(Icons.location_on),
+                                Text(
+                                  locationText,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                )
+                              ],
+                            ),
                             SizedBox(height: 8),
                             Row(
                               children: [
@@ -294,10 +297,9 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   }
 
   Widget buildTabContent() {
-    if (isLoaded == false) {
-      return LoaderWidget();
-    } else {
+    if(isLoaded){
       if (widget.event.rsvpUserData.isNotEmpty) {
+        print("HII");
         return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: (
@@ -316,6 +318,9 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
           child: Text('No RSVPs yet.'),
         );
       }
+    }
+    else{
+      return(Text("Loading"));
     }
   }
 
