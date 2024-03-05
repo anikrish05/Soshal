@@ -9,8 +9,11 @@ import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../app_config.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/profileWidgets/rsvpCard.dart';
+
+final serverUrl = AppConfig.serverUrl;
 
 class OtherEventProfilePage extends StatefulWidget {
   final EventCardData event;
@@ -45,14 +48,6 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     super.dispose();
   }
 
-  Future<void> loadRSVPs() async {
-    await widget.event.getRSVPData();
-    if (isLoaded == false) {
-      setState(() {
-        isLoaded = true;
-      });
-    }
-  }
   Future<void> postRequest() async {
     print("post request");
     String timeStamp = format.format(DateTime.now());
@@ -64,7 +59,7 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
       body: jsonEncode(<String, dynamic>{
         "name": widget.event.name,
         "description": widget.event.description,
-        "downloadURL": "",
+        "downloadURL": widget.event.downloadURL,
         "latitude": latitude,
         "longitude": longitude,
         "timestamp": timeStamp,
@@ -88,13 +83,11 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     super.initState();
     print("event info.dart, initstate");
     locationText = "Loading...";
+    print(widget.event.rsvpUserData);
     tabController = TabController(length: 1, vsync: this);
     eventNameController = TextEditingController(text: widget.event.name);
     eventDescController = TextEditingController(text: widget.event.description);
 
-    // Fetch location information asynchronously
-    loadStreetName();
-    loadRSVPs();
   }
 
   Future<void> loadStreetName() async {
@@ -107,7 +100,6 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
       locationText = tempText;
     });
     // Trigger a rebuild after setting the location text
-    rebuild();
   }
 
   // Function to trigger a rebuild
