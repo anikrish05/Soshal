@@ -69,7 +69,6 @@ const signedIn = async (req, res) => {
   if (idToken != null) {
     try {
       const userToken = await auth.currentUser.getIdToken();
-
       if (userToken !== idToken) {
         res.status(401).send(JSON.stringify({ message: false }));
       } else {
@@ -81,7 +80,7 @@ const signedIn = async (req, res) => {
       }
     } catch (error) {
       console.error('Error checking authorization:', error);
-      res.status(500).send(JSON.stringify({ error: 'Internal Server Error' }));
+        res.status(401).send(JSON.stringify({ message: false }));
       return false; // Return false in case of an error
     }
   } else {
