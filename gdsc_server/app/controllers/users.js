@@ -330,15 +330,21 @@ const likeEvent = async (req, res) => {
       const userDocRef = doc(db, "users", uid);
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
+     const updatedDisLikeEvents = userData.dislikedEvents ? userData.dislikedEvents.filter(event => event !== eventID) : [];
+
       const updatedLikeEvents = userData.likedEvents ? [...userData.likedEvents, eventID] : [eventID];
       await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
+      await setDoc(userDocRef, { dislikedEvents: updatedDislikedEvents }, { merge: true });
 
       // Update event's liked by users
       const eventDocRef = doc(db, "events", eventID);
       const eventDoc = await getDoc(eventDocRef);
       const eventData = eventDoc.data();
       const updatedLikedBy = eventData.likedBy ? [...eventData.likedBy, uid] : [uid];
+      const updatedDisLikedBy = eventData.dislikedEvents ? eventData.dislikedEvents.filter(allUIDS => allUIDS !== uid) : [];
+
       await setDoc(eventDocRef, { likedBy: updatedLikedBy }, { merge: true });
+      await setDoc(eventDocRef, { disLikedBy: updatedDisLikedBy }, { merge: true });
 
       res.status(200).send(JSON.stringify({ "message": "Success" }));
     }
@@ -358,14 +364,19 @@ const dislikeEvent = async (req, res) => {
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
       const updatedLikeEvents = userData.likedEvents ? userData.likedEvents.filter(event => event !== eventID) : [];
+      const updatedDislikedEvents = userData.dislikedEvents ? [...userData.dislikedEvents, eventID] : [eventID];
       await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
+      await setDoc(userDocRef, { dislikedEvents: updatedDislikedEvents }, { merge: true });
 
       // Update event's liked by users
       const eventDocRef = doc(db, "events", eventID);
       const eventDoc = await getDoc(eventDocRef);
       const eventData = eventDoc.data();
       const updatedLikedBy = eventData.likedBy ? eventData.likedBy.filter(allUIDS => allUIDS !== uid) : [];
+     const updatedDisLikedBy = eventData.disLikedBy ? [...eventData.disLikedBy, uid] : [uid];
+
       await setDoc(eventDocRef, { likedBy: updatedLikedBy }, { merge: true });
+      await setDoc(eventDocRef, { disLikedBy: updatedDisLikedBy }, { merge: true });
 
       res.status(200).send(JSON.stringify({ "message": "Success" }));
     }
