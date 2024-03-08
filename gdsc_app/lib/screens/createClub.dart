@@ -107,7 +107,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   Future<void> getAdmin() async {
     users = {};
     final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/api/users/getAllUsers'),
+        Uri.parse('$serverUrl/api/users/getAllUsers'),
         headers: await getHeaders());
     if (response.statusCode == 200) {
       // Parse and update the user list
@@ -226,7 +226,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               ),
             ),
             backgroundColor: Colors.white),
-        body: buildPage()
+        body: Container(child: buildPage())
       );
     }
     else{

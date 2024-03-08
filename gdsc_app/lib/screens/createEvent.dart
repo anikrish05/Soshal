@@ -82,7 +82,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   Future<void> getAdmin() async {
     clubs = [];
     final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/api/clubs/getAllClubs'),
+        Uri.parse('$serverUrl/api/clubs/getAllClubs'),
         headers: await getHeaders());
     if (response.statusCode == 200) {
       // Parse and update the user list
