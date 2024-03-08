@@ -354,7 +354,35 @@ const likeEvent = async (req, res) => {
 };
 
 const dislikeEvent = async(req, res) =>{
-  res.status(200).send(JSON.stringify({ "message": "Success" }));
+  try {
+    if (await checkAuthorization(req, res)) {
+      const { uid, eventID } = req.body;
+
+      // Remove user from club's followers
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDoc);
+      const userData = userDoc.data();
+
+      const updatedLikeEvents = userData.likedEvents ? userData.likedEvents.filter(event => event !== eventID) : [];
+
+      await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
+
+      // Remove club from user's following
+      const eventDocRef = doc(db, "events", eventID);
+      const eventDoc = await getDoc(userDocRef);
+      const eventData = eventDoc.data();
+
+      // Assuming userData.following is a map
+      const updatedLikedBy = eventData.likedBy ? eventData.likedBy.filter(allUIDS => allUIDS !== uid) : [];
+
+      await setDoc(userDocRef, { likedBy: updatedLikedBy }, { merge: true });
+
+      res.status(200).send(JSON.stringify({ "message": "Success" }));
+    }
+  } catch (error) {
+    console.error("Error liking event:", error);
+    res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
+  }
 }
 
 

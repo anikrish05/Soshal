@@ -15,5 +15,7 @@ router.post('/followPublicClub', controllers.followPublicClub)
 router.post('/followPrivateClub', controllers.followPrivateClub)
 
 router.post('/unfollowClub', controllers.unfollowClub)
+router.post('/likeEvent', controllers.likeEvent)
+router.post('/dislikeEvent', controllers.dislikeEvent)
 
 module.exports = router
