@@ -8,7 +8,9 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   final Color _colorTab = Color(0xFFFF8050);
   final Color _colorHighlight = Color(0xFF000000); // Black color for the text
-  final Color _colorUnderline = Color(0xFFD3D3D3); // Grey color for the underline
+  final Color _colorUnderline = Color(
+      0xFFD3D3D3); // Grey color for the underline
+
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            // Center the children horizontally
             children: [
               SizedBox(height: 16.0),
-              _buildTitle('Old Activity')
+              _buildTitle('Coming Soon!'),
             ],
           ),
         ),
@@ -33,13 +36,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Widget _buildTitle(String title) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: _colorUnderline)),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(color: _colorHighlight, fontSize: 24.0, fontWeight: FontWeight.bold),
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: MediaQuery
+            .of(context)
+            .size
+            .height * 0.3),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: _colorUnderline)),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(color: _colorHighlight,
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }
