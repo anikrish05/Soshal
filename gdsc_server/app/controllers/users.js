@@ -326,24 +326,19 @@ const likeEvent = async (req, res) => {
     if (await checkAuthorization(req, res)) {
       const { uid, eventID } = req.body;
 
-      // Remove user from club's followers
+      // Update user's liked events
       const userDocRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userDoc);
+      const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
-
       const updatedLikeEvents = userData.likedEvents ? [...userData.likedEvents, eventID] : [eventID];
-
       await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
 
-      // Remove club from user's following
+      // Update event's liked by users
       const eventDocRef = doc(db, "events", eventID);
-      const eventDoc = await getDoc(userDocRef);
+      const eventDoc = await getDoc(eventDocRef);
       const eventData = eventDoc.data();
-
-      // Assuming userData.following is a map
-      const updatedLikedBy = eventData.likedBy ? [...eventData.likedBy, eventID] : [uid];
-
-      await setDoc(userDocRef, { likedBy: updatedLikedBy }, { merge: true });
+      const updatedLikedBy = eventData.likedBy ? [...eventData.likedBy, uid] : [uid];
+      await setDoc(eventDocRef, { likedBy: updatedLikedBy }, { merge: true });
 
       res.status(200).send(JSON.stringify({ "message": "Success" }));
     }
@@ -353,37 +348,33 @@ const likeEvent = async (req, res) => {
   }
 };
 
-const dislikeEvent = async(req, res) =>{
+const dislikeEvent = async (req, res) => {
   try {
     if (await checkAuthorization(req, res)) {
       const { uid, eventID } = req.body;
 
-      // Remove user from club's followers
+      // Update user's liked events
       const userDocRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userDoc);
+      const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
-
       const updatedLikeEvents = userData.likedEvents ? userData.likedEvents.filter(event => event !== eventID) : [];
-
       await setDoc(userDocRef, { likedEvents: updatedLikeEvents }, { merge: true });
 
-      // Remove club from user's following
+      // Update event's liked by users
       const eventDocRef = doc(db, "events", eventID);
-      const eventDoc = await getDoc(userDocRef);
+      const eventDoc = await getDoc(eventDocRef);
       const eventData = eventDoc.data();
-
-      // Assuming userData.following is a map
       const updatedLikedBy = eventData.likedBy ? eventData.likedBy.filter(allUIDS => allUIDS !== uid) : [];
-
-      await setDoc(userDocRef, { likedBy: updatedLikedBy }, { merge: true });
+      await setDoc(eventDocRef, { likedBy: updatedLikedBy }, { merge: true });
 
       res.status(200).send(JSON.stringify({ "message": "Success" }));
     }
   } catch (error) {
-    console.error("Error liking event:", error);
+    console.error("Error disliking event:", error);
     res.status(500).send(JSON.stringify({ "message": "Failed", "error": error.message }));
   }
-}
+};
+
 
 
 module.exports = {
@@ -402,4 +393,5 @@ module.exports = {
   unfollowClub,
   updateProfileImage,
   likeEvent,
+  dislikeEvent
 };
