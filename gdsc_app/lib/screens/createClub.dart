@@ -47,11 +47,23 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   late String currUserId;
   int indexPubOrPriv = 1;
   final TextEditingController controller = TextEditingController();
-
+  bool isLoaded = false;
   _CreateClubScreenState(currUserId) {
     this.currUserId = currUserId;
   }
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+    // Call a new method to handle the sequential flow
+  }
 
+  Future<void> loadData() async{
+    await getAdmin();
+    setState(() {
+      isLoaded = true;
+    });
+  }
   FutureOr sendImageToServer(List<int> imageBytes, String id) async {
     try {
       final response = await http.post(
@@ -200,30 +212,27 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          leading: BackButton(
-              onPressed: () => Navigator.of(context).pop(),
-              color: _orangeColor),
-          centerTitle: true,
-          title: Text(
-            "Create a Club",
-            style: TextStyle(
-              color: Color(0xFF88898C),
+    if(isLoaded) {
+      return Scaffold(
+        appBar: AppBar(
+            leading: BackButton(
+                onPressed: () => Navigator.of(context).pop(),
+                color: _orangeColor),
+            centerTitle: true,
+            title: Text(
+              "Create a Club",
+              style: TextStyle(
+                color: Color(0xFF88898C),
+              ),
             ),
-          ),
-          backgroundColor: Colors.white),
-      body: FutureBuilder<void>(
-        future: getAdmin(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return buildPage();
-          } else {
-            return LoaderWidget();
-          }
-        },
-      ),
-    );
+            backgroundColor: Colors.white),
+        body: buildPage()
+      );
+    }
+    else{
+      return(
+      LoaderWidget());
+    }
   }
 
   Widget buildPage() {

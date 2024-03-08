@@ -443,7 +443,7 @@ class _SearchScreenState extends State<SearchScreen>
                           .of(context)
                           .size
                           .height *
-                          0.6, // Adjust the height accordingly
+                          1.0-265.0, // Adjust the height accordingly
                       child: ListView.builder(
                         itemCount: eventWidgets.length,
                         itemBuilder: (context, index) {
