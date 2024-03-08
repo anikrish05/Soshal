@@ -21,6 +21,7 @@ import '../widgets/loader.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 
 final serverUrl = AppConfig.serverUrl;
+const _orangeColor = Color(0xFFFF8050);
 
 class CreateEventScreen extends StatefulWidget {
   final ClubCardData club;
@@ -47,10 +48,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   bool chooseImage = false;
   XFile? _image;
 
-  Color _orangeColor = Color(0xFFFF8050);
 
   final ButtonStyle style = ElevatedButton.styleFrom(
-    backgroundColor: Colors.orange,
+    backgroundColor: _orangeColor,
     shape: StadiumBorder(),
     textStyle: const TextStyle(
       fontFamily: 'Garret',
@@ -256,7 +256,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                               return null;
                             },
                             decoration: InputDecoration(
-                              border: OutlineInputBorder(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: _orangeColor, width: 2.0),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black, width: 1.0),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               hintText: "Event Title",

@@ -268,7 +268,7 @@ class _SearchScreenState extends State<SearchScreen>
                 )),
             title: Text("Select Tags",
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Colors.grey,/*-*/
                 )),
             initialValue: selectedTags.toList(),
             selectedColor: _orangeColor,
