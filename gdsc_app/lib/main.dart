@@ -56,9 +56,18 @@ class _HomeState extends State<Home> {
   User user = User();
   int selectedIndex = 0;
   List screens = [
-    MyApp(),
-    SearchScreen(),
-    ProfileScreen()
+    PopScope( // Wrap SearchScreen with WillPopScope
+      canPop: false,
+      child: MyApp(), // Replace with your SearchScreen widget
+    ),
+    PopScope( // Wrap FeedScreen with WillPopScope
+      canPop: false,
+      child: SearchScreen(), // Replace with your FeedScreen widget
+    ),
+    PopScope( // Wrap ProfileScreen with WillPopScope
+      canPop: true,
+      child: ProfileScreen(),
+     ), // Replace with your ProfileScreen widget
   ];
   void onClicked(int index) {
     setState(() {
