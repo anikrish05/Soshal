@@ -19,6 +19,7 @@ import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:gdsc_app/classes/EventCardData.dart';
 
 final serverUrl = AppConfig.serverUrl;
+const Color _orangeColor = Color(0xFFFF8050);
 
 class UpdateEventScreen extends StatefulWidget {
   final EventCardData event;
@@ -46,13 +47,12 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
   double longitude = 0.0;
 
   int indexRepeatable = 1;
-  Color _orangeColor = Color(0xFFFF8050);
   final ButtonStyle style =
   ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
+      backgroundColor: _orangeColor,
       shape: StadiumBorder(),
       textStyle: const TextStyle(
-          fontFamily: 'Borel', fontSize: 30, color: Colors.grey));
+          fontFamily: 'Garret', fontSize: 25, color: Colors.grey));
 
   @override
   void onGetLocation() async {
@@ -117,12 +117,13 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                               )
                             ],
                           ),
+                          SizedBox(height: 15),
                           RichText(
                             text: TextSpan(
                               text: 'Change Event Name',
                               style: TextStyle(fontWeight: FontWeight.bold,
                                   color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
+                                  fontFamily: 'Garret',
                                   fontSize: 15),
                             ),
                           ),
@@ -137,12 +138,13 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                             ),
                           ),
                           Divider(),
+                          SizedBox(height: 10),
                           RichText(
                             text: TextSpan(
                               text: 'Change Event Description',
                               style: TextStyle(fontWeight: FontWeight.bold,
                                   color: Colors.black.withOpacity(0.6),
-                                  fontFamily: 'Borel',
+                                  fontFamily: 'Garret',
                                   fontSize: 15),
                             ),
                           ),
@@ -157,6 +159,7 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                             ),
                           ),
                           Divider(),
+                          SizedBox(height: 15),
                           Row(
                               children:[
                                 RichText(
@@ -164,36 +167,39 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                                     text: 'Repeat Event?',
                                     style: TextStyle(fontWeight: FontWeight.bold,
                                         color: Colors.black.withOpacity(0.6),
-                                        fontFamily: 'Borel',
+                                        fontFamily: 'Garret',
                                         fontSize: 15),
                                   ),
                                 ),
                                 VerticalDivider(),
-                                ToggleSwitch(
-                                  minWidth: 77.5,
-                                  cornerRadius: 20.0,
-                                  activeBgColors: [
-                                    [_orangeColor],
-                                    [_orangeColor]
-                                  ],
-                                  activeFgColor: Colors.white,
-                                  inactiveBgColor: Colors.grey,
-                                  inactiveFgColor: Colors.white,
-                                  initialLabelIndex: 0,
-                                  totalSwitches: 2,
-                                  labels: ['No', 'Yes'],
-                                  radiusStyle: true,
-                                  onToggle: (index) {
-                                    if (index == 1) {
-                                      indexRepeatable = 0;
-                                    } else if (index == 0) {
-                                      indexRepeatable = 1;
-                                    }
-                                  },
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: ToggleSwitch(
+                                    minWidth: 77.5,
+                                    cornerRadius: 20.0,
+                                    activeBgColors: [
+                                      [_orangeColor],
+                                      [_orangeColor]
+                                    ],
+                                    activeFgColor: Colors.white,
+                                    inactiveBgColor: Colors.grey,
+                                    inactiveFgColor: Colors.white,
+                                    initialLabelIndex: 0,
+                                    totalSwitches: 2,
+                                    labels: ['No', 'Yes'],
+                                    radiusStyle: true,
+                                    onToggle: (index) {
+                                      if (index == 1) {
+                                        indexRepeatable = 0;
+                                      } else if (index == 0) {
+                                        indexRepeatable = 1;
+                                      }
+                                    },
+                                  ),
                                 ),
                               ]
                           ),
-                          Divider(height: 15,),
+                          Divider(height: 24),
                           Center(
                             child: ElevatedButton(
                               style: ButtonStyle(
@@ -213,60 +219,64 @@ class _CreateUserScreenState extends State<UpdateEventScreen> {
                               child: const Text('Choose New Location'),
                             )
                           ),
-                          Divider(height: 15,),
-                          Container(
-                            height: 50,
-                            width: 280.0,
-                            child: DateTimeField(
-                              validator: (value) {
-                                if (dateTimeString.compareTo('Choose Date and Time') == 0) {
-                                  return 'Please enter a date-time.';
-                                } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
-                                  return "Please enter a future date-time.";
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                icon: Icon(Icons.calendar_month_outlined),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                hintText: dateTimeString,
-                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                              ),
-                              format: format,
-                              onShowPicker: (context, currentValue) async {
-                                final dateTime = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(2000),
-                                  initialDate: currentValue ?? DateTime.now(),
-                                  lastDate: DateTime(2101),
-                                );
-                                if (dateTime != null) {
-                                  final timeOfDay = await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.fromDateTime(
-                                      currentValue ?? DateTime.now(),
-                                    ),
-                                  );
-                                  if (timeOfDay != null) {
-                                    setState(() {
-                                      selectedDateTime = DateTime(
-                                        dateTime.year,
-                                        dateTime.month,
-                                        dateTime.day,
-                                        timeOfDay.hour,
-                                        timeOfDay.minute,
-                                      );
-                                      dateTimeString = selectedDateTime.toString();
-                                    });
-                                    chooseTime = true;
-                                    return selectedDateTime;
+                          Divider(height: 22),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 36.0),
+                            child: Container(
+                              height: 50,
+                              width: 280.0,
+                              child: DateTimeField(
+                                validator: (value) {
+                                  if (dateTimeString.compareTo('Choose Date and Time') == 0) {
+                                    return 'Please enter a date-time.';
+                                  } else if (selectedDateTime.compareTo(DateTime.now()) < 0){
+                                    return "Please enter a future date-time.";
                                   }
-                                }
-                              },
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.calendar_month_outlined),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0)),
+                                  hintText: dateTimeString,
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                ),
+                                format: format,
+                                onShowPicker: (context, currentValue) async {
+                                  final dateTime = await showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime(2000),
+                                    initialDate: currentValue ?? DateTime.now(),
+                                    lastDate: DateTime(2101),
+                                  );
+                                  if (dateTime != null) {
+                                    final timeOfDay = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.fromDateTime(
+                                        currentValue ?? DateTime.now(),
+                                      ),
+                                    );
+                                    if (timeOfDay != null) {
+                                      setState(() {
+                                        selectedDateTime = DateTime(
+                                          dateTime.year,
+                                          dateTime.month,
+                                          dateTime.day,
+                                          timeOfDay.hour,
+                                          timeOfDay.minute,
+                                        );
+                                        dateTimeString = selectedDateTime.toString();
+                                      });
+                                      chooseTime = true;
+                                      return selectedDateTime;
+                                    }
+                                  }
+                                },
+                              ),
                             ),
                           ),
-                          Divider(),
+                          Divider(height: 25),
                           Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
