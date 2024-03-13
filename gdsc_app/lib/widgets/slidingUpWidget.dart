@@ -35,6 +35,7 @@ class SlidingUpWidget extends StatefulWidget {
   _SlidingUpWidgetState createState() => _SlidingUpWidgetState();
 }
 
+
 class _SlidingUpWidgetState extends State<SlidingUpWidget> {
   // List to store comments
   List<Comment> comments = [];
@@ -126,7 +127,21 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     comments = [];
     commentsFuture = getComments();
     getStreetName();
-
+    if (widget.eventData.likedBy.contains(widget.currUser.uid))
+    {
+      thumbsUpSelected = true;
+      thumbsDownSelected = false;
+    }
+    else if(widget.eventData.disLikedBy.contains(widget.currUser.uid))
+    {
+      thumbsDownSelected = true;
+      thumbsUpSelected = false;
+    }
+    else
+    {
+      thumbsUpSelected = false;
+      thumbsDownSelected = false;
+    }
     // Reset the state callback
   }
 
@@ -139,6 +154,21 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
       comments = [];
       commentsFuture = getComments();
       getStreetName();
+      if (widget.eventData.likedBy.contains(widget.currUser.uid))
+      {
+        thumbsUpSelected = true;
+        thumbsDownSelected = false;
+      }
+      else if(widget.eventData.disLikedBy.contains(widget.currUser.uid))
+      {
+        thumbsDownSelected = true;
+        thumbsUpSelected = false;
+      }
+      else
+      {
+        thumbsUpSelected = false;
+        thumbsDownSelected = false;
+      }
     }
   }
   @override
@@ -164,6 +194,40 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
     String formattedDateTime =
     DateFormat.MMMd().add_jm().format(dateTime); // e.g., Feb 2, 7:30 PM
     return formattedDateTime;
+  }
+
+  void likeEvent() async
+  {
+    String userID = widget.currUser.uid;
+    String eventID = widget.eventData.id;
+
+    final response = await http.post(Uri.parse('$serverUrl/api/users/likeEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "uid": userID,
+          "eventID": eventID
+        }));
+
+    final responseData = json.decode(response.body);
+
+    print("Like: " + responseData["message"].toString());
+  }
+
+  void dislikeEvent() async
+  {
+    String userID = widget.currUser.uid;
+    String eventID = widget.eventData.id;
+
+    final response = await http.post(Uri.parse('$serverUrl/api/users/dislikeEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "uid": userID,
+          "eventID": eventID
+        }
+    ));
+    final responseData = json.decode(response.body);
+
+    print("Dislike: " + responseData["message"].toString());
   }
 
   @override
@@ -288,18 +352,25 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 2, right: 40),
+                              margin: EdgeInsets.only(bottom: 2, right: 40),
                               child: Row(
                                 children: [
                                   GestureDetector(
                                     onTap: () {
                                       // Toggle thumbs up state
                                       setState(() {
+                                        bool currentStatus = thumbsUpSelected;
                                         thumbsUpSelected = !thumbsUpSelected;
 
                                         // If thumbs up is selected, make thumbs down unselected
                                         if (thumbsUpSelected) {
+                                          print("Thumbs Up");
                                           thumbsDownSelected = false;
+                                          likeEvent();
+                                        }
+                                        else if(currentStatus)
+                                        {
+                                          thumbsUpSelected = true;
                                         }
                                       });
                                     },
@@ -320,11 +391,18 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
                                     onTap: () {
                                       // Toggle thumbs down state
                                       setState(() {
+                                        bool currentStatus = thumbsDownSelected;
                                         thumbsDownSelected = !thumbsDownSelected;
 
                                         // If thumbs down is selected, make thumbs up unselected
                                         if (thumbsDownSelected) {
+                                          print("Thumbs Down");
                                           thumbsUpSelected = false;
+                                          dislikeEvent();
+                                        }
+                                        else if(currentStatus)
+                                        {
+                                          thumbsDownSelected = true;
                                         }
                                       });
                                     },
@@ -466,18 +544,18 @@ class _SlidingUpWidgetState extends State<SlidingUpWidget> {
         timestamp: DateTime.now().millisecondsSinceEpoch,
         eventID: widget.eventData.id,
         user: UserData(
-          classOf: widget.currUser.classOf,
-          uid: widget.currUser.uid,
-          displayName: widget.currUser.displayName,
-          email: widget.currUser.email,
-          following: widget.currUser.following,
-          role: widget.currUser.role,
-          downloadURL: widget.currUser.downloadURL,
-          myEvents: widget.currUser.myEvents,
-          clubIds: widget.currUser.clubIds,
-          likedEvents: widget.currUser.likedEvents,
-          dislikedEvents: widget.currUser.dislikedEvents,
-          friendGroups: widget.currUser.friendGroups,
+            classOf: widget.currUser.classOf,
+            uid: widget.currUser.uid,
+            displayName: widget.currUser.displayName,
+            email: widget.currUser.email,
+            following: widget.currUser.following,
+            role: widget.currUser.role,
+            downloadURL: widget.currUser.downloadURL,
+            myEvents: widget.currUser.myEvents,
+            clubIds: widget.currUser.clubIds,
+            likedEvents: widget.currUser.likedEvents,
+            dislikedEvents: widget.currUser.dislikedEvents,
+            friendGroups: widget.currUser.friendGroups,
             interestedTags: widget.currUser.friendGroups
         ),
       );

@@ -4,12 +4,14 @@ import 'package:gdsc_app/classes/user.dart';
 import 'package:gdsc_app/classes/userData.dart';
 import 'package:gdsc_app/screens/createEventMap.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../app_config.dart';
+import '../../utils.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/profileWidgets/rsvpCard.dart';
 
@@ -38,7 +40,7 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   bool thumbsUpSelected = false;
   bool thumbsDownSelected = false;
   bool isLoaded = false;
-
+  String uid = "";
   double latitude = 0.0;
   double longitude = 0.0;
 
@@ -76,7 +78,16 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     return formattedDateTime;
   }
 
+  Future<bool> getUserID() async
+  {
+    final response = await get(Uri.parse('$serverUrl/api/users/userData'),
+      headers: await getHeaders(),
+    );
 
+    var data = jsonDecode(response.body)['message'];
+    uid = data["uid"];
+    return true;
+  }
 
   @override
   void initState() {
@@ -89,6 +100,23 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
     eventDescController = TextEditingController(text: widget.event.description);
     if(!isLoaded){
       loadData();
+    }
+    getUserID();
+
+    if (widget.event.likedBy.contains(uid))
+    {
+      thumbsUpSelected = true;
+      thumbsDownSelected = false;
+    }
+    else if(widget.event.disLikedBy.contains(uid))
+    {
+      thumbsDownSelected = true;
+      thumbsUpSelected = false;
+    }
+    else
+    {
+      thumbsUpSelected = false;
+      thumbsDownSelected = false;
     }
   }
 
@@ -115,6 +143,40 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
   Color _orangeColor = Color(0xFFFF8050);
   Color _greyColor = Color(0xFFD3D3D3);
   bool repeatable = false;
+
+  void likeEvent() async
+  {
+    String userID = uid;
+    String eventID = widget.event.id;
+
+    final response = await http.post(Uri.parse('$serverUrl/api/users/likeEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "uid": userID,
+          "eventID": eventID
+        }));
+
+    final responseData = json.decode(response.body);
+
+    print("Like: " + responseData["message"].toString());
+  }
+
+  void dislikeEvent() async
+  {
+    String userID = uid;
+    String eventID = widget.event.id;
+
+    final response = await http.post(Uri.parse('$serverUrl/api/users/dislikeEvent'),
+        headers: await getHeaders(),
+        body: jsonEncode(<String, dynamic>{
+          "uid": userID,
+          "eventID": eventID
+        }
+        ));
+    final responseData = json.decode(response.body);
+
+    print("Dislike: " + responseData["message"].toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,11 +274,18 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                                   onTap: () {
                                     // Toggle thumbs up state
                                     setState(() {
+                                      bool currentStatus = thumbsUpSelected;
                                       thumbsUpSelected = !thumbsUpSelected;
 
                                       // If thumbs up is selected, make thumbs down unselected
                                       if (thumbsUpSelected) {
+                                        print("Thumbs Up");
                                         thumbsDownSelected = false;
+                                        likeEvent();
+                                      }
+                                      else if(currentStatus)
+                                      {
+                                        thumbsUpSelected = true;
                                       }
                                     });
                                   },
@@ -237,11 +306,18 @@ class _OtherEventProfilePageState extends State<OtherEventProfilePage>
                                   onTap: () {
                                     // Toggle thumbs down state
                                     setState(() {
+                                      bool currentStatus = thumbsDownSelected;
                                       thumbsDownSelected = !thumbsDownSelected;
 
                                       // If thumbs down is selected, make thumbs up unselected
                                       if (thumbsDownSelected) {
+                                        print("Thumbs Down");
                                         thumbsUpSelected = false;
+                                        dislikeEvent();
+                                      }
+                                      else if(currentStatus)
+                                      {
+                                        thumbsDownSelected = true;
                                       }
                                     });
                                   },
