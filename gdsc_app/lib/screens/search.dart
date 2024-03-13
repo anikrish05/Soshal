@@ -210,6 +210,8 @@ class _SearchScreenState extends State<SearchScreen>
     return true;
   }
 
+  Color _orangeColor = Color(0xFFFF8050);
+
   @override
   Widget build(BuildContext context) {
     if (isLoaded == false) {
@@ -266,9 +268,10 @@ class _SearchScreenState extends State<SearchScreen>
                 )),
             title: Text("Select Tags",
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Colors.grey,/*-*/
                 )),
             initialValue: selectedTags.toList(),
+            selectedColor: _orangeColor,
             items: sampleTags.map((e) => MultiSelectItem(e, e)).toList(),
             dialogHeight: () {
               double? height = sampleTags.length * 50.0 + 50.0;
