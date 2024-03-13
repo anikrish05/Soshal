@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
       child: SearchScreen(), // Replace with your FeedScreen widget
     ),
     PopScope( // Wrap ProfileScreen with WillPopScope
-      canPop: false,
+      canPop: true,
       child: ProfileScreen(),
      ), // Replace with your ProfileScreen widget
   ];
